@@ -1,0 +1,9 @@
+#artworkRegisterPage {
+    .top {
+        height: calc(var(--vw, 1vw) * 15);
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
