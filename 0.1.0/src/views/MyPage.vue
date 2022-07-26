@@ -22,7 +22,8 @@
         </div>
         <div class="bottom">
             <div class="myArtwork">내 아트워크</div>
-            <ArtworkCardList></ArtworkCardList>
+            <ArtworkCardList v-if="this.loadFlag" :artworkIdList="this.artworkIdList">
+            </ArtworkCardList>
         </div>
         <SideBar :minimized="this.minimized"></SideBar>
         <UploadButton></UploadButton>
@@ -37,7 +38,7 @@
     import SideBar from '@/widgets/SideBar.vue';
     import UploadButton from '@/components/MyPage/UploadButton.vue';
     import Background from '../widgets/Background.vue';
-    // import { isAuth, getAuth } from '@/modules/auth';
+    import { isAuth, getAuth } from '@/modules/auth';
 
     export default {
         name: 'MyPage',
@@ -52,7 +53,11 @@
         data() {
             return {
                 minimized: true,
-                user: null
+                user: null,
+                loadFlag: false,
+                artworkIdList: [],
+                nothingToUpdate: false,
+                updateInProgress: false
             };
         },
         async created() {
@@ -68,20 +73,26 @@
                 }
             }
 
-            // Update session
-            // if (isAuth()) {
-            //     const user = getAuth()
-            //     await user.putUserSession()
-            // }
+            //Update session
+            if (isAuth()) {
+                const user = getAuth()
+                // await this.rebuild(0, 12)
+            }
+            else {
+                this.nothingToUpdate = true
+            }
+            this.loadFlag = true
         },
         mounted () {
+            const _this = this
+            
             // Scroll Listener
             document.getElementById('myPage').addEventListener('scroll', async function (event) {
                 const scroll_height = event.target.scrollHeight
                 const scroll_top = event.target.scrollTop
                 const offset_height = event.target.offsetHeight
                 if (scroll_height === scroll_top + offset_height) {
-                    await _this.$refs.myTab.load()
+                    await _this.load()
                 }
             })
         },
@@ -109,6 +120,25 @@
                 if (!this.minimized) {
                     window.history.back()
                 }
+            },
+            async rebuild(offset, length) {
+                const newArtworkIdList = await this.user.getHistoryArtworks(offset, length)
+                this.artworkIdList = this.artworkIdList.concat(newArtworkIdList)
+                if (newArtworkIdList.length < 12) {
+                    this.nothingToUpdate = true
+                }
+            },
+            async load() {
+                if (this.updateInProgress) {
+                    return false
+                }
+                this.updateInProgress = true
+
+                if (!this.nothingToUpdate) {
+                    await this.rebuild(this.artworkIdList.length, 12)
+                }
+
+                this.updateInProgress = false
             }
         }
     }
