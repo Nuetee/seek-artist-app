@@ -81,7 +81,7 @@ export class User {
             limit : limit
         }) 
         if (status < 500) {
-            return data[0].map(x => x.page_id)
+            return data[0].map(x => x.page_id
         }
         else {
             return []
