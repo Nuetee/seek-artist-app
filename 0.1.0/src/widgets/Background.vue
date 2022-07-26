@@ -1,11 +1,16 @@
 <template>
-<div></div>
-<div></div>
+    <div id="background" :style="this.backgroundDisplayFlag ? 'display:none' : ''"></div>
 </template>
 <script>
     export default {
-        name: 'LoginPage',
+        name: 'Background',
         components: {},
+        props: {
+            backgroundDisplayFlag: {
+                type: Boolean,
+                default: false
+            }
+        },
         data() {
             return {
                 sampleData: ''
@@ -22,3 +27,4 @@
         methods: {}
     }
 </script>
+<style lang="scss" scoped src="../scss/widgets/background.scss"></style>
