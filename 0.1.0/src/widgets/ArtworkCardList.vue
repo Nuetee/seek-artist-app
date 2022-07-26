@@ -3,7 +3,7 @@
         <div class="column1">
             <transition-group name="slide-fade" tag="div">
                 <div v-for="(artworkId, i) in this.artworkIdList" :key="i">
-                    <ArtworkCard v-if="i % 2 == 0" :artworkId="artworkId" :ownClass="this.tabClass + i.toString()">
+                    <ArtworkCard v-if="i % 2 == 0" :artworkId="artworkId" :order="i.toString()">
                     </ArtworkCard>
                 </div>
             </transition-group>
@@ -11,7 +11,7 @@
         <div class="column2">
             <transition-group name="slide-fade" tag="div">
                 <div v-for="(artworkId, i) in this.artworkIdList" :key="i">
-                    <ArtworkCard v-if="i % 2 == 1" :artworkId="artworkId" :ownClass="this.tabClass + i.toString()">
+                    <ArtworkCard v-if="i % 2 == 1" :artworkId="artworkId" :order="i.toString()">
                     </ArtworkCard>
                 </div>
             </transition-group>
@@ -31,7 +31,6 @@ export default {
             type: Array,
             default: []
         },
-        tabClass: String
     },
     data() {
         return {
