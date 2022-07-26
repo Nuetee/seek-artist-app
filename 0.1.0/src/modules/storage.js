@@ -189,6 +189,19 @@ export async function getArtworkRepresentImage (target_id) {
     return await sendStorageRequest('image', 'artwork', 'represent', target_id)
 }
 
+// Upload artwork's all images
+// - target_id : artwork's id
+// return the result of upload
+export async function putArtworkImages (target_id, files) {
+    if (!files) {
+        return false
+    }
+    const name_array = Array.from(
+            Array(files.length).keys()
+        ).map(x => String(x) + '.jpg')
+    return await sendStorageUpload('artwork', target_id, name_array, files)
+}
+
 // Upload artwork's thumbnail (representative) image
 // - target_id : artwork's id
 // return the result of upload
