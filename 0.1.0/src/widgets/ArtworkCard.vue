@@ -1,6 +1,6 @@
 <template>
     <div class="artworkCard" v-if="this.loadFlag" @click="this.redirectMain">
-        <ArtworkImageContainer :image-src="this.artworkImage" :ownClass="this.ownClass"></ArtworkImageContainer>
+        <ArtworkImageContainer :image-src="this.artworkImage" :order="this.order"></ArtworkImageContainer>
         <ArtworkInfo :artwork="this.artwork"></ArtworkInfo>
     </div>
 </template>
@@ -17,7 +17,7 @@ export default {
     },
     props: {
         artworkId: Number,
-        ownClass: String
+        order: String
     },
     data() {
         return {
