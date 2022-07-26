@@ -19,7 +19,7 @@
                 <va-sidebar-item active-color="black" hover-color="white">
                     <va-sidebar-item-content>
                         <va-sidebar-item-title>
-                            <router-link :to="'/mypage'" replace>
+                            <router-link :to="'/'" replace>
                                 {{ '마이페이지' }}
                             </router-link>
                         </va-sidebar-item-title>
@@ -50,11 +50,10 @@
 </template>
 <script>
     import RoundProfile from './RoundProfile.vue';
-    // import {
-    //     isAuth,
-    //     getAuth,
-    //     logout
-    // } from '@/modules/auth';
+    import {
+        isAuth,
+        logout
+    } from '@/modules/auth';
 
     export default {
         name: '',
@@ -96,19 +95,19 @@
         beforeUnmount() { },
         unmounted() { },
         methods: {
-            // logOut() {
-            //     if (!isAuth()) {
-            //         this.$router.replace({
-            //             path: '/login',
-            //             query: {
-            //                 redirect: this.$route.fullPath
-            //             }
-            //         })
-            //         return
-            //     }
-            //     logout(this.$store.getters.getProvider)
-            //     this.$router.go()
-            // },
+            logOut() {
+                if (!isAuth()) {
+                    this.$router.replace({
+                        path: '/login',
+                        query: {
+                            redirect: this.$route.fullPath
+                        }
+                    })
+                    return
+                }
+                logout(this.$store.getters.getProvider)
+                this.$router.go()
+            },
         }
     }
 </script>
