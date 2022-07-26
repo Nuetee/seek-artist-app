@@ -6,6 +6,7 @@ import {
     getArtworkThumbnailImage,
     getArtworkRepresentImage
 } from '../modules/storage'
+import { User } from './user'
 
 if (process.env.NODE_ENV === 'production') {
     axios.defaults.baseURL = process.env.VUE_APP_SERVER_URL
@@ -17,9 +18,9 @@ axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8'
 // Usage - const artwork = await new Artwork(<id>).init()
 export class Artwork {
     id
+    page_id
     name
     artist
-    sns
     
     archive_count
     year
@@ -27,19 +28,19 @@ export class Artwork {
     material
     information
 
-    constructor (id) {
-        this.id = id
+    constructor (page_id) {
+        this.page_id = page_id
     }
 
     init = async function () {
         const { status, data } = await sendRequest('get', '/artwork', {
-            target_id : this.id
+            target_id : this.page_id
         })
         if (status < 400) {
             const artwork_data = data[0][0]
+            this.id = artwork_data.id
             this.name = artwork_data.name
-            this.artist = artwork_data.artist
-            this.sns = artwork_data.sns
+            this.artist = await new User(artwork_data.artist_id).init()
             this.archive_count = artwork_data.archive_count
             this.year = artwork_data.year
             this.dimension = artwork_data.dimension
@@ -70,16 +71,16 @@ export class Artwork {
         return this.id
     }
 
+    getPageID () {
+        return this.page_id
+    }
+
     getName () {
         return this.name
     }
 
     getArtist () {
         return this.artist
-    }
-
-    getSNS () {
-        return this.sns
     }
 
     getArchiveCount () {
