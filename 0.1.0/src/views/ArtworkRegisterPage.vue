@@ -1,4 +1,8 @@
-<template></template>
+<template>
+    <div id="artworkRegisterPage">
+
+    </div>
+</template>
 <script>
     export default {
         name: 'ArtworkRegisterPage',
