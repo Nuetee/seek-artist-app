@@ -35,7 +35,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700&display=swap');
 :root {
-  --vw: 1vw;
+    --vw: 1vw;
     --vh: 1vh;
     --padding: calc(var(--vw, 1vw) * 5);
   }
@@ -66,11 +66,11 @@
     display: flex;
     justify-content: center;
   
-    >div:nth-child(1) {
+    > div:nth-child(1) {
       height: calc(var(--vh, 1vh) * 100);
     }
   
-    >div[id$="Page"] {
+    > div[id$="Page"] {
       width: calc(var(--vw, 1vw) * 100);
       overflow-y: scroll;
       -webkit-overflow-scrolling: touch;
@@ -83,7 +83,7 @@
       /* Firefox */
     }
   
-    >div[id$="Page"]::-webkit-scrollbar {
+    > div[id$="Page"]::-webkit-scrollbar {
       display: none;
       /* Chrome, Safari, Opera*/
       // 스크롤바 잔상 없애기
