@@ -80,7 +80,8 @@
             if (isAuth()) {
                 this.user = getAuth()
                 // await this.rebuild(0, 12)
-                this.artworkIdList = await this.user.getOwnArtworks()
+                this.artworkIdList = await this.user.getOwnArtworks(0, 10)
+                console.log(this.artworkIdList)
                 this.profile = this.user.getProfile()
             }
             else {
