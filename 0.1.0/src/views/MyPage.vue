@@ -16,8 +16,10 @@
             </div>
         </div>
         <div class="middle">
-            <RoundProfile></RoundProfile>
-            <div class="name"> {{ (user === null ? 'Guest' : user.getNickname()) }} </div>
+            <RoundProfile v-if="this.loadFlag" :profile="this.profile"></RoundProfile>
+            <div class="name" v-if="this.loadFlag">
+                {{ (this.user === null ? 'Guest' : this.user.getNickname()) }}
+            </div>
             <ProfileModifyButton></ProfileModifyButton>
         </div>
         <div class="bottom">
@@ -54,6 +56,7 @@
             return {
                 minimized: true,
                 user: null,
+                profile: '',
                 loadFlag: false,
                 artworkIdList: [],
                 nothingToUpdate: false,
@@ -75,8 +78,10 @@
 
             //Update session
             if (isAuth()) {
-                const user = getAuth()
+                this.user = getAuth()
                 // await this.rebuild(0, 12)
+                this.artworkIdList = await this.user.getOwnArtworks()
+                this.profile = this.user.getProfile()
             }
             else {
                 this.nothingToUpdate = true

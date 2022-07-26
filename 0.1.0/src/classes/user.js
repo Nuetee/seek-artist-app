@@ -71,7 +71,7 @@ export class User {
             limit : limit
         }) 
         if (status < 500) {
-            return data[0].map(x => x.artwork_id)
+            return data[0].map(x => x.id)
         }
         else {
             return []
