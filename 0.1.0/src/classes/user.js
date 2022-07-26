@@ -2,14 +2,8 @@
 import axios from 'axios'
 import { sendRequest } from '../modules/api'
 import {
-    doSession,
-    doHistory,
     doLike,
-    doArchive,
-    isArchived,
-    isLiked,
-    isHistory,
-    updateHistory
+    isLiked
 } from '../modules/event'
 import store from '../store'
 
@@ -24,18 +18,25 @@ axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8'
 export class User {
     id
     nickname
+    sns
 
     constructor (id) {
         this.id = id
     }
 
     init = async function () {
-        const { status, data } = await sendRequest('post', '/user', {
+        const { status, data } = await sendRequest('post', '/artist', {
             target_id : this.id
         })
         if (status < 400) {
             const user_data = data[0][0]
             this.nickname = user_data.nickname
+            if (user_data.sns) {
+                this.sns = user_data.sns
+            }
+            else {
+                this.sns = ''
+            }
             return this
         }
         else {
@@ -59,80 +60,22 @@ export class User {
         return store.getters.getProfile
     }
 
-    isArtworkArchived = async function (artwork) {
-        return await isArchived(artwork.getID(), this.id)
-    } 
-
-    isArtworkHistory = async function (artwork) {
-        return await isHistory(artwork.getID(), this.id)
-    } 
-
     isCommentLiked = async function (comment) {
         return await isLiked(comment.getID(), this.id)
     } 
 
-    getArchiveArtworks = async function (offset, limit) {
-        const { status, data } = await sendRequest('post', '/user/archive', {
+    getOwnArtworks = async function (offset, limit) {
+        const { status, data } = await sendRequest('post', '/artist/artwork', {
             target_id : this.id,
             offset : offset,
             limit : limit
-        })
+        }) 
         if (status < 500) {
             return data[0].map(x => x.artwork_id)
         }
         else {
             return []
         }
-    }
-
-    getHistoryArtworks = async function (offset, limit) {
-        const { status, data } = await sendRequest('post', '/user/history', {
-            target_id : this.id,
-            offset : offset,
-            limit : limit
-        })
-        if (status < 500) {
-            return data[0].map(x => x.artwork_id)
-        }
-        else {
-            return []
-        }
-    }
-
-    putUserSession = async function () {
-        return await doSession(this.id)
-    }
-
-    putArtworkHistory = async function (artwork) {
-        return await doHistory(artwork.getID(), this.id)
-    }
-
-    updateArtworkHistory = async function (artwork) {
-        return await updateHistory(artwork.getID(), this.id)
-    }
-
-    putArtworkArchive = async function (artwork) {
-        const archived_check = await isArchived(artwork.getID(), this.id)
-        if (!archived_check) {
-            const archive_result = await doArchive(artwork.getID(), this.id)
-            if (archive_result) {
-                artwork.setArchiveCount('inc')
-                return true
-            }
-        } 
-        return false
-    }
-
-    putArtworkUnarchive = async function (artwork) {
-        const archived_check = await isArchived(artwork.getID(), this.id)
-        if (archived_check) {
-            const archive_result = await doArchive(artwork.getID(), this.id, true)
-            if (archive_result) {
-                artwork.setArchiveCount('dec')
-                return true
-            }
-        } 
-        return false
     }
 
     putComment = async function (artwork, body) {
