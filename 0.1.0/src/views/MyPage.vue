@@ -3,26 +3,31 @@
         <div class="top">
             <button class="logo">
                 <img src="@/assets/seek_logo.png">
+                <div class="poppins">for artist</div>
             </button>
-            <button class="sideBarOpenButton" @click="this.openSideBar($event)">
-                <svg width="30" height="23" viewBox="0 0 30 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="30" height="1.5" rx="0.75" fill="black" />
-                    <rect y="21" width="30" height="1.5" rx="0.75" fill="black" />
-                    <rect y="10.5" width="30" height="1.5" rx="0.75" fill="black" />
-                </svg>
-            </button>
+            <div class="sideBarOpenButtonContainer">
+                <button class="sideBarOpenButton" @click="this.openSideBar($event)">
+                    <svg width="30" height="23" viewBox="0 0 30 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="30" height="1.5" rx="0.75" fill="black" />
+                        <rect y="21" width="30" height="1.5" rx="0.75" fill="black" />
+                        <rect y="10.5" width="30" height="1.5" rx="0.75" fill="black" />
+                    </svg>
+                </button>
+            </div>
         </div>
         <div class="middle">
             <RoundProfile></RoundProfile>
-            <div class="name"></div>
+            <div class="name"> {{ (user === null ? 'Guest' : user.getNickname()) }} </div>
             <ProfileModifyButton></ProfileModifyButton>
         </div>
         <div class="bottom">
+            <div class="myArtwork">내 아트워크</div>
             <ArtworkCardList></ArtworkCardList>
         </div>
-        <SideBar></SideBar>
+        <SideBar :minimized="this.minimized"></SideBar>
         <UploadButton></UploadButton>
-        <Background :backgroundDisplayFlag="this.minimized" @click="this.closeSideBar"></Background>
+        <Background :backgroundDisplayFlag=" this.minimized" @click="this.popHistory">
+        </Background>
     </div>
 </template>
 <script>
@@ -46,7 +51,8 @@
         },
         data() {
             return {
-                minimized: true
+                minimized: true,
+                user: null
             };
         },
         async created() {
@@ -57,7 +63,8 @@
             */
             window.onpopstate = function (event) {
                 if (_this.minimized == false) {
-                    _this.closeSideBar()
+                    _this.minimized = true
+                    return
                 }
             }
 
@@ -94,11 +101,13 @@
             },
             /*
             * - sideBar component가 접히도록 하는 함수.
-            * sideBar component에 props로 넘기는 data인 this.minimized 값을 true로 바꾸어준다. sideBar component는 minimized == true 일 때 접히고, minimized == false 일 때 펼쳐진다.
+            * 1. sideBar component에 props로 넘기는 data인 this.minimized == false인 경우, sideBar가 펼쳐져 있는 상태
+            * 2. sideBar가 펼쳐진 상태에서 background를 터치한 경우라면 history.back() 메서드를 통해 뒤로가기 이벤트를 발생시킴.
+            * 3. 뒤로가기 이벤트는 window.onpopstate를 발생시키고, 여기서 this.minimized = true로 바꿔줌.
             */
-            closeSideBar() {
+            popHistory() {
                 if (!this.minimized) {
-                    this.minimized = true
+                    window.history.back()
                 }
             }
         }

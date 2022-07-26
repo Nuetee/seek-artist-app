@@ -15,23 +15,26 @@ aside.sideBar {
             padding-left: calc(var(--vw, 1vw) * 3);
             padding-right: calc(var(--vw, 1vw) * 3);
 
-            >div {
+            > div {
                 padding-left: calc(var(--vw, 1vw) * 3);
                 padding-right: calc(var(--vw, 1vw) * 3);
             }
         }
 
-        >span:first-child>div {
+        > span:first-child > div {
             height: auto;
             padding-top: calc(var(--vw, 1vw) * 15);
             border-bottom: 1px solid black;
-
-            .roundProfile {
-                width: calc(var(--vw, 1vw) * 15);
-                height: calc(var(--vw, 1vw) * 15);
+            .va-icon {
+                height: auto !important;
+                
+                .roundProfile {
+                    width: calc(var(--vw, 1vw) * 15);
+                    height: calc(var(--vw, 1vw) * 15);
+                }
             }
 
-            >div {
+            > div {
                 text-align: left;
                 font-style: normal;
                 font-weight: 700;
