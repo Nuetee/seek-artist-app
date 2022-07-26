@@ -3,7 +3,6 @@
     import {
         check,
         refresh,
-        register,
         save
     } from '@/modules/auth'
     import { 
