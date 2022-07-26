@@ -17,6 +17,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8'
 // Usage - const user = await new User(<id>).init()
 export class User {
     id
+    page_id
     nickname
     sns
 
@@ -31,6 +32,7 @@ export class User {
         if (status < 400) {
             const user_data = data[0][0]
             this.nickname = user_data.nickname
+            this.page_id = user_data.page_id
             if (user_data.sns) {
                 this.sns = user_data.sns
             }
@@ -48,8 +50,16 @@ export class User {
         return this.id
     }
 
+    getPageID () {
+        return this.page_id
+    }
+
     getNickname () {
         return this.nickname
+    }
+
+    getSNS () {
+        return this.sns
     }
 
     getThumbnail () {
@@ -71,7 +81,7 @@ export class User {
             limit : limit
         }) 
         if (status < 500) {
-            return data[0].map(x => x.artwork_id)
+            return data[0].map(x => x.page_id)
         }
         else {
             return []
