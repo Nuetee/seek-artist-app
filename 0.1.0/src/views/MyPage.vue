@@ -20,6 +20,8 @@
             <div class="name" v-if="this.loadFlag">
                 {{ (this.user === null ? 'Guest' : this.user.getNickname()) }}
             </div>
+            <!-- <input id="file" type="file" accept="image/*" multiple>
+            <ProfileModifyButton @click="this.test_upload"></ProfileModifyButton> -->
             <ProfileModifyButton></ProfileModifyButton>
         </div>
         <div class="bottom">
@@ -41,6 +43,13 @@
     import UploadButton from '@/components/MyPage/UploadButton.vue';
     import Background from '../widgets/Background.vue';
     import { isAuth, getAuth } from '@/modules/auth';
+    import { resizeImage } from '@/modules/image';
+    import { 
+        putArtworkDirectory,
+        putArtworkImages,
+        putArtworkThumbnailImage,
+        deleteArtworkDirectory
+    } from '@/modules/storage';
 
     export default {
         name: 'MyPage',
@@ -80,8 +89,8 @@
             if (isAuth()) {
                 this.user = getAuth()
                 // await this.rebuild(0, 12)
-                this.artworkIdList = await this.user.getOwnArtworks(0, 10)
-                console.log(this.artworkIdList)
+                // this.artworkIdList = await this.user.getOwnArtworks(0, 10)
+                // console.log(this.artworkIdList)
                 this.profile = this.user.getProfile()
             }
             else {
@@ -145,6 +154,33 @@
                 }
 
                 this.updateInProgress = false
+            },
+            async test_upload() {
+                const target_id = 20
+                const resized_files = []
+                const files = document.getElementById('file').files
+                for (let i = 0 ; i < files.length ; i++) {
+                    const file = files[i]
+                    const resized_file = await resizeImage(file, {
+                        x: 720,
+                        y: 1200
+                    })
+                    resized_files.push(resized_file)
+                }
+                const thumbnail = await resizeImage(resized_files[0], {
+                    x: 200,
+                    y: 200
+                })
+                const directory_result = await putArtworkDirectory(String(target_id))
+                if (directory_result) {
+                    const image_result = await putArtworkImages(String(target_id), resized_files)
+                    if (image_result) {
+                        const thumbnail_result = await putArtworkThumbnailImage(String(target_id), thumbnail)
+                        console.log('result : ' + thumbnail_result)
+                    }
+                }
+                // const delete_result = await deleteArtworkDirectory(String(target_id))
+                // console.log('delete : ' + delete_result)
             }
         }
     }
