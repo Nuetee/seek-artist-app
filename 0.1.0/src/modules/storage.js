@@ -66,7 +66,6 @@ async function sendStorageUpload(target, target_id, file_names, file_lists) {
                     resolve(false)
                 } 
                 else {
-                    console.log(data)
                     if (i === file_names.length - 1) {
                         resolve(true)
                     }
