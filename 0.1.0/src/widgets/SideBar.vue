@@ -52,6 +52,7 @@
     import RoundProfile from './RoundProfile.vue';
     import {
         isAuth,
+        getAuth,
         logout
     } from '@/modules/auth';
 
@@ -80,12 +81,12 @@
         },
         beforeCreate() { },
         created() {
-            // if (isAuth()) {
-            //     const user = getAuth()
-            //     this.nickname = user.getNickname()
-            //     this.userId = user.getID()
-            //     this.userThumbnail = user.getThumbnail()
-            // }
+            if (isAuth()) {
+                const user = getAuth()
+                this.nickname = user.getNickname()
+                this.userId = user.getPageID()
+                this.userThumbnail = user.getThumbnail()
+            }
             this.userThumbnailLoadFlag = true
         },
         beforeMount() { },

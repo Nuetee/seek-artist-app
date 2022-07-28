@@ -66,7 +66,6 @@ async function sendStorageUpload(target, target_id, file_names, file_lists) {
                     resolve(false)
                 } 
                 else {
-                    console.log(data)
                     if (i === file_names.length - 1) {
                         resolve(true)
                     }
@@ -199,6 +198,17 @@ export async function putArtworkImages (target_id, files) {
     const name_array = Array.from(
             Array(files.length).keys()
         ).map(x => String(x) + '.jpg')
+    return await sendStorageUpload('artwork', target_id, name_array, files)
+}
+
+// Update artwork's all images
+// - target_id : artwork's id
+// return the result of upload
+export async function updateArtworkImages (target_id, indices, files) {
+    if (!files) {
+        return false
+    }
+    const name_array = indices.map(x => String(x) + '.jpg')
     return await sendStorageUpload('artwork', target_id, name_array, files)
 }
 

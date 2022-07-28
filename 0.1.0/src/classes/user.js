@@ -5,6 +5,7 @@ import {
     doLike,
     isLiked
 } from '../modules/event'
+import { Artwork } from './artwork'
 import store from '../store'
 
 if (process.env.NODE_ENV === 'production') {
@@ -86,6 +87,48 @@ export class User {
         else {
             return []
         }
+    }
+
+    postArtwork = async function (name, year, dimension, material, information, color) {
+        if (name && year && dimension && material && information && color) {
+            const { status, data } = await sendRequest('post', '/artwork', {
+                artist_id : this.id,
+                name : name,
+                year : year,
+                dimension : dimension,
+                material : material,
+                information : information,
+                color : color
+            })
+            if (status < 500) {
+                return await new Artwork(data.page_id).init()
+            }
+        }
+        return null
+    }
+
+    putUserData = async function (target, value) {
+        const { status, data } = await sendRequest('put', '/artist/' + target, {
+            target_id : this.id,
+            data: value
+        })
+        if (status < 500) {
+            this[target] = value
+            return true
+        }
+        else {
+            return false
+        }
+    }
+    
+    putNickname = async function (nickname) {
+        const result = await this.putUserData('nickname', nickname)
+        return result
+    }
+
+    putSNS = async function (sns) {
+        const result = await this.putUserData('sns', sns)
+        return result
     }
 
     putComment = async function (artwork, body) {
