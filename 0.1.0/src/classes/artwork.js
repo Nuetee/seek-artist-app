@@ -121,6 +121,54 @@ export class Artwork {
         }
     }
 
+    putArtworkData = async function (target, value) {
+        const { status, data } = await sendRequest('put', '/artwork/' + target, {
+            target_id : this.id,
+            data : value
+        })
+        if (status < 500) {
+            this[target] = value
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
+    putName = async function (name) {
+        const result = await this.putArtworkData('name', name)
+        return result
+    }
+
+    putInformation = async function (information) {
+        const result = await this.putArtworkData('information', information)
+        return result
+    }
+
+    putMaterial = async function (material) {
+        const result = await this.putArtworkData('material', material)
+        return result
+    }
+
+    putYear = async function (year) {
+        let value = year
+        if (!Number.isInteger(value)) {
+            if (Number.isInteger(parseInt(value, 10))) {
+                value = parseInt(value, 10)
+            }
+            else {
+                return false
+            }
+        }
+        const result = await this.putArtworkData('year', value)
+        return result
+    }
+
+    putDimension = async function (dimension) {
+        const result = await this.putArtworkData('dimension', dimension)
+        return result
+    }
+
     // - type : 'inc', 'dec'
     setArchiveCount (type) {
         (type === 'dec')
