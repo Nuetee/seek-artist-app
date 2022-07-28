@@ -20,9 +20,11 @@
                     <TitleInput @activate-next-button="this.activateNextButton"></TitleInput>
                 </swiper-slide>
                 <swiper-slide>
-                    <ImageSelection></ImageSelection>
+                    <ImageSelection @activate-next-button="this.activateNextButton"></ImageSelection>
                 </swiper-slide>
-                <swiper-slide>Slide 3</swiper-slide>
+                <swiper-slide>
+                    <Description @activate-next-button="this.activateNextButton"></Description>
+                </swiper-slide>
                 <swiper-slide>Slide 4</swiper-slide>
                 <button class="next"></button>
                 <button class="previous"></button>
@@ -37,6 +39,7 @@
     import "swiper/css/pagination";
     import TitleInput from '@/components/ArtworkRegisterPage/TitleInput.vue';
     import ImageSelection from '@/components/ArtworkRegisterPage/ImageSelection.vue';
+    import Description from '@/components/ArtworkRegisterPage/Description.vue';
 
     SwiperCore.use([Pagination, Navigation]);
 
@@ -46,7 +49,8 @@
             Swiper,
             SwiperSlide,
             TitleInput,
-            ImageSelection
+            ImageSelection,
+            Description
         },
         data() {
             return {
@@ -95,11 +99,11 @@
             swiperNavigation (buttonIndex) {
                 this.navigationButtons[buttonIndex].click()
                 if (buttonIndex) {
-                    this.navigationButtons[buttonIndex].disabled = true
+                    this.navigationButtons[1].disabled = true
                     this.fontColor = '#959595'
                 }
                 else {
-                    this.navigationButtons[buttonIndex].disabled = false
+                    this.navigationButtons[1].disabled = false
                     this.fontColor = '#000000'
                 }
             },
