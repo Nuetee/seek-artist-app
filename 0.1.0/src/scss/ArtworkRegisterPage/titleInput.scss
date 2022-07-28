@@ -1,0 +1,25 @@
+#titleInput {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    > div {
+        background-color: #F5F5F5;
+        height: calc(var(--vw, 1vw) * 11);
+        width: calc(var(--vw, 1vw) * 85);
+        border: none;
+        border-radius: calc(var(--vw, 1vw) * 2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        #title {
+            resize: none;
+            background-color: transparent;
+            height: auto;
+            width: 100%;
+            border: none;
+            text-align: center;
+        }
+    }
+}
