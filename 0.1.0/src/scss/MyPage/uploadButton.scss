@@ -1,0 +1,24 @@
+.uploadButton {
+    position: absolute;
+    bottom: calc(var(--vw, 1vw) * 10);
+    left: 50%;
+    transform: translate(-50%, 0);
+    background-color: black;
+    width: calc(var(--vw, 1vw) * 33);
+    height: calc(var(--vw, 1vw) * 14);
+    border-radius: calc(var(--vw, 1vw) * 7);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'SF Pro Rounded';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 115%;
+    padding-bottom: calc(var(--vw, 1vw) * 1);
+
+    svg {
+        padding-left: calc(var(--vw, 1vw) * 1);
+    }
+}

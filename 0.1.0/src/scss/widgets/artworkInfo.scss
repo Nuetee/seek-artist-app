@@ -1,0 +1,28 @@
+.artworkInfo {
+    display: grid;
+    grid-template-rows: auto calc(var(--vw, 1vw) * 10);
+    align-items: center;
+    width: calc(100% - calc(var(--vw, 1vw) * 10));
+    margin-left: var(--padding, 5vw);
+    margin-right: var(--padding, 5vw);
+    text-align: left;
+
+    >div {
+        overflow: visible;
+    }
+
+    .artworkTitle {
+        font-size: 32px;
+        letter-spacing: -0.04em;
+        line-height: 115%;
+        font-weight: bold;
+    }
+
+    .artist {
+        font-size: 15px;
+        letter-spacing: -0.06em;
+        font-weight: 500;
+        align-items: center;
+        display: flex;
+    }
+}
