@@ -1,0 +1,39 @@
+#description {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: calc(var(--vw, 1vw) * 25);
+
+    .background {
+        border: none;
+        border-radius: calc(var(--vw, 1vw) * 2);
+        background-color: #F5F5F5;
+        width: calc(var(--vw, 1vw) * 85);
+        height: calc(var(--vw, 1vw) * 84);
+        padding: var(--padding, 5vw);
+        font-style: normal;
+        font-weight: 400;
+        font-size: 15px;
+        line-height: 22px;
+        letter-spacing: -0.06em;
+
+        textarea {
+            resize: none;
+            border: none;
+            background-color: transparent;
+            width: 100%;
+            height: calc(100% - var(--vw, 1vw) * 5);
+
+            &::placeholder {
+                color: #959595;
+            }
+        }
+        
+        .letterCount {
+            font-size: 12px;
+            line-height: 17px;
+            text-align: right;
+            color: #959595;
+        }
+    }
+}

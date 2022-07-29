@@ -20,6 +20,7 @@
                     await this.$nextTick()
                     if (newVal.length > 0) {
                         this.$emit('activate-next-button', true)
+                        this.$emit('set-artwork-entity', 'title', newVal)
                     }
                     else {
                         this.$emit('activate-next-button', false)
