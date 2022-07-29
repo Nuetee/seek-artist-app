@@ -112,11 +112,12 @@ async function sendStorageCopy (target, target_id, src_indices, dst_indices) {
     }
     const src_urls = src_indices.map(i => target + '/' + target_id + '/' + String(i) + '.jpg')
     const dst_urls = dst_indices.map(j => target + '/' + target_id + '/' + String(j) + '.jpg')
+    const original_urls = src_indices.map(k => target + '/' + target_id + '/original/' + String(k) + '.jpg')
     return new Promise(function (resolve) {
         for (let j = 0 ; j < src_indices.length ; j++) {
             s3.copyObject({
                 CopySource: BUCKET_NAME + '/' + src_urls[j],
-                Key: 'original/' + src_urls[j]
+                Key: original_urls[j]
             }, function (err, data) {
                 if (err) {
                     console.log(err)
@@ -126,7 +127,7 @@ async function sendStorageCopy (target, target_id, src_indices, dst_indices) {
                     if (j === src_indices.length - 1) {
                         for (let i = 0 ; i < src_indices.length ; i++) {
                             s3.copyObject({
-                                CopySource: BUCKET_NAME + '/original/' + src_urls[i],
+                                CopySource: BUCKET_NAME + '/' + original_urls[i],
                                 Key: dst_urls[i],
                             }, async function (err, data) {
                                 if (err) {
