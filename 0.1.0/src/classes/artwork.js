@@ -25,6 +25,7 @@ export class Artwork {
     archive_count
     year
     dimension
+    three_dimensional
     material
     information
 
@@ -44,6 +45,7 @@ export class Artwork {
             this.archive_count = artwork_data.archive_count
             this.year = artwork_data.year
             this.dimension = artwork_data.dimension
+            this.three_dimensional = artwork_data.three_dimensional
             this.material = artwork_data.material
             this.information = artwork_data.information
             this.color = artwork_data.color
