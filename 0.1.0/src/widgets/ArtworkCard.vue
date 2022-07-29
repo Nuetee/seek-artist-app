@@ -16,7 +16,7 @@ export default {
         ArtworkInfo
     },
     props: {
-        artworkId: Number,
+        artworkId: String,
         order: String
     },
     data() {
