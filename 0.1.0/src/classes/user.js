@@ -89,13 +89,14 @@ export class User {
         }
     }
 
-    postArtwork = async function (name, year, dimension, material, information, color) {
+    postArtwork = async function (name, year, dimension, three_dimensional, material, information, color) {
         if (name && year && dimension && material && information && color) {
             const { status, data } = await sendRequest('post', '/artwork', {
                 artist_id : this.id,
                 name : name,
                 year : year,
                 dimension : dimension,
+                three_dimensional : three_dimensional,
                 material : material,
                 information : information,
                 color : color
