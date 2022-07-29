@@ -73,12 +73,14 @@ router.beforeEach(async function (to, from, next) {
           auth_result.access_token, 
           auth_result.profile_image, 
           auth_result.thumbnail_image)
-        result = await refresh(
-          auth_result.user_id, 
-          'kakao', 
-          auth_result.access_token, 
-          auth_result.refresh_token, 
-          auth_result.expire_time)
+        if (auth_result.access_token !== access_token) {
+          result = await refresh(
+            auth_result.user_id, 
+            'kakao', 
+            auth_result.access_token, 
+            auth_result.refresh_token, 
+            auth_result.expire_time)
+        }
       }
       else {
         logout('kakao')
