@@ -1,40 +1,8 @@
 <template>
     <div id="description">
-        <div class="material">
-            <div class="label">재료</div>
-            <div class="background">
-                <textarea class="input" v-model="this.material" name="material" cols="30" rows="1"
-                    placeholder="클레이"></textarea>
-            </div>
-        </div>
-        <div class="size">
-            <div class="label">크기</div>
-            <div class="form poppins">
-                <div class="background">
-                    <input class="input" placeholder="20" type="number" v-model="this.size.x" />
-                </div>
-                x
-                <div class="background">
-                    <input class="input" placeholder="20" type="number" v-model="this.size.y" />
-                </div>
-                x
-                <div class="background">
-                    <input class="input" placeholder="20" type="number" v-model="this.size.z" />
-                </div>
-                <div class="background unit">
-                    <select class="input" name="unit" id="unit-select" v-model="this.unit">
-                        <option value="mm">mm</option>
-                        <option value="cm">cm</option>
-                        <option value="m">m</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="manufacturedDate">
-            <div class="label">제작연도</div>
-            <div class="background poppins">
-                <input class="input" placeholder="2022" type="number" v-model="this.year" />
-            </div>
+        <div class="background">
+            <textarea v-model="this.description" cols="auto" rows="auto" placeholder="500자를 넘어갈 경우, 나머지 설명은 팝업창으로 볼 수 있습니다."></textarea>
+            <div class="letterCount">{{ this.letterCount + '/500' }}</div>
         </div>
     </div>
 </template>
@@ -44,25 +12,26 @@
         components: {},
         data() {
             return {
-                material: '',
-                size: {
-                    x: null,
-                    y: null,
-                    z: null,
-                },
-                unit: 'cm',
-                year: null
+                description: '',
+                isFirst: true
             };
         },
-        watch: {
-            'material': 'validCheck',
-            size: {
-                deep: true,
-                handler() {
-                    this.validCheck()
+        computed: {
+            letterCount: function () {
+                if (this.isFirst) {
+                    this.isFirst = false
                 }
-            },
-            'year': 'validCheck'
+                else {
+                    if (this.description) {
+                        this.$emit('activate-next-button', true)
+                        this.$emit('set-artwork-entity', 'description', this.description)
+                    }
+                    else
+                        this.$emit('activate-next-button', false)
+                }
+
+                return this.description.length
+            }
         },
         beforeCreate() {},
         created() {},
@@ -72,16 +41,7 @@
         updated() {},
         beforeUnmount() {},
         unmounted() {},
-        methods: {
-            validCheck () {
-                if (this.material && this.size.x && this.size.y && this.year) {
-                    this.$emit('activate-next-button', true)
-                }
-                else {
-                    this.$emit('activate-next-button', false)
-                }
-            }
-        }
+        methods: {}
     }
 </script>
 <style lang="scss" scoped src="../../scss/ArtworkRegisterPage/description.scss"></style>

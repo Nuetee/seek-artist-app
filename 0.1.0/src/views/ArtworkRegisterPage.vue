@@ -17,15 +17,17 @@
         <div class="bottom">
             <swiper v-bind="this.swiperOptions" @slideChange="this.slideChange">
                 <swiper-slide>
-                    <TitleInput @activate-next-button="this.activateNextButton"></TitleInput>
+                    <TitleInput @activate-next-button="this.activateNextButton" @set-artwork-entity="this.setArtworkEntity"></TitleInput>
                 </swiper-slide>
                 <swiper-slide>
-                    <ImageSelection @activate-next-button="this.activateNextButton"></ImageSelection>
+                    <ImageSelection @activate-next-button="this.activateNextButton" @set-artwork-entity="this.setArtworkEntity"></ImageSelection>
                 </swiper-slide>
                 <swiper-slide>
-                    <Description @activate-next-button="this.activateNextButton"></Description>
+                    <BasicInformation @activate-next-button="this.activateNextButton" @set-artwork-entity="this.setArtworkEntity"></BasicInformation>
                 </swiper-slide>
-                <swiper-slide>Slide 4</swiper-slide>
+                <swiper-slide>
+                    <Description @activate-next-button="this.activateNextButton" @set-artwork-entity="this.setArtworkEntity"></Description>
+                </swiper-slide>
                 <button class="next"></button>
                 <button class="previous"></button>
             </swiper>
@@ -39,6 +41,7 @@
     import "swiper/css/pagination";
     import TitleInput from '@/components/ArtworkRegisterPage/TitleInput.vue';
     import ImageSelection from '@/components/ArtworkRegisterPage/ImageSelection.vue';
+    import BasicInformation from '@/components/ArtworkRegisterPage/BasicInformation.vue';
     import Description from '@/components/ArtworkRegisterPage/Description.vue';
 
     SwiperCore.use([Pagination, Navigation]);
@@ -50,6 +53,7 @@
             SwiperSlide,
             TitleInput,
             ImageSelection,
+            BasicInformation,
             Description
         },
         data() {
@@ -58,6 +62,20 @@
                 swiperIndex: 0,
                 navigationButtons: [],
                 fontColor: '#959595;',
+                newArtwork: {
+                    title: null,
+                    images: null,
+                    material: null,
+                    type: null,
+                    size: {
+                        x: null,
+                        y: null,
+                        z: null,
+                    },
+                    unit: null,
+                    year: null,
+                    description: null
+                },
                 swiperOptions: {
                     slidesPerView: 1,
                     spaceBetween: 0,
@@ -74,19 +92,12 @@
                 },
             };
         },
-        beforeCreate() {},
-        created() {},
-        beforeMount() {},
         mounted() {
             this.navigationButtons.push(document.getElementsByClassName('previous')[0])
             this.navigationButtons.push(document.getElementsByClassName('next')[0])
             
             this.navigationButtons[1].disabled = true
         },
-        beforeUpdate() {},
-        updated() {},
-        beforeUnmount() {},
-        unmounted() {},
         methods: {
             /*
             * - "다음" 또는 "<(이전)" 버튼을 누르면 활성화 되는 함수
@@ -98,7 +109,7 @@
             */
             swiperNavigation (buttonIndex) {
                 this.navigationButtons[buttonIndex].click()
-                if (buttonIndex) {
+                if (buttonIndex === 1) {
                     this.navigationButtons[1].disabled = true
                     this.fontColor = '#959595'
                 }
@@ -118,6 +129,34 @@
                 }
                 else {
                     this.fontColor = '#959595'
+                }
+            },
+            setArtworkEntity (entity, value) {
+                switch (entity) {
+                    case 'title':
+                        this.newArtwork.title = value
+                        break
+                    case 'images':
+                        this.newArtwork.images = value
+                        break
+                    case 'material':
+                        this.newArtwork.material = value
+                        break
+                    case 'type':
+                        this.newArtwork.type = value
+                        break
+                    case 'size':
+                        this.newArtwork.size = value
+                        break
+                    case 'unit':
+                        this.newArtwork.unit = value
+                        break
+                    case 'year':
+                        this.newArtwork.year = value
+                        break
+                    case 'description':
+                        this.newArtwork.description = value
+                        break
                 }
             }
         }
