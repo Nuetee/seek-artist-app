@@ -5,6 +5,10 @@
     justify-content: space-evenly;
     padding-bottom: calc(var(--vw, 1vw) * 25);
 
+    #imageUpload {
+        display: none;
+    }
+
     > div:first-child {
         font-style: normal;
             font-weight: 300;
@@ -23,8 +27,16 @@
 
         .swiper-slide {
             border-radius: calc(var(--vw, 1vw) * 4);
+            overflow: hidden;
+            position: relative;
+            img {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
         }
-        .swiper-slide#imageAddition {
+        .swiper-slide:last-child {
             background-color: #F5F5F5;
             display: flex;
             align-items: center;
