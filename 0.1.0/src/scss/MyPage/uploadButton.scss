@@ -1,5 +1,5 @@
 .uploadButton {
-    position: absolute;
+    position: fixed;
     bottom: calc(var(--vw, 1vw) * 10);
     left: 50%;
     transform: translate(-50%, 0);
