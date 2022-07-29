@@ -1,105 +1,39 @@
 #description {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
-    text-align: left;
-    padding-left: var(--padding, 5vw);
-    padding-right: var(--padding, 5vw);
-    gap: calc(var(--vw, 1vw) * 7);
+    padding-bottom: calc(var(--vw, 1vw) * 25);
 
-    > div {
-        .label {
-            text-align: left;
-            font-style: normal;
-            font-weight: 500;
-            font-size: 15px;
-            line-height: 22px;
-            letter-spacing: -0.06em;
-    
-            color: #000000;
-            padding-bottom: calc(var(--vw, 1vw) * 3);
-        }
+    .background {
+        border: none;
+        border-radius: calc(var(--vw, 1vw) * 2);
+        background-color: #F5F5F5;
+        width: calc(var(--vw, 1vw) * 85);
+        height: calc(var(--vw, 1vw) * 84);
+        padding: var(--padding, 5vw);
+        font-style: normal;
+        font-weight: 400;
+        font-size: 15px;
+        line-height: 22px;
+        letter-spacing: -0.06em;
 
-        .background {
-            background-color: #F5F5F5;
-            height: calc(var(--vw, 1vw) * 11);
+        textarea {
+            resize: none;
             border: none;
-            border-radius: calc(var(--vw, 1vw) * 2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        
-            .input {
-                resize: none;
-                background-color: transparent;
-                height: auto;
-                width: 100%;
-                border: none;
-                text-align: center;
-            }
-
-            textarea, input {
-                font-style: normal;
-                font-weight: 400;
-                font-size: 15px;
-                line-height: 22px;
-                /* identical to box height */
-            
-                letter-spacing: -0.04em;
-            
-                &::placeholder {
-                    color: #959595;
-                }
-            }
-        }
-    }
-
-    .material {
-        width: calc(var(--vw, 1vw) * 45);
-
-        .background {
-            width: 100%;
-        }
-    }
-
-    .size {
-        width: 100%;
-
-        .form {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-weight: 400;
-            font-size: 20px;
-            line-height: 30px;
-            /* identical to box height */
-        
-            letter-spacing: -0.06em;
-        }
-
-        .background {
-            width: calc(var(--vw, 1vw) * 11);
-        }
-        
-        .background.unit {
-            width: auto;
             background-color: transparent;
-            font-weight: 400;
-            font-size: 17px;
-            line-height: 26px;
-            /* identical to box height */
-        
-            letter-spacing: -0.06em;
-        }
-    }
-
-    .manufacturedDate {
-        width: calc(var(--vw, 1vw) * 20.5);
-
-        .background {
             width: 100%;
+            height: calc(100% - var(--vw, 1vw) * 5);
+
+            &::placeholder {
+                color: #959595;
+            }
+        }
+        
+        .letterCount {
+            font-size: 12px;
+            line-height: 17px;
+            text-align: right;
+            color: #959595;
         }
     }
-
 }
