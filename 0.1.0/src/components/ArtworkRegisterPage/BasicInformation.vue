@@ -10,10 +10,10 @@
         <div class="type">
             <div class="label">유형</div>
             <div class="form poppins">
-                <input type="radio" v-model="this.type" name="type" value="plane" id="plane" checked>
-                <label for="plane">평면</label>
-                <input type="radio" v-model="this.type" name="type" value="cubic" id="cubic">
-                <label for="cubic">입체</label>
+                <input type="radio" v-model="this.threeDimensional" name="threeDimensional" value="2D" id="2D" checked>
+                <label for="2D">평면</label>
+                <input type="radio" v-model="this.threeDimensional" name="threeDimensional" value="3D" id="3D">
+                <label for="3D">입체</label>
             </div>
         </div>
         <div class="size">
@@ -26,9 +26,9 @@
                 <div class="background">
                     <input class="input" placeholder="20" type="number" v-model="this.size.y" />
                 </div>
-                <div v-if="this.type === 'cubic'">x</div>
-                <div class="background" v-if="this.type === 'cubic'">
-                    <input class="input" placeholder="20" type="number" v-model="this.size.z" />
+                <div v-if="this.threeDimensional === '3D'">x</div>
+                <div class="background" v-if="this.threeDimensional === '3D'">
+                    <input class="input" placeholder="20" threeDimensional="number" v-model="this.size.z" />
                 </div>
                 <div class="background unit">
                     <select class="input" name="unit" id="unit-select" v-model="this.unit">
@@ -54,7 +54,7 @@ export default {
     data() {
         return {
             material: '',
-            type: 'plane',
+            threeDimensional: '2D',
             size: {
                 x: null,
                 y: null,
@@ -66,7 +66,7 @@ export default {
     },
     watch: {
         'material': 'validCheck',
-        'type' : 'validCheck',
+        'threeDimensional' : 'validCheck',
         size: {
             deep: true,
             handler() {
@@ -77,12 +77,13 @@ export default {
     },
     methods: {
         validCheck() {
-            let type = (this.type === 'plane') ? true : false
+            let threeDimensional = (this.threeDimensional === '3D') ? true : false
+            // let type = (this.type === 'plane') ? true : false
 
-            if (this.material && this.size.x && this.size.y && (type || this.size.z) && this.year) {
+            if (this.material && this.size.x && this.size.y && (!threeDimensional || this.size.z) && this.year) {
                 this.$emit('activate-next-button', true)
                 this.$emit('set-artwork-entity', 'material', this.material)
-                this.$emit('set-artwork-entity', 'type', this.type)
+                this.$emit('set-artwork-entity', 'threeDimensional', threeDimensional)
                 this.$emit('set-artwork-entity', 'size', this.size)
                 this.$emit('set-artwork-entity', 'unit', this.unit)
                 this.$emit('set-artwork-entity', 'year', this.year)

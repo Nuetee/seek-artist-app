@@ -66,7 +66,8 @@
                     title: null,
                     images: null,
                     material: null,
-                    type: null,
+                    threeDimensional: null,
+                    // type: null,
                     size: {
                         x: null,
                         y: null,
@@ -140,11 +141,8 @@
                     return
                 
                 let result
-                let type
-
                 for(let i in this.newArtwork) {
-                    if (i === 'type') {
-                        type = (this.newArtwork[i] === 'plane') ? true : false
+                    if (i === 'threeDimensional') {
                         continue
                     }
                     else if (i === 'size') {
@@ -154,7 +152,7 @@
                     result = result && this.newArtwork[i]
                 }
 
-                result = result && (type || this.newArtwork.size.z)
+                result = result && (!this.newArtwork.threeDimensional || this.newArtwork.size.z)
 
                 /* result === false면 artwork에 누락된 정보 있음. 처음부터 등록 */
                 
@@ -201,8 +199,8 @@
                     case 'material':
                         this.newArtwork.material = value
                         break
-                    case 'type':
-                        this.newArtwork.type = value
+                    case 'threeDimensional':
+                        this.newArtwork.threeDimensional = value
                         break
                     case 'size':
                         this.newArtwork.size = value
