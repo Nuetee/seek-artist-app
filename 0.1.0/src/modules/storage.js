@@ -49,7 +49,7 @@ async function sendStorageRequest(type, target, sub_target, target_id) {
 // - file_names : an array of file names
 // - file_lists : an array of file bodies
 // return true, or false if the upload failed
-async function sendStorageUpload(target, target_id, file_names, file_lists) {
+async function sendStorageUpload (target, target_id, file_names, file_lists) {
     if (file_names.length !== file_lists.length) {
         return false
     }
@@ -78,9 +78,8 @@ async function sendStorageUpload(target, target_id, file_names, file_lists) {
 // Send request for deleting file
 // - target : 'user', 'artist', 'artwork', 'advertisement'
 // - file_names : an array of file names
-// - file_lists : an array of file bodies
 // return true, or false if the upload failed
-async function sendStorageDelete(target, target_id, file_names) {
+async function sendStorageDelete (target, target_id, file_names) {
     const file_urls = file_names.map(file_name => target + '/' + target_id + '/' + file_name)
     return new Promise(function (resolve) {
         for (let i = 0 ; i < file_names.length ; i++) {
@@ -101,10 +100,58 @@ async function sendStorageDelete(target, target_id, file_names) {
     })
 }
 
+// Send request for copying file
+// - target : 'user', 'artist', 'artwork', 'advertisement'
+// - file_names : an array of file names
+// - src_index : array of old indices of target file
+// - dst_index : array of new indices of target file
+// return true, or false if the copy failed
+async function sendStorageCopy (target, target_id, src_indices, dst_indices) {
+    if (src_indices.length !== target_indices.length) {
+        return false
+    }
+    const src_urls = src_indices.map(i => target + '/' + target_id + '/' + String(i) + '.jpg')
+    const dst_urls = dst_indices.map(j => target + '/' + target_id + '/' + String(j) + '.jpg')
+    return new Promise(function (resolve) {
+        for (let j = 0 ; j < src_indices.length ; j++) {
+            s3.copyObject({
+                CopySource: BUCKET_NAME + '/' + src_urls[j],
+                Key: 'original/' + src_urls[j]
+            }, function (err, data) {
+                if (err) {
+                    console.log(err)
+                    resolve(false)
+                }
+                else {
+                    if (j === src_indices.length - 1) {
+                        for (let i = 0 ; i < src_indices.length ; i++) {
+                            s3.copyObject({
+                                CopySource: BUCKET_NAME + '/original/' + src_urls[i],
+                                Key: dst_urls[i],
+                            }, async function (err, data) {
+                                if (err) {
+                                    console.log(err)
+                                    resolve(false)
+                                } 
+                                else {
+                                    if (i === src_indices.length - 1) {
+                                        const delete_result = await sendStorageDeleteOriginal(target, target_id)
+                                        resolve(delete_result)
+                                    }
+                                }
+                            })
+                        }
+                    }
+                }
+            })
+        }
+    })
+}
+
 // Send request for creating new directory
 // - target : 'user', 'artist', 'artwork', 'advertisement'
 // return true, or false if the creation failed
-async function sendStoragePutDirectory(target, target_id) {
+async function sendStoragePutDirectory (target, target_id) {
     const url = target + '/' + target_id + '/'
     return new Promise(function (resolve) {
         s3.headObject({
@@ -134,8 +181,44 @@ async function sendStoragePutDirectory(target, target_id) {
 // Send request for deleting directory
 // - target : 'user', 'artist', 'artwork', 'advertisement'
 // return true, or false if the deletion failed
-async function sendStorageDeleteDirectory(target, target_id) {
+async function sendStorageDeleteDirectory (target, target_id) {
     const url = target + '/' + target_id + '/'
+    return new Promise(function (resolve) {
+        s3.listObjects({
+            Prefix: url
+        }, function (err, data) {
+            if (err) {
+                console.log(err)
+                resolve(false)
+            }
+            else {
+                const objects = data.Contents.map(function (object) {
+                    return { Key: object.Key }
+                })
+                s3.deleteObjects({
+                    Delete: {
+                        Objects: objects,
+                        Quiet: true
+                    }
+                }, function (err, data) {
+                    if (err) {
+                        console.log(err)
+                        resolve(false)
+                    }
+                    else {
+                        resolve(true)
+                    }
+                })
+            }
+        })
+    })
+}
+
+// Send request for deleting original directory
+// - target : 'user', 'artist', 'artwork', 'advertisement'
+// return true, or false if the deletion failed
+async function sendStorageDeleteOriginal (target, target_id) {
+    const url = target + '/' + target_id + '/original/'
     return new Promise(function (resolve) {
         s3.listObjects({
             Prefix: url
@@ -201,15 +284,60 @@ export async function putArtworkImages (target_id, files) {
     return await sendStorageUpload('artwork', target_id, name_array, files)
 }
 
-// Update artwork's all images
+// Upload (or overwrite) artwork's images for given indices
 // - target_id : artwork's id
 // return the result of upload
-export async function updateArtworkImages (target_id, indices, files) {
+async function modifyArtworkImages (target_id, indices, files) {
+    const name_array = indices.map(x => String(x) + '.jpg')
+    return await sendStorageUpload('artwork', target_id, name_array, files)
+}
+
+// Update artwork's images
+// - original_length : length of original image list
+// - mapping_array : list of mapped index for new image list
+// ex. [0, 1, 2, 3] -> [1, null, 3, null, null]
+// - target_id : artwork's id
+// return the result of upload
+export async function updateArtworkImages (target_id, original_length, mapping_array, files) {
     if (!files) {
         return false
     }
-    const name_array = indices.map(x => String(x) + '.jpg')
-    return await sendStorageUpload('artwork', target_id, name_array, files)
+    const src_indices = []
+    const dst_indices = []
+    const new_indices = []
+    const new_length = mapping_array.length
+    for (let i = 0 ; i < mapping_array.length ; i++) {
+        const index = mapping_array[i]
+        if (index) {
+            if (index < original_length) {
+                src_indices.push(index)
+                dst_indices.push(i)
+            }
+            else {
+                return false
+            }
+        }
+        else {
+            new_indices.push(i)
+        }
+    }
+
+    const copy_result = await sendStorageCopy('artwork', target_id, src_indices, dst_indices)
+    if (copy_result) {
+        const modify_result = await modifyArtworkImages(target_id, new_indices, files)
+        if (modify_result) {
+            if (new_length < original_length) {
+                for (let j = original_length - 1 ; j > new_length - 1 ; j--) {
+                    const delete_result = await sendStorageDelete('artwork', target_id, String(j) + '.jpg')
+                    if (!delete_result) {
+                        return false
+                    }
+                }
+            }
+            return true
+        }
+    }
+    return false
 }
 
 // Upload artwork's thumbnail (representative) image
