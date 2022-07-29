@@ -88,9 +88,8 @@
             //Update session
             if (isAuth()) {
                 this.user = getAuth()
-                // await this.rebuild(0, 12)
-                // this.artworkIdList = await this.user.getOwnArtworks(0, 10)
-                // console.log(this.artworkIdList)
+                await this.rebuild(0, 12)
+                console.log(this.artworkIdList)
                 this.profile = this.user.getProfile()
             }
             else {
@@ -137,7 +136,7 @@
                 }
             },
             async rebuild(offset, length) {
-                const newArtworkIdList = await this.user.getHistoryArtworks(offset, length)
+                const newArtworkIdList = await this.user.getOwnArtworks(offset, length)
                 this.artworkIdList = this.artworkIdList.concat(newArtworkIdList)
                 if (newArtworkIdList.length < 12) {
                     this.nothingToUpdate = true
