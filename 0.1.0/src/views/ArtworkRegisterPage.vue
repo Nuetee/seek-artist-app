@@ -43,6 +43,7 @@
     import ImageSelection from '@/components/ArtworkRegisterPage/ImageSelection.vue';
     import BasicInformation from '@/components/ArtworkRegisterPage/BasicInformation.vue';
     import Description from '@/components/ArtworkRegisterPage/Description.vue';
+    import { getAuth } from '@/modules/auth';
 
     SwiperCore.use([Pagination, Navigation]);
 
@@ -136,12 +137,12 @@
             * 3. 누락된 정보가 있는 경우 (result === false) 등록 재실행
             * 4. 정보가 모두 담긴 경우 (result === true) 등록 절차 진행
             */
-            completeRegister () {
+            async completeRegister () {
                 if (this.navigationButtons[1].disabled)
                     return
                 
                 let result
-                for(let i in this.newArtwork) {
+                for (let i in this.newArtwork) {
                     if (i === 'threeDimensional') {
                         continue
                     }
@@ -161,6 +162,24 @@
                 /* result === true면 artwork 등록 */
 
                 // artwork 등록 code
+
+                const current_artist = getAuth()
+                const dimension_string = String(this.newArtwork.size.x) 
+                    + ' x ' + String(this.newArtwork.size.y)
+                    + ((this.newArtwork.threeDimensional)
+                        ? ' x ' + String(this.newArtwork.size.z)
+                        : '')
+                    + ' ' + this.newArtwork.unit
+                const registration_result = await current_artist.postArtwork(
+                    this.newArtwork.title,
+                    this.newArtwork.year,
+                    dimension_string,
+                    this.newArtwork.threeDimensional,
+                    this.newArtwork.material,
+                    this.newArtwork.description,
+                    'black'
+                )
+                console.log(registration_result)
             },
             // - artwork 등록을 취소하는 함수.
             cancelRegister() {
