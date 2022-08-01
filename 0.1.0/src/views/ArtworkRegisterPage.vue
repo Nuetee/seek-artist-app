@@ -10,23 +10,30 @@
             </div>
             <div class="presentStep"> {{ this.presentStep[this.swiperIndex] }} </div>
             <div class="nextButton" @click="this.swiperNavigation(1)" :style="'color: ' + this.fontColor">
-                <div v-if="this.swiperIndex === 3">완료</div>
+                <div v-if="this.swiperIndex === 4">완료</div>
                 <div v-else>다음</div>
             </div>
         </div>
         <div class="bottom">
             <swiper v-bind="this.swiperOptions" @slideChange="this.slideChange">
                 <swiper-slide>
-                    <TitleInput @activate-next-button="this.activateNextButton" @set-artwork-entity="this.setArtworkEntity"></TitleInput>
+                    <TitleInput ref="titleInput" @activate-next-button="this.activateNextButton"
+                        @set-artwork-entity="this.setArtworkEntity"></TitleInput>
                 </swiper-slide>
                 <swiper-slide>
-                    <ImageSelection @activate-next-button="this.activateNextButton" @set-artwork-entity="this.setArtworkEntity"></ImageSelection>
+                    <ImageSelection ref="imageSelection" @activate-next-button="this.activateNextButton"
+                        @set-artwork-entity="this.setArtworkEntity"></ImageSelection>
                 </swiper-slide>
                 <swiper-slide>
-                    <BasicInformation @activate-next-button="this.activateNextButton" @set-artwork-entity="this.setArtworkEntity"></BasicInformation>
+                    <BasicInformation ref="basicInformation" @activate-next-button="this.activateNextButton"
+                        @set-artwork-entity="this.setArtworkEntity"></BasicInformation>
                 </swiper-slide>
                 <swiper-slide>
-                    <Description @activate-next-button="this.activateNextButton" @set-artwork-entity="this.setArtworkEntity"></Description>
+                    <Description ref="description" @activate-next-button="this.activateNextButton"
+                        @set-artwork-entity="this.setArtworkEntity"></Description>
+                </swiper-slide>
+                <swiper-slide>
+                    <TextColorSelection ref="textColorSelection" :artworkData="this.newArtwork"></TextColorSelection>
                 </swiper-slide>
                 <button class="next"></button>
                 <button class="previous"></button>
@@ -35,14 +42,16 @@
     </div>
 </template>
 <script>
-    import SwiperCore, { Pagination, Navigation } from 'swiper';
-    import { Swiper, SwiperSlide } from 'swiper/vue';
-    import 'swiper/css';
-    import "swiper/css/pagination";
     import TitleInput from '@/components/ArtworkRegisterPage/TitleInput.vue';
     import ImageSelection from '@/components/ArtworkRegisterPage/ImageSelection.vue';
     import BasicInformation from '@/components/ArtworkRegisterPage/BasicInformation.vue';
     import Description from '@/components/ArtworkRegisterPage/Description.vue';
+    import TextColorSelection from '@/components/ArtworkRegisterPage/TextColorSelection.vue';
+
+    import SwiperCore, { Pagination, Navigation } from 'swiper';
+    import { Swiper, SwiperSlide } from 'swiper/vue';
+    import 'swiper/css';
+    import "swiper/css/pagination";
 
     SwiperCore.use([Pagination, Navigation]);
 
@@ -54,7 +63,8 @@
             TitleInput,
             ImageSelection,
             BasicInformation,
-            Description
+            Description,
+            TextColorSelection
         },
         data() {
             return {
@@ -67,7 +77,6 @@
                     images: null,
                     material: null,
                     threeDimensional: null,
-                    // type: null,
                     size: {
                         x: null,
                         y: null,
@@ -75,7 +84,8 @@
                     },
                     unit: null,
                     year: null,
-                    description: null
+                    description: null,
+                    textColor: null
                 },
                 swiperOptions: {
                     slidesPerView: 1,
@@ -105,28 +115,20 @@
             * - buttonIndex를 parameter로 받는다. "<"버튼은 buttonIndex == 0, "다음" 버튼은 buttonIndex == 1.
             * 1. "<" 또는 "다음" 버튼을 눌렀을 때, 실제 swiperNavigation이 binding 돼 있는 버튼의 click 이벤트를 발생시킨다.
             * : 실제 navigation을 관장하는 button은 배열 navigationButtons에 담겨있다.
-            * 2. "다음" 버튼을 누른 경우(buttonIndex == 1)
-            *   2-1. 마지막 등록 페이지인 경우 completeRegister 함수를 호출하여 등록을 완료.
-            *   2-2. "다음" 버튼을 비활성화 한다.
-            * 3. "<" 버튼을 누른 경우(buttonIndex == 0)
-            *   3-1. 첫 등록 페이지인 경우 cancelRegister 함수를 호출하여 등록을 취소한다.
-            *   3-2."다음" 버튼을 활성화 한다.
+            * 2. "다음" 버튼을 누른 경우(buttonIndex == 1) 이고 마지막 등록 페이지인 경우 completeRegister 함수를 호출하여 등록을 완료.
+            * 3. "<" 버튼을 누른 경우(buttonIndex == 0)이고 첫 등록 페이지인 경우 cancelRegister 함수를 호출하여 등록을 취소한다.
             */
             swiperNavigation (buttonIndex) {
                 this.navigationButtons[buttonIndex].click()
                 if (buttonIndex === 1) {
-                    if (this.swiperIndex === 3) {
+                    if (this.swiperIndex === 4) {
                         this.completeRegister ()
                     }
-                    this.navigationButtons[1].disabled = true
-                    this.fontColor = '#959595'
                 }
                 else {
                     if (this.swiperIndex === 0) {
                         this.cancelRegister()
                     }
-                    this.navigationButtons[1].disabled = false
-                    this.fontColor = '#000000'
                 }
             },
             /*
@@ -166,8 +168,32 @@
             cancelRegister() {
 
             },
-            slideChange (swiper) {
+            /*
+            * 등록 페이지가 변경되면 호출되는 함수.
+            * 1. 현재 swiper index를 저장한다.
+            * 2. 현재 slide의 입력 폼이 유효한지 검사한다.
+            *   : formValidCheck은 입력 폼이 유효하면 '다음' 버튼을 활성화 한다.
+            */
+            async slideChange (swiper) {
                 this.swiperIndex = swiper.activeIndex
+
+                switch(this.swiperIndex) {
+                    case 0:
+                        await this.$refs.titleInput.formValidCheck()
+                        break
+                    case 1:
+                        await this.$refs.imageSelection.formValidCheck()
+                        break
+                    case 2:
+                        this.$refs.basicInformation.formValidCheck()
+                        break
+                    case 3:
+                        this.$refs.description.formValidCheck()
+                        break
+                    case 4:
+                        await this.$refs.textColorSelection.formValidCheck()
+                        break 
+                }
             },
             /*
             * - "다음"(또는 완료) 버튼의 활성화를 결정하는 함수.
@@ -214,6 +240,8 @@
                     case 'description':
                         this.newArtwork.description = value
                         break
+                    case 'textColor':
+                        this.newArtwork.textColor = value
                 }
             }
         }
