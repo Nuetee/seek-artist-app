@@ -4,9 +4,13 @@
         <input type="file" id="imageUpload" accept="image/*" multiple>
         <swiper v-bind="this.swiperOptions">
             <swiper-slide v-for="(image, i) in this.selectedImageFiles">
+                <div class="deleteButton" @click="this.deleteImageSlide(i)">
+                    <div></div>
+                </div>
+                <div class="thumbnail poppins" v-if="i===0">Main</div>
                 <img :src="image.src" :style="image.style">
             </swiper-slide>
-            <swiper-slide id="imageAddition">
+            <swiper-slide>
                 <label for="imageUpload"> + </label>
             </swiper-slide>
         </swiper>
@@ -45,17 +49,10 @@
                 }
             },
         },
-        beforeCreate() {},
-        created() {},
-        beforeMount() {},
         mounted() {
             this.imageUpload = document.getElementById('imageUpload')
             imageUpload.addEventListener('change', this.addImageSlide)
         },
-        beforeUpdate() {},
-        updated() {},
-        beforeUnmount() {},
-        unmounted() {},
         methods: {
             async formValidCheck() {
                 await this.$nextTick()
@@ -89,6 +86,13 @@
                     }
                 }
                 imageUpload.value = ''
+            },
+            /*
+            * 이미지 슬라이드를 삭제하는 함수. deleteButton을 누르면 호출.
+            * 현재 화면에 위치한 slide index를 parameter로 받는다.
+            */
+            deleteImageSlide (index) {
+
             },
             checkImage (imageName) {
                 const length = this.selectedImageFiles.length

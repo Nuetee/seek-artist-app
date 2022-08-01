@@ -48,6 +48,19 @@
                         transform: translate(-50%, -50%);
                     }
                 }
+                
+                .swiper-pagination {
+                    .swiper-pagination-bullet {
+                        background: white;
+                        opacity: 1;
+                        width: 5px;
+                        height: 5px;
+                    }
+                    
+                    .swiper-pagination-bullet-active {
+                        background: black;
+                    }
+                }
             }
 
             .artworkInfo {
@@ -83,13 +96,18 @@
                     letter-spacing: -0.06em;
                     display: flex;
                     align-items: center;
+                    height: calc(var(--vw, 1vw) * 8);
 
                     .snsLink {
-                        padding-top: calc(var(--vw, 1vw) * 1);
                         padding-left: calc(var(--vw, 1vw) * 2);
-                        display: flex;
+                        height: 100%;
+                        position: relative;
+
                         svg {
-                            transform: scale(0.9);
+                            position: absolute;
+                            right: 0;
+                            top: 50%;
+                            transform: translate(100%, -50%) scale(0.9);
                         }
                     }
                 }
