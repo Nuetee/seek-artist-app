@@ -16,15 +16,8 @@
         },
         watch: {
             'title': {
-                async handler (newVal, oldVal) {
-                    await this.$nextTick()
-                    if (newVal.length > 0) {
-                        this.$emit('activate-next-button', true)
-                        this.$emit('set-artwork-entity', 'title', newVal)
-                    }
-                    else {
-                        this.$emit('activate-next-button', false)
-                    }
+                async handler () {
+                    await this.formValidCheck()
                 },
                 immediate: true
             }
@@ -37,7 +30,19 @@
         updated() {},
         beforeUnmount() {},
         unmounted() {},
-        methods: {}
+        methods: {
+            async formValidCheck () {
+                await this.$nextTick()
+
+                if (this.title.length > 0) {
+                    this.$emit('activate-next-button', true)
+                    this.$emit('set-artwork-entity', 'title', this.title)
+                }
+                else {
+                    this.$emit('activate-next-button', false)
+                }
+            }
+        }
     }
 </script>
 <style lang="scss" scoped src="../../scss/ArtworkRegisterPage/titleInput.scss"></style>

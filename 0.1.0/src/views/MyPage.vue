@@ -89,7 +89,6 @@
             if (isAuth()) {
                 this.user = getAuth()
                 await this.rebuild(0, 12)
-                console.log(this.artworkIdList)
                 this.profile = this.user.getProfile()
             }
             else {
