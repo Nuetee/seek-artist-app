@@ -33,7 +33,10 @@
                         @set-artwork-entity="this.setArtworkEntity"></Description>
                 </swiper-slide>
                 <swiper-slide>
-                    <TextColorSelection ref="textColorSelection" :artworkData="this.newArtwork"></TextColorSelection>
+                    <TextColorSelection ref="textColorSelection" 
+                        @activate-next-button="this.activateNextButton"
+                        @set-artwork-entity="this.setArtworkEntity"
+                        :artworkData="this.newArtwork"></TextColorSelection>
                 </swiper-slide>
                 <button class="next"></button>
                 <button class="previous"></button>
@@ -46,8 +49,17 @@
     import ImageSelection from '@/components/ArtworkRegisterPage/ImageSelection.vue';
     import BasicInformation from '@/components/ArtworkRegisterPage/BasicInformation.vue';
     import Description from '@/components/ArtworkRegisterPage/Description.vue';
-    import { getAuth } from '@/modules/auth';
     import TextColorSelection from '@/components/ArtworkRegisterPage/TextColorSelection.vue';
+    import { getAuth } from '@/modules/auth';
+    import { Artwork } from '@/classes/artwork';
+    import { resizeImage } from '@/modules/image';
+    import { 
+        putArtworkDirectory,
+        putArtworkImages,
+        putArtworkThumbnailImage,
+        deleteArtworkDirectory
+    } from '@/modules/storage';
+
 
     import SwiperCore, { Pagination, Navigation } from 'swiper';
     import { Swiper, SwiperSlide } from 'swiper/vue';
@@ -119,11 +131,11 @@
             * 2. "다음" 버튼을 누른 경우(buttonIndex == 1) 이고 마지막 등록 페이지인 경우 completeRegister 함수를 호출하여 등록을 완료.
             * 3. "<" 버튼을 누른 경우(buttonIndex == 0)이고 첫 등록 페이지인 경우 cancelRegister 함수를 호출하여 등록을 취소한다.
             */
-            swiperNavigation (buttonIndex) {
+            async swiperNavigation (buttonIndex) {
                 this.navigationButtons[buttonIndex].click()
                 if (buttonIndex === 1) {
                     if (this.swiperIndex === 4) {
-                        this.completeRegister ()
+                        await this.completeRegister()
                     }
                 }
                 else {
@@ -140,6 +152,7 @@
             * 4. 정보가 모두 담긴 경우 (result === true) 등록 절차 진행
             */
             async completeRegister () {
+                // console.log(this.navigationButtons[1].disabled)
                 if (this.navigationButtons[1].disabled)
                     return
                 
@@ -155,37 +168,70 @@
                     result = result && this.newArtwork[i]
                 }
 
-                result = result && (!this.newArtwork.threeDimensional || this.newArtwork.size.z)
+                result = result && ((this.newArtwork.threeDimensional !== null) || this.newArtwork.size.z)
 
                 /* result === false면 artwork에 누락된 정보 있음. 처음부터 등록 */
-                
-                // 처음으로 돌아가는 code.
-                
+                if (!result) {
+                    // 처음으로 돌아가는 code.
+                    this.$router.replace(this.$router.currentRoute)
+                }
                 /* result === true면 artwork 등록 */
+                else {
+                    // artwork 등록 code
+                    const current_artist = getAuth()
+                    const dimension_string = String(this.newArtwork.size.x) 
+                        + ' x ' + String(this.newArtwork.size.y)
+                        + ((this.newArtwork.threeDimensional)
+                            ? ' x ' + String(this.newArtwork.size.z)
+                            : '')
+                        + ' ' + this.newArtwork.unit
+                    const new_page_id = await current_artist.postArtwork(
+                        this.newArtwork.title,
+                        this.newArtwork.year,
+                        dimension_string,
+                        this.newArtwork.threeDimensional,
+                        this.newArtwork.material,
+                        this.newArtwork.description,
+                        this.newArtwork.textColor
+                    )
+                    console.log(new_page_id)
+                    console.log(this.newArtwork.images)
 
-                // artwork 등록 code
-
-                const current_artist = getAuth()
-                const dimension_string = String(this.newArtwork.size.x) 
-                    + ' x ' + String(this.newArtwork.size.y)
-                    + ((this.newArtwork.threeDimensional)
-                        ? ' x ' + String(this.newArtwork.size.z)
-                        : '')
-                    + ' ' + this.newArtwork.unit
-                const registration_result = await current_artist.postArtwork(
-                    this.newArtwork.title,
-                    this.newArtwork.year,
-                    dimension_string,
-                    this.newArtwork.threeDimensional,
-                    this.newArtwork.material,
-                    this.newArtwork.description,
-                    'black'
-                )
-                console.log(registration_result.getPageID())
+                    const resized_files = []
+                    const files = this.newArtwork.images
+                    for (let i = 0 ; i < files.length ; i++) {
+                        const file = files[i]
+                        const resized_file = await resizeImage(file, {
+                            x: 720,
+                            y: 1200
+                        })
+                        resized_files.push(resized_file)
+                    }
+                    const thumbnail = await resizeImage(resized_files[0], {
+                        x: 200,
+                        y: 200
+                    })
+                    const directory_result = await putArtworkDirectory(new_page_id)
+                    if (directory_result) {
+                        const image_result = await putArtworkImages(new_page_id, resized_files)
+                        if (image_result) {
+                            const thumbnail_result = await putArtworkThumbnailImage(new_page_id, thumbnail)
+                            if (thumbnail_result) {
+                                this.$router.replace('/')
+                                return
+                            }
+                        }
+                    }
+                    await this.cancelRegister(new_page_id)
+                    this.$router.replace('/')
+                    return
+                }
             },
             // - artwork 등록을 취소하는 함수.
-            cancelRegister() {
-
+            async cancelRegister(new_page_id) {
+                const pre_artwork = await new Artwork(new_page_id).init()
+                await pre_artwork.deleteArtwork()
+                await deleteArtworkDirectory(new_page_id)
             },
             /*
             * 등록 페이지가 변경되면 호출되는 함수.
@@ -207,7 +253,7 @@
                         this.$refs.basicInformation.formValidCheck()
                         break
                     case 3:
-                        this.$refs.description.formValidCheck()
+                        this.$refs.description.descriptionValidCheck()
                         break
                     case 4:
                         await this.$refs.textColorSelection.formValidCheck()
@@ -221,6 +267,7 @@
             */
             activateNextButton (isActive) {
                 this.navigationButtons[1].disabled = !isActive
+                // console.log(this.navigationButtons[1].disabled)
 
                 if (isActive) {
                     this.fontColor = '#000000'

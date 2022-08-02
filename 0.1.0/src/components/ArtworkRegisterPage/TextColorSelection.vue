@@ -38,13 +38,13 @@
             };
         },
         watch: {
-            textColor: function(newVal) {
+            textColor: function (newVal) {
                 this.$emit('set-artwork-entity', 'textColor', newVal)
             }
         },
         beforeCreate() {},
         created() {
-            this.formValdCheck()
+            this.formValidCheck()
         },
         beforeMount() {},
         mounted() {},
@@ -53,7 +53,7 @@
         beforeUnmount() {},
         unmounted() {},
         methods: {
-            formValdCheck () {
+            formValidCheck () {
                 this.$emit('activate-next-button', true)
             }
         }
