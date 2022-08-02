@@ -73,8 +73,7 @@ router.beforeEach(async function (to, from, next) {
           auth_result.access_token, 
           auth_result.profile_image, 
           auth_result.thumbnail_image)
-        result = await refresh(
-          auth_result.user_id, 
+        await refresh(
           'kakao', 
           auth_result.access_token, 
           auth_result.refresh_token, 
