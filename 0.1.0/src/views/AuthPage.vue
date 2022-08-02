@@ -46,18 +46,14 @@
 
                         // Given user is already registered
                         if (user_id) {
-                            const refresh_result = await refresh(
-                                user_id, this.provider, access_token,
+                            await refresh(
+                                this.provider, access_token,
                                 refresh_token, expire_time
                             )
-
-                            // Update successfully
-                            if (refresh_result) {
-                                await save(
-                                    user_id, this.provider, access_token,
-                                    user_data.profile_image, user_data.thumbnail_image)
-                                result = true
-                            }
+                            await save(
+                                user_id, this.provider, access_token,
+                                user_data.profile_image, user_data.thumbnail_image)
+                            result = true
                         } 
                     }
                 }

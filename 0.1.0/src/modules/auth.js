@@ -37,22 +37,11 @@ export async function check (provider, id) {
 }
 
 // Refresh OAuth2's information
-export async function refresh (user_id, provider, access_token, refresh_token, expireTime) {
-    const { status, data } = await sendRequest('post', '/auth/refresh', {
-        user_id: user_id,
-        provider: provider,
-        access_token: access_token
-    })
-    if (status < 400) {
-        saveCookie(provider, {
-            access_token: access_token,
-            refresh_token: refresh_token,
-        }, expireTime)
-        return true
-    }
-    else {
-        return null
-    }
+export async function refresh (provider, access_token, refresh_token, expireTime) {
+    saveCookie(provider, {
+        access_token: access_token,
+        refresh_token: refresh_token,
+    }, expireTime)
 }
 
 // Store via Vuex
