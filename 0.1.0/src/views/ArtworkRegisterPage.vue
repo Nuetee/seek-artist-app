@@ -179,7 +179,7 @@
                     this.newArtwork.description,
                     'black'
                 )
-                console.log(registration_result)
+                console.log(registration_result.getPageID())
             },
             // - artwork 등록을 취소하는 함수.
             cancelRegister() {
