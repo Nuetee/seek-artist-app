@@ -171,6 +171,18 @@ export class Artwork {
         return result
     }
 
+    deleteArtwork = async function () {
+        const { status, data } = await sendRequest('delete', '/artwork', {
+            target_id : this.id
+        })
+        if (status < 500) {
+            return data
+        }
+        else {
+            return false
+        }
+    }
+
     // - type : 'inc', 'dec'
     setArchiveCount (type) {
         (type === 'dec')
