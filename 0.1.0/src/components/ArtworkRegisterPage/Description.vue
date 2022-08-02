@@ -1,8 +1,9 @@
 <template>
     <div id="description">
         <div class="background">
-            <textarea v-model="this.description" cols="auto" rows="auto" placeholder="500자를 넘어갈 경우, 나머지 설명은 팝업창으로 볼 수 있습니다."></textarea>
-            <div class="letterCount">{{ this.letterCount + '/500' }}</div>
+            <textarea v-model="this.description" cols="auto" rows="auto"
+                placeholder="500자를 넘어갈 경우, 나머지 설명은 팝업창으로 볼 수 있습니다."></textarea>
+            <div class="letterCount">{{ this.formValidCheck + '/500' }}</div>
         </div>
     </div>
 </template>
@@ -17,7 +18,7 @@
             };
         },
         computed: {
-            letterCount: function () {
+            formValidCheck () {
                 if (this.isFirst) {
                     this.isFirst = false
                 }
