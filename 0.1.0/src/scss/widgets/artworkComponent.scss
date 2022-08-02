@@ -1,0 +1,131 @@
+.artworkComponent {
+    width: 100%;
+    opacity: 0;
+    transition: flex 0.3s linear, opacity 0.2s linear;
+    perspective: calc(var(--vw, 1vw) * 275);
+    position: relative;
+    z-index: 1;
+
+    .flipped {
+        transform: rotateY(180deg);
+    }
+
+    .card {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transition: .4s;
+        transform-style: preserve-3d;
+        z-index: 0;
+
+        .front,
+        .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: calc(var(--vw, 1vw) * 5);
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .front {
+            ::v-deep(.artworkImageSlider) {
+                z-index: 0;
+            }
+
+            ::v-deep(.artworkInfo),
+            ::v-deep(.archiveInfo) {
+                z-index: 1;
+                position: absolute;
+            }
+
+            ::v-deep(.artworkInfo) {
+                top: var(--padding, 5vw);
+                left: 0;
+
+                .artworkTitle {
+                    z-index: 1;
+                }
+            }
+
+            ::v-deep(.archiveInfo) {
+                bottom: var(--padding, 5vw);
+                right: 0;
+                margin-right: var(--padding, 5vw);
+            }
+        }
+
+        .back {
+            background: white;
+            border: 1px solid black;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+
+            ::v-deep(.artworkInfo) {
+                flex: 0 0 auto;
+                padding-top: var(--padding, 5vw);
+                padding-bottom: calc(var(--vw, 1vw) * 2);
+                border-bottom: 1px solid black;
+            }
+        }
+    }
+
+    .show {
+        visibility: visible !important;
+        animation-name: show;
+        animation-duration: 1.5s;
+        animation-timing-function: linear;
+        animation-delay: 0s;
+        animation-iteration-count: 1;
+        animation-direction: normal;
+        animation-fill-mode: forwards;
+    }
+
+    @keyframes show {
+        0% {
+            opacity: 1;
+        }
+
+        80% {
+            opacity: 1;
+        }
+
+        100% {
+            opacity: 0;
+        }
+    }
+
+    @keyframes tap {
+        0% {
+            font-size: calc(var(--vw, 1vw) * 8);
+            color: rgba($color: #000000, $alpha: 0.5);
+        }
+
+        10% {
+            font-size: calc(var(--vw, 1vw) * 10);
+            color: rgba($color: #000000, $alpha: 0.8);
+        }
+
+        15% {
+            font-size: calc(var(--vw, 1vw) * 12);
+            color: rgba($color: #000000, $alpha: 1);
+        }
+
+        20% {
+            font-size: calc(var(--vw, 1vw) * 10);
+            color: rgba($color: #000000, $alpha: 0.8);
+        }
+
+        25% {
+            font-size: calc(var(--vw, 1vw) * 8);
+            color: rgba($color: #000000, $alpha: 0.5);
+        }
+
+        100% {
+            font-size: calc(var(--vw, 1vw) * 8);
+            color: rgba($color: #000000, $alpha: 0.5);
+        }
+    }
+}
