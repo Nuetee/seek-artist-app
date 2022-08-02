@@ -28,7 +28,7 @@ const s3 = new AWS.S3({
 // - target : 'user', 'artist', 'artwork', 'advertisement'
 // - sub-target : 'profile', 'background', 'represent', 'all' or empty string
 // return the signed url (or an array of urls), or empty string (or []) if the respond is not given successfully
-async function sendStorageRequest(type, target, sub_target, target_id) {
+async function sendStorageRequest (type, target, sub_target, target_id) {
     const url = '/storage/' + type + '/' + target + '/' + sub_target
     const body = {
         target_id: target_id,
