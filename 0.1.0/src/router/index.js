@@ -78,6 +78,7 @@ router.beforeEach(async function (to, from, next) {
           auth_result.access_token, 
           auth_result.refresh_token, 
           auth_result.expire_time)
+        result = true
       }
       else {
         logout('kakao')
