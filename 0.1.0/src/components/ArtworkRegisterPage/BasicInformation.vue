@@ -65,20 +65,19 @@ export default {
         };
     },
     watch: {
-        'material': 'validCheck',
-        'threeDimensional' : 'validCheck',
+        'material': 'formValidCheck',
+        'threeDimensional': 'formValidCheck',
         size: {
             deep: true,
             handler() {
-                this.validCheck()
+                this.formValidCheck()
             }
         },
-        'year': 'validCheck'
+        'year': 'formValidCheck'
     },
     methods: {
-        validCheck() {
+        formValidCheck() {
             let threeDimensional = (this.threeDimensional === '3D') ? true : false
-            // let type = (this.type === 'plane') ? true : false
 
             if (this.material && this.size.x && this.size.y && (!threeDimensional || this.size.z) && this.year) {
                 this.$emit('activate-next-button', true)
