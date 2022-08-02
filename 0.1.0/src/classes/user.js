@@ -103,7 +103,7 @@ export class User {
                 color : color
             })
             if (status < 500) {
-                return await new Artwork(data.page_id).init()
+                return data.page_id
             }
         }
         return null
