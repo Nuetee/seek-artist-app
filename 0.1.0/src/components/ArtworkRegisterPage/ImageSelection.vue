@@ -50,7 +50,9 @@
         beforeMount() {},
         mounted() {
             this.imageUpload = document.getElementById('imageUpload')
-            imageUpload.addEventListener('change', this.addImageSlide)
+            this.$nextTick(() => {
+                this.imageUpload.addEventListener('change', this.addImageSlide)
+            })
         },
         beforeUpdate() {},
         updated() {},
