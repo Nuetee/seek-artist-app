@@ -70,6 +70,7 @@
                                 this.artworkData.size.x + ' x '
                                 + this.artworkData.size.y
                                 + ( this.artworkData.threeDimensional ? (' x ' + this.artworkData.size.z ) : '' )
+                                + ' ' + this.artworkData.unit
                                 }}
                             </div>
                         </div>
@@ -126,13 +127,9 @@
             }
         },
         beforeMount() {},
-        mounted() {},
-        beforeUpdate() {},
-        updated() {},
-        beforeUnmount() {},
-        unmounted() {
+        mounted() {
+            const _this = this
             this.$nextTick(function () {
-                const _this = this
                 let content = document.getElementsByClassName('content')[0]
                 
                 if (content.clientHeight < content.scrollHeight) {
@@ -141,6 +138,10 @@
                 }
             })
         },
+        beforeUpdate() {},
+        updated() {},
+        beforeUnmount() {},
+        unmounted() {},
         methods: {
             flip() {
                 let front = document.getElementById('preview').firstChild.firstChild
