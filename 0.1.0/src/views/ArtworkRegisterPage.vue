@@ -2,7 +2,7 @@
     <div id="artworkRegisterPage">
         <div class="top">
             <div class="prevButton" @click="this.swiperNavigation(0);">
-                <div v-if="this.swiperIndex === 0">취소</div>
+                <div @click="this.back" v-if="this.swiperIndex === 0">취소</div>
                 <svg v-else width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M7 13L1 7L7 1" stroke="black" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round" />
@@ -123,6 +123,9 @@
             this.navigationButtons[1].disabled = true
         },
         methods: {
+            back () {
+                this.$router.replace('/')
+            },
             /*
             * - "다음" 또는 "<(이전)" 버튼을 누르면 활성화 되는 함수
             * - buttonIndex를 parameter로 받는다. "<"버튼은 buttonIndex == 0, "다음" 버튼은 buttonIndex == 1.
