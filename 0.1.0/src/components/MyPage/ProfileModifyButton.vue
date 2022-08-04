@@ -1,5 +1,5 @@
 <template>
-    <div class="profileModifyButton">
+    <div @click="this.redirect" class="profileModifyButton">
         프로필 수정
     </div>
 </template>
@@ -20,7 +20,11 @@
         updated() {},
         beforeUnmount() {},
         unmounted() {},
-        methods: {}
+        methods: {
+            redirect () {
+                this.$router.replace('/profile-modify')
+            }
+        }
     }
 </script>
 <style lang="scss" scoped src="../../scss/MyPage/profileModifyButton.scss"></style>
