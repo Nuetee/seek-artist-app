@@ -47,7 +47,7 @@ export default {
             this.$router.replace({
                 path: '/',
                 query: {
-                    id: _this.artworkId.toString()
+                    id: _this.artworkId
                 }
             })
         }

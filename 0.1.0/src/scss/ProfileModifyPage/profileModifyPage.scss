@@ -1,0 +1,110 @@
+#profileModifyPage {
+    display: flex;
+    flex-direction: column;
+    .top {
+        flex: 0 0 calc(var(--vw, 1vw) * 15);
+        height: calc(var(--vw, 1vw) * 15);
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        > div {
+            font-style: normal;
+            font-weight: 500;
+            font-size: 15px;
+            line-height: 22px;
+            /* identical to box height */
+        
+            text-align: center;
+            letter-spacing: -0.06em;
+        }
+        
+        div[class$="Button"] {
+            width: calc(var(--vw, 1vw) * 10);
+        }
+
+        .prevButton {
+            text-align: left;
+        }
+
+        .nextButton {
+            text-align: right;
+        }
+    }
+    .bottom {
+        flex: 1 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: column;
+        padding-top: calc(var(--vw, 1vw) * 10);
+        padding-bottom: calc(var(--vw, 1vw) * 120);
+        gap: calc(var(--vw, 1vw) * 3);
+
+        > div {
+            .label {
+                text-align: left;
+                font-style: normal;
+                font-weight: 400;
+                font-size: 15px;
+                line-height: 22px;
+                letter-spacing: -0.06em;
+        
+                color: #959595;
+                padding-bottom: calc(var(--vw, 1vw) * 2);
+            }
+    
+            .background {
+                background-color: #F5F5F5;
+                height: calc(var(--vw, 1vw) * 11);
+                border: none;
+                border-radius: calc(var(--vw, 1vw) * 2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            
+                .input {
+                    resize: none;
+                    background-color: transparent;
+                    height: auto;
+                    width: 100%;
+                    border: none;
+                    text-align: center;
+                }
+    
+                textarea, input {
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 15px;
+                    line-height: 22px;
+                    /* identical to box height */
+                
+                    letter-spacing: -0.04em;
+                
+                    &::placeholder {
+                        color: #959595;
+                    }
+                }
+            }
+        }
+
+        .profile {
+            width: calc(var(--vw, 1vw) * 23);
+            height: calc(var(--vw, 1vw) * 23);
+
+            .roundProfile {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        .type {
+            width: calc(var(--vw, 1vw) * 90);
+    
+            .background {
+                width: 100%;
+            }
+        }
+    }
+}
