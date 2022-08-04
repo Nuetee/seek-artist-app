@@ -18,7 +18,7 @@
                 firstResize: true,
             };
         },
-        mounted () {
+        async mounted () {
             const _this = this;
 
             const observer = new ResizeObserver(async entries => {
