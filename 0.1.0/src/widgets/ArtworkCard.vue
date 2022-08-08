@@ -45,9 +45,9 @@ export default {
         redirectMain() {
             const _this = this
             this.$router.replace({
-                path: '/',
+                path: '/artwork-modify',
                 query: {
-                    id: _this.artworkId.toString()
+                    id: _this.artworkId
                 }
             })
         }

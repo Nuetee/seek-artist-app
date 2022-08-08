@@ -20,15 +20,15 @@
             <div class="label">크기</div>
             <div class="form poppins">
                 <div class="background">
-                    <input class="input" placeholder="20" type="number" v-model="this.size.x" />
+                    <input class="input" placeholder="20" type="number" min="0" v-model="this.size.x" />
                 </div>
                 <div>x</div>
                 <div class="background">
-                    <input class="input" placeholder="20" type="number" v-model="this.size.y" />
+                    <input class="input" placeholder="20" type="number" min="0" v-model="this.size.y" />
                 </div>
                 <div v-if="this.threeDimensional === '3D'">x</div>
                 <div class="background" v-if="this.threeDimensional === '3D'">
-                    <input class="input" placeholder="20" threeDimensional="number" v-model="this.size.z" />
+                    <input class="input" placeholder="20" type="number" min="0" v-model="this.size.z" />
                 </div>
                 <div class="background unit">
                     <select class="input" name="unit" id="unit-select" v-model="this.unit">

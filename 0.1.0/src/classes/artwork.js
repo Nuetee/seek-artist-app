@@ -58,15 +58,15 @@ export class Artwork {
     }
 
     getAllImages = async function () {
-        return await getArtworkImages(this.id)
+        return await getArtworkImages(this.page_id)
     }
 
     getThumbnailImage = async function () {
-        return await getArtworkThumbnailImage(this.id)
+        return await getArtworkThumbnailImage(this.page_id)
     }
 
     getRepresentImage = async function () {
-        return await getArtworkRepresentImage(this.id)
+        return await getArtworkRepresentImage(this.page_id)
     }
 
     getID () {
@@ -169,6 +169,18 @@ export class Artwork {
     putDimension = async function (dimension) {
         const result = await this.putArtworkData('dimension', dimension)
         return result
+    }
+
+    deleteArtwork = async function () {
+        const { status, data } = await sendRequest('delete', '/artwork', {
+            target_id : this.page_id
+        })
+        if (status < 500) {
+            return data
+        }
+        else {
+            return false
+        }
     }
 
     // - type : 'inc', 'dec'

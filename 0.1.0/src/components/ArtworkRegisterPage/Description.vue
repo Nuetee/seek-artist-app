@@ -42,7 +42,21 @@
         updated() {},
         beforeUnmount() {},
         unmounted() {},
-        methods: {}
+        methods: {
+            descriptionValidCheck () {
+                if (this.isFirst) {
+                    this.isFirst = false
+                }
+                else {
+                    if (this.description) {
+                        this.$emit('activate-next-button', true)
+                        this.$emit('set-artwork-entity', 'description', this.description)
+                    }
+                    else
+                        this.$emit('activate-next-button', false)
+                }
+            }
+        }
     }
 </script>
 <style lang="scss" scoped src="../../scss/ArtworkRegisterPage/description.scss"></style>

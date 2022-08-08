@@ -1,0 +1,11 @@
+.commentComponent {
+    transition: max-height 0.3s linear;
+    flex: 1 0 auto;
+}
+.normal {
+    max-height: 0;
+    overflow: hidden;
+}
+.comment {
+    max-height: calc(var(--vw, 1vw) * 100);
+}

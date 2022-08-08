@@ -12,6 +12,7 @@ import { authByToken } from '@/modules/kakao'
 
 import MyPage from '../views/MyPage.vue'
 import ArtworkRegisterPage from '../views/ArtworkRegisterPage.vue'
+import ArtworkModifyPage from '../views/ArtworkModifyPage.vue'
 import ProfileModifyPage from '../views/ProfileModifyPage.vue'
 
 const routes = [
@@ -24,6 +25,11 @@ const routes = [
     path: '/artwork-register',
     name: 'artworkRegisterPage',
     component: ArtworkRegisterPage
+  },
+  {
+    path: '/artwork-modify',
+    name: 'artworkModifyPage',
+    component: ArtworkModifyPage
   },
   {
     path: '/profile-modify',
@@ -73,12 +79,12 @@ router.beforeEach(async function (to, from, next) {
           auth_result.access_token, 
           auth_result.profile_image, 
           auth_result.thumbnail_image)
-        result = await refresh(
-          auth_result.user_id, 
+        await refresh(
           'kakao', 
           auth_result.access_token, 
           auth_result.refresh_token, 
           auth_result.expire_time)
+        result = true
       }
       else {
         logout('kakao')

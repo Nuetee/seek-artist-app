@@ -1,0 +1,27 @@
+.artworkBasicInfo {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+    padding: var(--padding, 5vw);
+    ::v-deep(.content) {
+        font-size: 15px;
+        letter-spacing: -0.06em;
+        font-weight: 400;
+        line-height: 140%;
+    }
+    ::v-deep(.artworkMoreInfo.normal) {
+        flex: 1 1 calc(var(--vw, 1vw) * 10);
+    }
+    ::v-deep(.artworkMoreInfo.comment) {
+        flex: 1 0 calc(var(--vw, 1vw) * 10);
+    }
+    ::v-deep(.artworkTableInfo) {
+        flex: 0 0 calc(var(--vw, 1vw) * 15);
+        padding-top: var(--padding, 5vw);
+        align-items: flex-start;
+        border-top: 1px solid black;
+        flex-wrap: wrap;
+        white-space: nowrap;
+    }
+}
