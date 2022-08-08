@@ -15,6 +15,9 @@ import ArtworkRegisterPage from '../views/ArtworkRegisterPage.vue'
 import ArtworkModifyPage from '../views/ArtworkModifyPage.vue'
 import ProfileModifyPage from '../views/ProfileModifyPage.vue'
 
+// test
+// import TextModification from '../components/ArtworkModifyPage/TextModification.vue'
+
 const routes = [
   {
     path: '/',
@@ -31,6 +34,13 @@ const routes = [
     name: 'artworkModifyPage',
     component: ArtworkModifyPage
   },
+  // test
+  // {
+  //   path: '/text-modify',
+  //   name: 'textModification',
+  //   component: TextModification
+  // },
+  //
   {
     path: '/profile-modify',
     name: 'profileModifyPage',
