@@ -46,6 +46,7 @@ export default {
             const _this = this
             this.$router.replace({
                 path: '/artwork-modify',
+                // path: '/text-modify',
                 query: {
                     id: _this.artworkId
                 }

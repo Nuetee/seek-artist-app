@@ -45,7 +45,7 @@ export class Artwork {
             this.archive_count = artwork_data.archive_count
             this.year = artwork_data.year
             this.dimension = artwork_data.dimension
-            this.three_dimensional = artwork_data.three_dimensional
+            this.three_dimensional = Boolean(artwork_data.three_dimensional.data[0])
             this.material = artwork_data.material
             this.information = artwork_data.information
             this.color = artwork_data.color
@@ -95,6 +95,10 @@ export class Artwork {
 
     getDimension () {
         return this.dimension
+    }
+
+    getThreeDimensional () {
+        return this.three_dimensional
     }
 
     getMaterial () {
@@ -168,6 +172,11 @@ export class Artwork {
 
     putDimension = async function (dimension) {
         const result = await this.putArtworkData('dimension', dimension)
+        return result
+    }
+
+    putThreeDimensional = async function  (three_dimensional) {
+        const result = await this.putArtworkData('three_dimensional', three_dimensional)
         return result
     }
 

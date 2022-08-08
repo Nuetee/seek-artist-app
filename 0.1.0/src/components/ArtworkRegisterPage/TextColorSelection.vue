@@ -57,4 +57,4 @@
         }
     }
 </script>
-<style lang="scss" scoped src="../../scss/ArtworkRegisterPage/textColorSelection.scss"></style>
+<style lang="scss" scoped src="../../scss/ArtworkRegisterPage/TextColorSelection.scss"></style>
