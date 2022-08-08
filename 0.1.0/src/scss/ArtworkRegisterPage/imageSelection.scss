@@ -39,32 +39,76 @@
             border-radius: calc(var(--vw, 1vw) * 4);
             overflow: hidden;
             position: relative;
-            div {
+
+            /*
+            .deleteButton {
                 position: absolute;
-                letter-spacing: calc(var(--vw, 1vw) * -0.1);
-                top: calc(var(--vw, 1vw) * 3);
-                left: 50%;
                 z-index: 1;
-                transform: translateX(-50%);
+                top: calc(var(--vw, 1vw) * 4);
+                right: calc(var(--vw, 1vw) * 4.1);
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                width: calc(var(--vw, 1vw) * 4.1);
+                height: calc(var(--vw, 1vw) * 4.1);
+                
+                border-radius: 50%;
+                border: 1.3px solid black;
+
+                div {
+                    width: calc(var(--vw, 1vw) * 1.8);
+                    height: 0;
+                    border-top: 1.3px solid black;
+                    border-right: 1px solid black;
+                }
             }
+            */
+            
+            .thumbnail {
+                position: absolute;
+                z-index: 1;
+                top: calc(var(--vw, 1vw) * 2.8);
+                left: 50%;
+                transform: translate(-50%, 0);
+                width: calc(var(--vw, 1vw) * 10);
+                height: calc(var(--vw, 1vw) * 6.2);
+                display: flex;
+                justify-content: center;
+                font-weight: 500;
+                font-size: 16px;
+                line-height: 24px;
+                /* identical to box height */
+            
+                text-align: center;
+                letter-spacing: -0.04em;
+            }
+
             svg {
                 position: absolute;
                 top: calc(var(--vw, 1vw) * 3);
                 right: calc(var(--vw, 1vw) * 3);
                 z-index: 1;
             }
+            
             img {
                 position: absolute;
+                z-index: 0;
                 top: 50%;
                 left: 50%;
                 z-index: 0;
                 transform: translate(-50%, -50%);
             }
         }
+        
         .swiper-slide:first-child {
-            border: calc(var(--vw, 1vw) * 0.5) solid black;
+            border: 1.3px solid black;
         }
+
+
         .swiper-slide:last-child {
+            border: none !important;
             background-color: #F5F5F5;
             display: flex;
             align-items: center;
