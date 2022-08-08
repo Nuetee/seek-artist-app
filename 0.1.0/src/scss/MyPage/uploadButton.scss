@@ -3,6 +3,8 @@
     bottom: calc(var(--vw, 1vw) * 10);
     left: 50%;
     transform: translate(-50%, 0);
+    padding-top: calc(var(--vw, 1vw) * 1);
+    padding-left: calc(var(--vw, 1vw) * 1);
     background-color: black;
     width: calc(var(--vw, 1vw) * 33);
     height: calc(var(--vw, 1vw) * 14);

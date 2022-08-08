@@ -1,11 +1,11 @@
 <template>
-    <div @click="this.redirect" class="profileModifyButton">
-        프로필 수정
-    </div>
+    <button id="moreButton">
+        +더보기
+    </button>
 </template>
 <script>
     export default {
-        name: 'ProfileModifyButton',
+        name: '',
         components: {},
         data() {
             return {
@@ -20,11 +20,7 @@
         updated() {},
         beforeUnmount() {},
         unmounted() {},
-        methods: {
-            redirect () {
-                this.$router.replace('/profile-modify')
-            }
-        }
+        methods: {}
     }
 </script>
-<style lang="scss" scoped src="../../scss/MyPage/profileModifyButton.scss"></style>
+<style lang="scss" scoped src="../../scss/ArtworkModifyPage/moreButton.scss"></style>

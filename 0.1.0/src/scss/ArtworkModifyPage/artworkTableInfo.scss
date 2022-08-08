@@ -1,0 +1,13 @@
+.artworkTableInfo {
+    display: flex;
+    justify-content: space-between;
+    gap: calc(var(--vw, 1vw) * 2);
+    .tableCell {
+        flex: 1 1 calc(var(--vw, 1vw) * 15);
+        display: flex;
+        flex-direction: column;
+        .label {
+            flex: 0 0 calc(var(--vw, 1vw) * 5);
+        }
+    }
+}

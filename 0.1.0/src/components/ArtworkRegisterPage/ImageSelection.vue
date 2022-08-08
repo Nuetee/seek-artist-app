@@ -4,10 +4,11 @@
         <input type="file" id="imageUpload" accept="image/*" multiple>
         <swiper v-bind="this.swiperOptions">
             <swiper-slide v-for="(image, i) in this.selectedImageFiles">
-                <div class="deleteButton" @click="this.deleteImageSlide(i)">
-                    <div></div>
-                </div>
-                <div class="thumbnail poppins" v-if="i===0">Main</div>
+                <div class="thumbnail poppins" v-if="i===0">Main</div>\
+                <svg @click="this.deleteImageSlide(i)" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="black" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M5.79999 9H12.2" stroke="black" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
                 <img :src="image.src" :style="image.style">
             </swiper-slide>
             <swiper-slide>
@@ -51,7 +52,9 @@
         },
         mounted() {
             this.imageUpload = document.getElementById('imageUpload')
-            imageUpload.addEventListener('change', this.addImageSlide)
+            this.$nextTick(() => {
+                this.imageUpload.addEventListener('change', this.addImageSlide)
+            })
         },
         methods: {
             async formValidCheck() {
@@ -74,7 +77,6 @@
                     // image.src = URL.createObjectURL(selectedfiles[i])
                     // image.style = await cropImage(image.src, 3/5)
 
-
                     let imageFile = new Object()
                     imageFile = selectedfiles[i]
                     imageFile.src = URL.createObjectURL(selectedfiles[i])
@@ -91,8 +93,8 @@
             * 이미지 슬라이드를 삭제하는 함수. deleteButton을 누르면 호출.
             * 현재 화면에 위치한 slide index를 parameter로 받는다.
             */
-            deleteImageSlide (index) {
-
+            deleteImageSlide (i) {
+                this.selectedImageFiles.splice(i, 1)
             },
             checkImage (imageName) {
                 const length = this.selectedImageFiles.length
