@@ -1,0 +1,18 @@
+#moreButton {
+    position: absolute;
+    bottom: calc(var(--vw, 1vw) * 4);
+    left: 50%;
+    transform: translate(-50%, 0);
+    width: calc(var(--vw, 1vw) * 30);
+    height: calc(var(--vw, 1vw) * 10);
+    border-radius: calc(var(--vw, 1vw) * 5);
+    border: 1px solid black;
+    outline: 0;
+    box-shadow: none;
+    background-color: white;
+    font-size: 13px;
+    line-height: 19px;
+    text-align: center;
+    letter-spacing: -0.06em;
+    color: #000000;
+}

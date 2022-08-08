@@ -19,14 +19,14 @@
 
     > div:first-child {
         font-style: normal;
-            font-weight: 300;
-            font-size: 13px;
-            line-height: 19px;
-        
-            text-align: center;
-            letter-spacing: -0.06em;
-        
-            color: #959595;
+        font-weight: 300;
+        font-size: 13px;
+        line-height: 19px;
+    
+        text-align: center;
+        letter-spacing: -0.06em;
+    
+        color: #959595;
     }
 
     ::v-deep(.swiper) {
@@ -39,12 +39,30 @@
             border-radius: calc(var(--vw, 1vw) * 4);
             overflow: hidden;
             position: relative;
+            div {
+                position: absolute;
+                letter-spacing: calc(var(--vw, 1vw) * -0.1);
+                top: calc(var(--vw, 1vw) * 3);
+                left: 50%;
+                z-index: 1;
+                transform: translateX(-50%);
+            }
+            svg {
+                position: absolute;
+                top: calc(var(--vw, 1vw) * 3);
+                right: calc(var(--vw, 1vw) * 3);
+                z-index: 1;
+            }
             img {
                 position: absolute;
                 top: 50%;
                 left: 50%;
+                z-index: 0;
                 transform: translate(-50%, -50%);
             }
+        }
+        .swiper-slide:first-child {
+            border: calc(var(--vw, 1vw) * 0.5) solid black;
         }
         .swiper-slide:last-child {
             background-color: #F5F5F5;
@@ -54,6 +72,7 @@
             font-size: calc(var(--vw, 1vw) * 28);
             font-weight: 100;
             color: #959595;
+            border: none;
         }
     }
 }

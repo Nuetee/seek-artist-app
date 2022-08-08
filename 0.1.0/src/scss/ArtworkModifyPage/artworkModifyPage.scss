@@ -1,0 +1,247 @@
+#artworkModifyPage {
+    position: relative;
+    .top {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        transition: height 0.3s linear;
+        ::v-deep(.label) {
+            font-size: 12px;
+            font-weight: 300;
+            letter-spacing: -0.06em;
+        }
+        .profileContainer {
+            flex: 0 1 calc(var(--vw, 1vw) * 17);
+            min-height: calc(var(--vw, 1vw) * 17);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            button {
+                height: calc(var(--vw, 1vw) * 8);
+                width: auto;
+                border: none;
+                background-color: transparent;
+                box-shadow: none;
+                outline: none;
+                img {
+                    height: 100%;
+                    width: auto;
+                }
+                div.poppins {
+                    margin-left: calc(var(--vw, 1vw) * 2);
+                    display: inline;
+                    font-style: normal;
+                    font-weight: 300;
+                    font-size: 18px;
+                    line-height: 27px;
+                }
+            }
+        }
+        .bottomArea {
+            transition: flex 0.3s linear;
+            display: flex;
+            align-items: flex-start;
+            .buttonContainer {
+                transition: padding 0.3s linear;
+                ::v-deep(button) {
+                    transition-property: flex, border, width, height, font-size;
+                    transition-duration: 0.3s;
+                    transition-timing-function: linear;
+            
+                    svg {
+                        transition-property: width, height;
+                        transition-duration: 0.3s;
+                        transition-timing-function: linear;
+                    }
+                }
+                ::v-deep(.shareButton),
+                ::v-deep(.commentButton) {
+                    > div {
+                        font-weight: 350;
+                        font-size: 12px;
+                        line-height: 17px;
+                        text-align: center;
+                        letter-spacing: -0.06em;
+                        color: #4D4D4D;
+                    }
+                }
+            }
+        }        
+    }
+    .top.normal {
+        height: calc(var(--vh, 1vh) * 100);
+        ::v-deep(.artworkComponent) {
+            flex: 5 0 calc(var(--vw, 1vw) * 90);
+            max-height: calc(var(--vw, 1vw) * 150);
+            .front, .back {
+                z-index: 0;
+                .artworkInfo, .archiveInfo {
+                    z-index: 1;
+                }
+            }
+        }
+        .bottomArea {
+            flex: 1 0 calc(var(--vw, 1vw) * 28);
+            .buttonContainer {
+                padding-top: calc(var(--vw, 1vw) * 5);
+                display: flex;
+                align-items: center;
+                justify-content: space-evenly;
+                width: 100%;
+        
+                ::v-deep(.archiveButton) {
+                    width: calc(var(--vw, 1vw) * 33);
+                    height: calc(var(--vw, 1vw) * 18);
+                    background-color: transparent;
+        
+                    .inner {
+                        border-radius: calc(var(--vw, 1vw) * 9);
+                    }
+                }
+        
+                ::v-deep(.shareButton),
+                ::v-deep(.commentButton) {
+                    border: none;
+                    outline: 0;
+                    box-shadow: none;
+                    background-color: transparent;
+                    flex: 0 1 20%;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    align-items: center;
+        
+                    svg {
+                        width: calc(var(--vw, 1vw) * 11);
+                        height: calc(var(--vw, 1vw) * 11);
+                    }
+                }
+            }
+        }
+    }
+    .top.comment {
+        // profileContainer + artworkComponent + bottomArea
+        height: calc(var(--vw, 1vw) * 122);
+        ::v-deep(.artworkComponent) {
+            flex: 0 0 calc(var(--vw, 1vw) * 90);
+            .front, .back {
+                z-index: 0;
+                .artworkInfo,
+                .archiveInfo {
+                    z-index: 1;
+                }
+            }
+        }
+        .bottomArea {
+            flex: 1 0 calc(var(--vw, 1vw) * 15);
+            .buttonContainer {
+                padding-top: calc(var(--vw, 1vw) * 3);
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+                width: 100%;
+
+                ::v-deep(.archiveButton) {
+                    width: calc(var(--vw, 1vw) * 18);
+                    height: calc(var(--vw, 1vw) * 9);
+                    background-color: transparent;
+
+                    .inner {
+                        border-radius: calc(var(--vw, 1vw) * 4.5);
+                        font-size: calc(var(--vw, 1vw) * 3);
+                        padding-left: calc(var(--vw, 1vw) * 3);
+                        padding-right: calc(var(--vw, 1vw) * 3);
+                    }
+                }
+
+                ::v-deep(.shareButton) {
+                    border: none;
+                    outline: 0;
+                    box-shadow: none;
+                    background-color: transparent;
+
+                    svg {
+                        width: calc(var(--vw, 1vw) * 9);
+                        height: calc(var(--vw, 1vw) * 9);
+                    }
+                }
+
+                ::v-deep(.commentButton) {
+                    visibility: hidden;
+                    flex: 0 0 60%;
+
+                    svg {
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+    .background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.2);
+        z-index: 1;
+    }
+    #more {
+        visibility: hidden;
+        position: fixed;
+        top: calc(var(--vw, 1vw) * 17);
+        left: 0;
+        margin-left: var(--padding, 5vw);
+        margin-right: var(--padding, 5vw);
+        width: calc(100% - var(--padding, 5vw) * 2);
+        height: calc(var(--vw, 1vw) * 150);
+
+        text-align: left;
+        padding: var(--padding, 5vw);
+        overflow-y: scroll;
+
+        border-radius: calc(var(--vw, 1vw) * 5);
+        border: 1px solid black;
+        background-color: white;
+        z-index: 2;
+        #header {
+            display: flex;
+            justify-content: flex-end;
+            button {
+                border: none;
+                border-radius: calc(var(--vw, 1vw) * 2);
+                outline: 0;
+                box-shadow: none;
+                background-color: transparent;
+            }
+        }
+        div {
+            font-weight: 400;
+            font-size: 15px;
+            line-height: 140%;
+            letter-spacing: -0.06em;
+            color: #000000;
+        }
+        > div:nth-child(4) {
+            font-weight: bold;
+        }
+    }
+    .showMore {
+        visibility: visible !important;
+        animation-name: showMore;
+        animation-duration: 0.2s;
+        animation-timing-function: ease-out;
+        animation-delay: 0s;
+        animation-iteration-count: 1;
+        animation-direction: normal;
+        animation-fill-mode: none;
+    }
+}
+@keyframes showMore {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}

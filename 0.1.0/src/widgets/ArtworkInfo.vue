@@ -5,7 +5,7 @@
         </div>
         <div :style="(this.isBack) ? { color: 'black' } : { color: this.color }" class="artist">
             {{ this.artwork.getArtist().getNickname() }}
-            <SNSLink v-if="this.sns" :artwork="this.artwork"></SNSLink>
+            <SNSLink v-if="this.$route.path !== '/' && this.sns" :artwork="this.artwork"></SNSLink>
         </div>
     </div>
 </template>

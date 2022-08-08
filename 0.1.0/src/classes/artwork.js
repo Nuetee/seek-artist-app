@@ -173,7 +173,7 @@ export class Artwork {
 
     deleteArtwork = async function () {
         const { status, data } = await sendRequest('delete', '/artwork', {
-            target_id : this.id
+            target_id : this.page_id
         })
         if (status < 500) {
             return data

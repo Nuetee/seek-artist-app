@@ -14,7 +14,7 @@
                     </div>
                     <div class="artist">
                         {{ (this.user === null ? 'Guest' : this.user.getNickname()) }}
-                        <div class="snsLink">
+                        <div class="snsLink" v-if="this.user.getSNS() !== ''">
                             <svg width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path
                                     d="M14.1667 1.66699H5.83332c-2.30118 0-4.16666 1.86548-4.16666 4.16667V14.167c0 2.3012 1.86548 4.1667 4.16666 4.1667h8.33338c2.3011 0 4.1666-1.8655 4.1666-4.1667V5.83366c0-2.30119-1.8655-4.16667-4.1666-4.16667Z"
@@ -70,6 +70,7 @@
                                 this.artworkData.size.x + ' x '
                                 + this.artworkData.size.y
                                 + ( this.artworkData.threeDimensional ? (' x ' + this.artworkData.size.z ) : '' )
+                                + ' ' + this.artworkData.unit
                                 }}
                             </div>
                         </div>
@@ -126,13 +127,9 @@
             }
         },
         beforeMount() {},
-        mounted() {},
-        beforeUpdate() {},
-        updated() {},
-        beforeUnmount() {},
-        unmounted() {
+        mounted() {
+            const _this = this
             this.$nextTick(function () {
-                const _this = this
                 let content = document.getElementsByClassName('content')[0]
                 
                 if (content.clientHeight < content.scrollHeight) {
@@ -141,6 +138,10 @@
                 }
             })
         },
+        beforeUpdate() {},
+        updated() {},
+        beforeUnmount() {},
+        unmounted() {},
         methods: {
             flip() {
                 let front = document.getElementById('preview').firstChild.firstChild
