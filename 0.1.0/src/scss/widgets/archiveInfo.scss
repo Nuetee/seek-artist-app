@@ -1,0 +1,48 @@
+.archiveInfo {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: calc(var(--vw, 1vw) * 3);
+    font-weight: bold;
+    > button:first-child {
+        flex: 0 0 calc(var(--vw, 1vw) * 13);
+        height: calc(var(--vw, 1vw) * 7);
+        padding-left: calc(var(--vw, 1vw) * 2.2);
+        padding-right: calc(var(--vw, 1vw) * 2.2);
+        border: none;
+        border-radius: calc(var(--vw, 1vw) * 3.5);
+        background-color: black;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        .eye {
+            width: 50%;
+            height: 100%;
+            position: relative;
+            .eyelid {
+                position: absolute;
+                top: 52%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 79%;
+                height: auto;
+            }
+            .pupil {
+                position: absolute;
+                top: 56%;
+                left: 34%;
+                transform: translate(-50%, -50%);
+                width: 42%;
+                height: auto;
+            }
+        }
+    }
+    .archiveCount {
+        flex: 1 0 calc(var(--vw, 1vw) * 8);
+        font-size: 15px;
+        font-weight: 400;
+        text-align: end;
+        border: none;
+        background-color: transparent;
+    }
+}

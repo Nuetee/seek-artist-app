@@ -60,7 +60,6 @@
         deleteArtworkDirectory
     } from '@/modules/storage';
 
-
     import SwiperCore, { Pagination, Navigation } from 'swiper';
     import { Swiper, SwiperSlide } from 'swiper/vue';
     import 'swiper/css';
@@ -81,7 +80,7 @@
         },
         data() {
             return {
-                presentStep: ['작품명 입력', '이미지 선택', '상세정보 입력', '작품 설명 입력'],
+                presentStep: ['작품명 입력', '이미지 선택', '상세정보 입력', '작품 설명 입력', '텍스트 색상 선택'],
                 swiperIndex: 0,
                 navigationButtons: [],
                 fontColor: '#959595;',
@@ -98,7 +97,7 @@
                     unit: null,
                     year: null,
                     description: null,
-                    textColor: null
+                    textColor: 'black'
                 },
                 swiperOptions: {
                     slidesPerView: 1,
@@ -123,6 +122,9 @@
             this.navigationButtons[1].disabled = true
         },
         methods: {
+            back () {
+                this.$router.replace('/')
+            },
             /*
             * - "다음" 또는 "<(이전)" 버튼을 누르면 활성화 되는 함수
             * - buttonIndex를 parameter로 받는다. "<"버튼은 buttonIndex == 0, "다음" 버튼은 buttonIndex == 1.
@@ -132,7 +134,6 @@
             * 3. "<" 버튼을 누른 경우(buttonIndex == 0)이고 첫 등록 페이지인 경우 cancelRegister 함수를 호출하여 등록을 취소한다.
             */
             async swiperNavigation (buttonIndex) {
-                this.navigationButtons[buttonIndex].click()
                 if (buttonIndex === 1) {
                     if (this.swiperIndex === 4) {
                         await this.completeRegister()
@@ -140,9 +141,10 @@
                 }
                 else {
                     if (this.swiperIndex === 0) {
-                        this.cancelRegister()
+                        this.back()
                     }
                 }
+                this.navigationButtons[buttonIndex].click()
             },
             /*
             * - 작품 등록을 완료시키는 함수.
@@ -152,11 +154,10 @@
             * 4. 정보가 모두 담긴 경우 (result === true) 등록 절차 진행
             */
             async completeRegister () {
-                // console.log(this.navigationButtons[1].disabled)
                 if (this.navigationButtons[1].disabled)
                     return
                 
-                let result
+                let result = true
                 for (let i in this.newArtwork) {
                     if (i === 'threeDimensional') {
                         continue
@@ -194,8 +195,6 @@
                         this.newArtwork.description,
                         this.newArtwork.textColor
                     )
-                    console.log(new_page_id)
-                    console.log(this.newArtwork.images)
 
                     const resized_files = []
                     const files = this.newArtwork.images
@@ -208,8 +207,8 @@
                         resized_files.push(resized_file)
                     }
                     const thumbnail = await resizeImage(resized_files[0], {
-                        x: 200,
-                        y: 200
+                        x: 400,
+                        y: 400
                     })
                     const directory_result = await putArtworkDirectory(new_page_id)
                     if (directory_result) {
@@ -267,7 +266,6 @@
             */
             activateNextButton (isActive) {
                 this.navigationButtons[1].disabled = !isActive
-                // console.log(this.navigationButtons[1].disabled)
 
                 if (isActive) {
                     this.fontColor = '#000000'
