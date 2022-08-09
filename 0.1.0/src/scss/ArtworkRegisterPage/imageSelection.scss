@@ -42,28 +42,28 @@
             
             .thumbnail {
                 position: absolute;
-                z-index: 1;
-                top: calc(var(--vw, 1vw) * 2.8);
+                z-index: 2;
+                top: 50%;
                 left: 50%;
-                transform: translate(-50%, 0);
+                transform: translate(-50%, -50%);
                 width: calc(var(--vw, 1vw) * 10);
                 height: calc(var(--vw, 1vw) * 6.2);
                 display: flex;
                 justify-content: center;
-                font-weight: 500;
-                font-size: 16px;
-                line-height: 24px;
-                /* identical to box height */
-            
+                font-style: normal;
+                font-weight: 400;
+                font-size: 32px;
+                line-height: 48px;
                 text-align: center;
                 letter-spacing: -0.04em;
+                opacity: 0.6;
             }
 
             svg {
                 position: absolute;
                 top: calc(var(--vw, 1vw) * 3);
                 right: calc(var(--vw, 1vw) * 3);
-                z-index: 1;
+                z-index: 2;
             }
             
             img {
@@ -76,10 +76,6 @@
             }
         }
         
-        .swiper-slide:first-child {
-            border: 1.3px solid black;
-        }
-
 
         .swiper-slide:last-child {
             border: none !important;
@@ -91,6 +87,38 @@
             font-weight: 100;
             color: #959595;
             border: none;
+        }
+    }
+
+    .textColorButtonContainer {
+        display: flex;
+        width: calc(var(--vw, 1vw) * 50);
+        align-items: center;
+        justify-content: space-evenly;
+
+        input[type=radio] {
+            display: none;
+        }
+
+        label {
+            height: calc(var(--vw, 1vw) * 11);
+            width: calc(var(--vw, 1vw) * 11);
+            border-radius: calc(var(--vw, 1vw) * 5.5);
+            border: 1px solid black;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        input[type=radio],
+        #black+label {
+            background-color: #000000;
+        }
+
+        input[type=radio],
+        #white+label {
+            background-color: #ffffff;
         }
     }
 }
