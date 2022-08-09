@@ -4,13 +4,13 @@
             <div class="prevButton" @click="this.swiperNavigation(0);">
                 <div v-if="this.swiperIndex === 0">취소</div>
                 <svg v-else width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M7 13L1 7L7 1" stroke="black" stroke-width="2" stroke-linecap="round"
+                    <path d="M7 13L1 7L7 1" :stroke="black" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round" />
                 </svg>
             </div>
             <div class="presentStep"> {{ this.presentStep[this.swiperIndex] }} </div>
             <div class="nextButton" @click="this.swiperNavigation(1)" :style="'color: ' + this.fontColor">
-                <div v-if="this.swiperIndex === 4">완료</div>
+                <div v-if="this.swiperIndex === 3">완료</div>
                 <div v-else>다음</div>
             </div>
         </div>
@@ -22,7 +22,7 @@
                 </swiper-slide>
                 <swiper-slide>
                     <ImageSelection ref="imageSelection" @activate-next-button="this.activateNextButton"
-                        @set-artwork-entity="this.setArtworkEntity"></ImageSelection>
+                        @set-artwork-entity="this.setArtworkEntity" :artworkData="this.newArtwork"></ImageSelection>
                 </swiper-slide>
                 <swiper-slide>
                     <BasicInformation ref="basicInformation" @activate-next-button="this.activateNextButton"
@@ -32,12 +32,12 @@
                     <Description ref="description" @activate-next-button="this.activateNextButton"
                         @set-artwork-entity="this.setArtworkEntity"></Description>
                 </swiper-slide>
-                <swiper-slide>
+                <!-- <swiper-slide>
                     <TextColorSelection ref="textColorSelection" 
                         @activate-next-button="this.activateNextButton"
                         @set-artwork-entity="this.setArtworkEntity"
                         :artworkData="this.newArtwork"></TextColorSelection>
-                </swiper-slide>
+                </swiper-slide> -->
                 <button class="next"></button>
                 <button class="previous"></button>
             </swiper>
@@ -80,7 +80,7 @@
         },
         data() {
             return {
-                presentStep: ['작품명 입력', '이미지 선택', '상세정보 입력', '작품 설명 입력', '텍스트 색상 선택'],
+                presentStep: ['작품명 입력', '이미지 선택', '상세정보 입력', '작품 설명 입력'],
                 swiperIndex: 0,
                 navigationButtons: [],
                 fontColor: '#959595;',
@@ -135,7 +135,7 @@
             */
             async swiperNavigation (buttonIndex) {
                 if (buttonIndex === 1) {
-                    if (this.swiperIndex === 4) {
+                    if (this.swiperIndex === 3) {
                         await this.completeRegister()
                     }
                 }
@@ -254,9 +254,9 @@
                     case 3:
                         this.$refs.description.descriptionValidCheck()
                         break
-                    case 4:
-                        await this.$refs.textColorSelection.formValidCheck()
-                        break 
+                    // case 4:
+                    //     await this.$refs.textColorSelection.formValidCheck()
+                    //     break 
                 }
             },
             /*

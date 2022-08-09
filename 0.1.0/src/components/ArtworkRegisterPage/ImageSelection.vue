@@ -4,37 +4,66 @@
         <input type="file" id="imageUpload" accept="image/*" multiple>
         <swiper v-bind="this.swiperOptions">
             <swiper-slide v-for="(image, i) in this.selectedImageFiles">
-                <div class="thumbnail poppins" v-if="i===0">Main</div>\
-                <svg @click="this.deleteImageSlide(i)" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="black" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M5.79999 9H12.2" stroke="black" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                <div class="thumbnail poppins" v-if="i===0" :style="'color: ' + this.textColor">Main</div>
+                <svg @click="this.deleteImageSlide(i)" width="18" height="18" viewBox="0 0 18 18" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z"
+                        :stroke="this.textColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M5.79999 9H12.2" :stroke="this.textColor" stroke-width="1.3" stroke-linecap="round"
+                        stroke-linejoin="round" />
                 </svg>
-                <img :src="image.src" :style="image.style">
+                <Preview :textColor="this.textColor" :title="this.artworkData.title" :image="image"></Preview>
+                <!-- <img :src="image.src" :style="image.style"> -->
             </swiper-slide>
             <swiper-slide>
                 <label for="imageUpload"> + </label>
             </swiper-slide>
         </swiper>
+        <div class="textColorButtonContainer" v-show="this.selectedImageFiles.length">
+            <input type="radio" v-model="this.textColor" name="textColor" id="black" value="black">
+            <label for="black">
+                <svg v-if="this.textColor==='black'" width="18" height="13" viewBox="0 0 18 13" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17 1L6 12L1 7" stroke="white" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+            </label>
+            <input type="radio" v-model="this.textColor" name="textColor" id="white" value="white">
+            <label for="white">
+                <svg v-if="this.textColor==='white'" width="18" height="13" viewBox="0 0 18 13" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17 1L6 12L1 7" stroke="black" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+            </label>
+        </div>
     </div>
 </template>
 <script>
     import { cropImage } from '@/modules/image';
     import { Swiper, SwiperSlide } from 'swiper/vue';
     import 'swiper/css';
+    import Preview from './Preview.vue';
 
     export default {
         name: 'ImageSelection',
         components: {
             Swiper,
             SwiperSlide,
+            Preview
+        },
+        props: {
+            artworkData: Object
         },
         data() {
             return {
                 imageUpload: null,
                 selectedImageSrcs: [],
                 selectedImageFiles: [],
+                textColor: 'black',
                 swiperOptions: {
-                    slidesPerView: 1.3,
+                    slidesPerView: 'auto',
                     spaceBetween: 20,
                     loop: false,
                     centerInsufficientSlides: true,
@@ -49,6 +78,9 @@
                     await this.formValidCheck()
                 }
             },
+            textColor: function (newVal) {
+                this.$emit('set-artwork-entity', 'textColor', newVal)
+            }
         },
         mounted() {
             this.imageUpload = document.getElementById('imageUpload')

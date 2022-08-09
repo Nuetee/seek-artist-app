@@ -44,7 +44,7 @@ export default {
     methods: {
         redirectMain() {
             const _this = this
-            this.$router.replace({
+            this.$router.push({
                 path: '/artwork-modify',
                 // path: '/text-modify',
                 query: {
