@@ -8,7 +8,7 @@
             <div class="prevButton" @click="this.swiperNavigation(0);">
                 <div v-if="this.swiperIndex === 0">취소</div>
                 <svg v-else width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M7 13L1 7L7 1" :stroke="black" stroke-width="2" stroke-linecap="round"
+                    <path d="M7 13L1 7L7 1" :stroke="'black'" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round" />
                 </svg>
             </div>

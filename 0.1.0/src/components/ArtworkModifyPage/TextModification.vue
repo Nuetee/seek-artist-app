@@ -1,5 +1,5 @@
 <template>
-    <div id="textModification">
+    <div id="textModificationPage">
         <div class="top">
             <div @click="this.back" class="prevButton">
                 <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
