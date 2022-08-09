@@ -113,6 +113,7 @@ async function sendStorageCopy (target, target_id, src_indices, dst_indices) {
     const src_urls = src_indices.map(i => target + '/' + target_id + '/' + String(i) + '.jpg')
     const dst_urls = dst_indices.map(j => target + '/' + target_id + '/' + String(j) + '.jpg')
     const original_urls = src_indices.map(k => target + '/' + target_id + '/original/' + String(k) + '.jpg')
+    
     return new Promise(function (resolve) {
         for (let j = 0 ; j < src_indices.length ; j++) {
             s3.copyObject({
@@ -307,6 +308,7 @@ export async function updateArtworkImages (target_id, original_length, mapping_a
     const dst_indices = []
     const new_indices = []
     const new_length = mapping_array.length
+
     for (let i = 0 ; i < mapping_array.length ; i++) {
         const index = mapping_array[i]
         if (index) {
