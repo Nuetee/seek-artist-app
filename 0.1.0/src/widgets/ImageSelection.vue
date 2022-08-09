@@ -19,6 +19,7 @@
                 <label for="imageUpload"> + </label>
             </swiper-slide>
         </swiper>
+        <div v-show="this.selectedImageFiles.length">텍스트 색상</div>
         <div class="textColorButtonContainer" v-show="this.selectedImageFiles.length">
             <input type="radio" v-model="this.textColor" name="textColor" id="black" value="black">
             <label for="black">

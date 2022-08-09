@@ -16,6 +16,9 @@
         letter-spacing: -0.04em;
         line-height: 115%;
         font-weight: bold;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .artist {
@@ -24,5 +27,8 @@
         font-weight: 500;
         align-items: center;
         display: flex;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 }

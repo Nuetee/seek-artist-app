@@ -77,7 +77,7 @@
                     </svg>
                 </div>
                 <div class="textEditButton" @click="this.showEditPage('text')">
-                    <svg width=" 70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M35 58.3333H61.25" stroke="black" stroke-width="4" stroke-linecap="round"
                             stroke-linejoin="round" />
                         <path
@@ -188,8 +188,6 @@
             }
 
             this.userThumbnailLoadFlag = true
-
-            //await this.$nextTick()
 
             if (artwork.getColor() === 'black') {
                 document.getElementById('artworkModifyPage').style.setProperty('--color', 'black')

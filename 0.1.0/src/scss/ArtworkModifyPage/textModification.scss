@@ -1,4 +1,4 @@
-#textModification {
+#textModificationPage {
     display: flex;
     flex-direction: column;
     
@@ -40,7 +40,7 @@
         justify-content: space-between;
         flex-direction: column;
         padding-top: calc(var(--vw, 1vw) * 10);
-        padding-bottom: calc(var(--vw, 1vw) * 120);
+        padding-bottom: calc(var(--vw, 1vw) * 20);
         gap: calc(var(--vw, 1vw) * 3);
 
         hr {
