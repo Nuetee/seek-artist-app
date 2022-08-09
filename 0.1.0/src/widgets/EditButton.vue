@@ -1,10 +1,10 @@
 <template>
     <button class="commonButton editButton" @click="this.edit()">
-        <div class="edit inner">
-            <div v-if="this.editInProgress" class="poppins">
+        <div class="inner poppins" :style="'background-color: ' + this.color + '; color: ' + ((this.color==='black' ) ? 'white' : 'black' )">
+            <div class="phrase" v-if="this.editInProgress">
                 Done
             </div>
-            <div v-else class="poppins">
+            <div class="phrase" v-else>
                 Edit
             </div>
         </div>
@@ -16,7 +16,7 @@
         name: 'EditButton',
         components: {},
         props: {
-            artwork: Object,
+            color: String,
         },
         data() {
             return {
