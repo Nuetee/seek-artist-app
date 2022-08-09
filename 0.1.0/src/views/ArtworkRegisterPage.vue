@@ -1,5 +1,9 @@
 <template>
     <div id="artworkRegisterPage">
+        <Background :backgroundDisplayFlag="!this.loading"></Background>
+        <div v-if="this.loading" id="loading">
+            <va-progress-circle indeterminate />
+        </div>
         <div class="top">
             <div class="prevButton" @click="this.swiperNavigation(0);">
                 <div v-if="this.swiperIndex === 0">취소</div>
@@ -64,6 +68,7 @@
     import { Swiper, SwiperSlide } from 'swiper/vue';
     import 'swiper/css';
     import "swiper/css/pagination";
+    import Background from '@/widgets/Background.vue';
 
     SwiperCore.use([Pagination, Navigation]);
 
@@ -76,7 +81,8 @@
             ImageSelection,
             BasicInformation,
             Description,
-            TextColorSelection
+            TextColorSelection,
+            Background
         },
         data() {
             return {
@@ -113,6 +119,7 @@
                         prevEl: '.previous'
                     }
                 },
+                loading: false
             };
         },
         mounted() {
@@ -178,6 +185,8 @@
                 }
                 /* result === true면 artwork 등록 */
                 else {
+                    this.loading = true
+
                     // artwork 등록 code
                     const current_artist = getAuth()
                     const dimension_string = String(this.newArtwork.size.x) 
@@ -195,6 +204,10 @@
                         this.newArtwork.description,
                         this.newArtwork.textColor
                     )
+                    if (!new_page_id) {
+                        this.$router.replace('/')
+                        return
+                    }
 
                     const resized_files = []
                     const files = this.newArtwork.images
@@ -214,14 +227,16 @@
                     if (directory_result) {
                         const image_result = await putArtworkImages(new_page_id, resized_files)
                         if (image_result) {
-                            const thumbnail_result = await putArtworkThumbnailImage(new_page_id, thumbnail)
-                            if (thumbnail_result) {
-                                this.$router.replace('/')
-                                return
+                                const thumbnail_result = await putArtworkThumbnailImage(new_page_id, thumbnail)
+                                if (thumbnail_result) {
+                                    this.$router.replace('/')
+                                    return
+                                }
                             }
-                        }
                     }
                     await this.cancelRegister(new_page_id)
+                    this.loading = false
+
                     this.$router.replace('/')
                     return
                 }
@@ -229,7 +244,7 @@
             // - artwork 등록을 취소하는 함수.
             async cancelRegister(new_page_id) {
                 const pre_artwork = await new Artwork(new_page_id).init()
-                await pre_artwork.deleteArtwork()
+                await pre_artwork.deletePreArtwork()
                 await deleteArtworkDirectory(new_page_id)
             },
             /*

@@ -180,8 +180,22 @@ export class Artwork {
         return result
     }
 
+    deletePreArtwork = async function () {
+        const { status, data } = await sendRequest('delete', '/artwork', {
+            registered : false,
+            target_id : this.page_id
+        })
+        if (status < 500) {
+            return data
+        }
+        else {
+            return false
+        }
+    }
+
     deleteArtwork = async function () {
         const { status, data } = await sendRequest('delete', '/artwork', {
+            registered : true,
             target_id : this.page_id
         })
         if (status < 500) {
