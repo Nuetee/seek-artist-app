@@ -1,5 +1,5 @@
 <template>
-    <div class="commentComponent normal">
+    <div class="commentComponent comment">
         <InputContainer 
             :artwork="this.artwork"
             @insertComment="this.insert"></InputContainer>

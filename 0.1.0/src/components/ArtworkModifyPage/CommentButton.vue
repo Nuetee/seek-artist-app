@@ -76,6 +76,9 @@
             switchButton (isComment) {
                 this.isComment = isComment
             },
+            commentButtonClick () {
+                this.$emit('comment-button-click')
+            }
         }
     }
 </script>
