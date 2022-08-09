@@ -101,13 +101,6 @@
                 }
             },
             formValidCheck () {
-                if (this.new_nickname === '') {
-                    this.new_nickname = null
-                }
-                if (this.new_sns === '') {
-                    this.new_sns = null
-                }
-
                 if (this.new_nickname || this.new_sns) {
                     this.activateNextButton = true
                 }

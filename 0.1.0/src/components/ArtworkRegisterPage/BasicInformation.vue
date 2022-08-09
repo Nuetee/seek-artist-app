@@ -42,7 +42,7 @@
         <div class="manufacturedDate">
             <div class="label">제작연도</div>
             <div class="background poppins">
-                <input class="input" placeholder="2022" type="number" v-model="this.year" />
+                <input class="input" placeholder="2022" type="number" min="0" v-model="this.year" />
             </div>
         </div>
     </div>
