@@ -1,11 +1,12 @@
 <template>
-    <button class="commonButton editButton" @click="this.edit()">
-        <div class="inner poppins" :style="'background-color: ' + this.color + '; color: ' + ((this.color==='black' ) ? 'white' : 'black' )">
-            <div class="phrase" v-if="this.editInProgress">
-                Done
+    <button class="commonButton editButton">
+        <div class="inner poppins"
+            :style="'background-color: ' + this.color + '; color: ' + ((this.color==='black' ) ? 'white' : 'black' )">
+            <div class="phrase" v-if="this.isEdit">
+                Edit
             </div>
             <div class="phrase" v-else>
-                Edit
+                Done
             </div>
         </div>
     </button>
@@ -20,7 +21,7 @@
         },
         data() {
             return {
-                editInProgress: false,
+                isEdit: true,
             };
         },
         beforeCreate() {},
@@ -32,7 +33,9 @@
         beforeUnmount() {},
         unmounted() {},
         methods: {
-            edit () {}
+            switchButton (isEdit) {
+                this.isEdit = isEdit
+            }
         }
     }
 </script>

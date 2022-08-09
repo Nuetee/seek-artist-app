@@ -11,7 +11,7 @@
             <div 
                 class="nextButton" 
                 :style="(this.activateNextButton) ? 'color:black' : 'color:#959595'" 
-                @click="this.submit()"
+                @click="this.editComplete()"
             >
                 <div>완료</div>
             </div>
@@ -95,6 +95,9 @@
 
     export default {
         name: 'TextModification',
+        props: {
+            originalArtwork: Object
+        },
         data() {
             return {
                 artwork: null,
@@ -149,8 +152,8 @@
             }
         },
         async created() {
-            this.artwork = await new Artwork(this.$route.query.id).init()
-
+            this.artwork = this.originalArtwork
+            
             this.old_title = this.artwork.getName()
             this.old_material = this.artwork.getMaterial()
             this.old_threeDimensional = this.artwork.getThreeDimensional()
@@ -182,6 +185,9 @@
         methods: {
             back () {
                 this.$router.replace('/')
+            },
+            editComplete () {
+                this.$emit('edit-complete', 'text')
             },
             async submit () {
                 if (!this.activateNextButton || !this.artwork) {

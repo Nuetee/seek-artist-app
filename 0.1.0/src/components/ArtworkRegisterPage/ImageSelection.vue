@@ -34,7 +34,7 @@
                 selectedImageSrcs: [],
                 selectedImageFiles: [],
                 swiperOptions: {
-                    slidesPerView: 1.3,
+                    slidesPerView: 'auto',
                     spaceBetween: 20,
                     loop: false,
                     centerInsufficientSlides: true,
