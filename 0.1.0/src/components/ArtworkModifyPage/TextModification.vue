@@ -8,11 +8,8 @@
                 </svg>
             </div>
             <div class="presentStep">텍스트 수정</div>
-            <div 
-                class="nextButton" 
-                :style="(this.activateNextButton) ? 'color:black' : 'color:#959595'" 
-                @click="this.editComplete()"
-            >
+            <div class="nextButton" :style="(this.activateNextButton) ? 'color:black' : 'color:#959595'"
+                @click="this.closeWindow()">
                 <div>완료</div>
             </div>
         </div>
@@ -35,19 +32,10 @@
             <div class="type">
                 <div class="label">유형</div>
                 <div class="form poppins">
-                    <input type="radio" 
-                        v-model="this.threeDimensional" 
-                        name="threeDimensional" 
-                        :value="false" 
-                        id="2D" 
+                    <input type="radio" v-model="this.threeDimensional" name="threeDimensional" :value="false" id="2D"
                         :checked="!this.old_threeDimensional">
                     <label for="2D">평면</label>
-                    <input 
-                        type="radio" 
-                        v-model="this.threeDimensional" 
-                        name="threeDimensional" 
-                        :value="true" 
-                        id="3D"
+                    <input type="radio" v-model="this.threeDimensional" name="threeDimensional" :value="true" id="3D"
                         :checked="this.old_threeDimensional">
                     <label for="3D">입체</label>
                 </div>
@@ -56,18 +44,24 @@
                 <div class="label">크기</div>
                 <div class="form poppins">
                     <div class="background">
-                        <input class="input" :placeholder="this.old_size.x" type="number" min="0" v-model="this.size_x" />
+                        <input class="input" :placeholder="this.old_size.x" type="number" min="0"
+                            v-model="this.size_x" />
                     </div>
                     <div>x</div>
                     <div class="background">
-                        <input class="input" :placeholder="this.old_size.y" type="number" min="0" v-model="this.size_y" />
+                        <input class="input" :placeholder="this.old_size.y" type="number" min="0"
+                            v-model="this.size_y" />
                     </div>
-                    <div v-if="(this.threeDimensional !== null) ? this.threeDimensional : this.old_threeDimensional">x</div>
-                    <div class="background" v-if="(this.threeDimensional !== null) ? this.threeDimensional : this.old_threeDimensional">
-                        <input class="input" :placeholder="this.old_size.z" type="number" min="0" v-model="this.size_z" />
+                    <div v-if="(this.threeDimensional !== null) ? this.threeDimensional : this.old_threeDimensional">x
+                    </div>
+                    <div class="background"
+                        v-if="(this.threeDimensional !== null) ? this.threeDimensional : this.old_threeDimensional">
+                        <input class="input" :placeholder="this.old_size.z" type="number" min="0"
+                            v-model="this.size_z" />
                     </div>
                     <div class="background unit">
-                        <select class="input" name="unit" id="unit-select" @change="this.changeUnit" v-model="this.old_unit">
+                        <select class="input" name="unit" id="unit-select" @change="this.changeUnit"
+                            v-model="this.old_unit">
                             <option v-for="value in this.unit_candidates" :key="value" :value="value">{{value}}</option>
                         </select>
                     </div>
@@ -184,10 +178,11 @@
         mounted() {},
         methods: {
             back () {
-                this.$emit('close-text-modification')
+                this.artwork = this.originalArtwork
+                this.closeWindow()
             },
-            editComplete () {
-                this.$emit('edit-complete', 'text')
+            closeWindow () {
+                this.$emit('close-text-modification', 'text')
             },
             async submit () {
                 if (!this.activateNextButton || !this.artwork) {

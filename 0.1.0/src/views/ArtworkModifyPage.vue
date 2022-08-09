@@ -89,15 +89,18 @@
         </div>
         <div class="buttonContainer">
             <CommentButton :color="buttonColor" ref="commentButton"></CommentButton>
-            <EditButton :color="buttonColor" @click="this.switchPage" ref="editButton">
+            <EditButton :color="buttonColor" @switch-page="this.switchPage" @submit-artwork="this.submitArtwork()"
+                ref="editButton">
             </EditButton>
             <ShareButton :color="buttonColor" :artwork="this.artwork" ref="shareButton"></ShareButton>
         </div>
         <SideBar :minimized="this.minimized" @closeSideBar="this.closeSideBar()"></SideBar>
         <Background :backgroundDisplayFlag="this.minimized" @click="this.popHistory"></Background>
     </div>
-    <TextModification v-if="this.artwork !== null" v-show="!this.isFrontPage && this.textEdit"
-        :originalArtwork="this.artwork" @close-text-modification="this.closeEditPage('text')"></TextModification>
+    <TextModification ref="textModification" v-if="this.artwork !== null" v-show="!this.isFrontPage && this.textEdit"
+        :originalArtwork="this.artwork" @close-text-modification="this.closeEditPage"></TextModification>
+    <ImageModification ref="imageModification" v-if="this.artwork !== null" v-show="!this.isFrontPage && this.imageEdit"
+        :originalArtwork="this.artwork" @close-text-modification="this.closeEditPage"></ImageModification>
 </template>
 <script>
     import RoundProfile from '@/widgets/RoundProfile.vue';
@@ -115,6 +118,7 @@
     import { isAuth, getAuth } from '@/modules/auth';
     import Background from '@/widgets/Background.vue';
     import TextModification from '@/components/ArtworkModifyPage/TextModification.vue';
+    import ImageModification from '@/components/ArtworkModifyPage/ImageModification.vue'
 
     SwiperCore.use([Pagination]);
 
@@ -129,7 +133,8 @@
             Swiper,
             SwiperSlide,
             Background,
-            TextModification
+            TextModification,
+            ImageModification
         },
         data() {
             return {
@@ -198,6 +203,10 @@
             // - backButton을 눌렀을 때 뒤로가기 이벤트를 실행시키는 함수.
             back() {
                 window.history.back()
+            },
+            async submitArtwork () {
+                await this.$refs.textModification.submit()
+                await this.$refs.imageModification.submit()
             },
             switchPage () {
                 if (this.isFrontPage) {
