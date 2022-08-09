@@ -13,7 +13,7 @@
                 stroke-linecap="round" stroke-linejoin="round" />
         </svg>
 
-        <svg v-show="!this.isShare" width="32" height="35" viewBox="0 0 32 35" fill="none"
+        <svg v-show="!this.isShare" @click="this.delete" width="32" height="35" viewBox="0 0 32 35" fill="none"
             xmlns="http://www.w3.org/2000/svg">
             <path
                 d="M24.2348 6.48885V3.58163C24.2348 2.61799 23.5504 1.84446 22.6565 1.84446H10.3133C9.41987 1.84446 8.73497 2.61839 8.73497 3.58163V6.48885H2.53392C2.15038 6.48885 1.83945 6.79978 1.83945 7.18332C1.83945 7.56687 2.15038 7.87779 2.53392 7.87779H30.4359C30.8194 7.87779 31.1304 7.56687 31.1304 7.18332C31.1304 6.79978 30.8194 6.48885 30.4359 6.48885H24.2348ZM10.2068 3.58163C10.2068 3.45143 10.2431 3.35767 10.2801 3.29845C10.2988 3.26847 10.3173 3.2481 10.3305 3.23645C10.3318 3.23531 10.333 3.23429 10.3341 3.2334H22.6357C22.6368 3.23429 22.638 3.23531 22.6393 3.23645C22.6526 3.2481 22.671 3.26847 22.6898 3.29845C22.7268 3.35767 22.763 3.45143 22.763 3.58163V6.48885H10.2068V3.58163ZM10.3419 3.22766C10.3431 3.227 10.3429 3.22724 10.3415 3.22792L10.3419 3.22766Z"
@@ -34,6 +34,8 @@
     </button>
 </template>
 <script>
+    import { deleteArtworkDirectory } from '@/modules/storage';
+
     export default {
         name: 'ShareButton',
         components: {},
@@ -57,6 +59,19 @@
         methods: {
             switchButton (isShare) {
                 this.isShare = isShare
+            },
+            async delete () {
+                if (!this.artwork) {
+                    return
+                }
+                else {
+                    // await this.artwork.deleteArtwork()
+
+                    // For development
+                    await deleteArtworkDirectory(this.artwork.getPageID())
+                    await this.artwork.deletePreArtwork()
+                    this.$router.replace('/')
+                }
             },
             share () {
                 let shareTitle = this.artwork.getName()

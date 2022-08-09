@@ -14,12 +14,12 @@
                         stroke-linejoin="round" />
                 </svg>
                 <Preview :textColor="this.textColor" :title="this.artworkData.title" :image="image"></Preview>
-                <!-- <img :src="image.src" :style="image.style"> -->
             </swiper-slide>
             <swiper-slide>
                 <label for="imageUpload"> + </label>
             </swiper-slide>
         </swiper>
+        <div v-show="this.selectedImageFiles.length">텍스트 색상</div>
         <div class="textColorButtonContainer" v-show="this.selectedImageFiles.length">
             <input type="radio" v-model="this.textColor" name="textColor" id="black" value="black">
             <label for="black">
@@ -104,18 +104,12 @@
                 let fileLength = selectedfiles.length
 
                 for (let i = 0; i < fileLength; i++) {
-                    // let image = new Object()
-                    // image.name = selectedfiles[i].name
-                    // image.src = URL.createObjectURL(selectedfiles[i])
-                    // image.style = await cropImage(image.src, 3/5)
-
                     let imageFile = new Object()
                     imageFile = selectedfiles[i]
                     imageFile.src = URL.createObjectURL(selectedfiles[i])
                     imageFile.style = await cropImage(imageFile.src, 3 / 5)
 
                     if (this.checkImage(imageFile.name)) {
-                        // this.selectedImageSrcs.push(image)
                         this.selectedImageFiles.push(imageFile)
                     }
                 }
