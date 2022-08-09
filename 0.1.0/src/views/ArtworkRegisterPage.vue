@@ -8,7 +8,7 @@
             <div class="prevButton" @click="this.swiperNavigation(0);">
                 <div v-if="this.swiperIndex === 0">취소</div>
                 <svg v-else width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M7 13L1 7L7 1" :stroke="black" stroke-width="2" stroke-linecap="round"
+                    <path d="M7 13L1 7L7 1" stroke="black" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round" />
                 </svg>
             </div>
@@ -50,10 +50,10 @@
 </template>
 <script>
     import TitleInput from '@/components/ArtworkRegisterPage/TitleInput.vue';
-    import ImageSelection from '@/components/ArtworkRegisterPage/ImageSelection.vue';
+    import ImageSelection from '@/widgets/ImageSelection.vue';
     import BasicInformation from '@/components/ArtworkRegisterPage/BasicInformation.vue';
     import Description from '@/components/ArtworkRegisterPage/Description.vue';
-    import TextColorSelection from '@/components/ArtworkRegisterPage/TextColorSelection.vue';
+    
     import { getAuth } from '@/modules/auth';
     import { Artwork } from '@/classes/artwork';
     import { resizeImage } from '@/modules/image';
@@ -81,8 +81,7 @@
             ImageSelection,
             BasicInformation,
             Description,
-            TextColorSelection,
-            Background
+            Background,
         },
         data() {
             return {
