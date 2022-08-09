@@ -1,6 +1,16 @@
 #artworkRegisterPage {
     display: flex;
     flex-direction: column;
+    position: relative;
+
+    #loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 3;
+    }
+
     .top {
         flex: 0 0 calc(var(--vw, 1vw) * 15);
         height: calc(var(--vw, 1vw) * 15);
@@ -34,6 +44,7 @@
     }
     .bottom {
         flex: 1 0 auto;
+
         > ::v-deep(.swiper) {
             height: 100%;
 
