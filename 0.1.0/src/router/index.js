@@ -108,7 +108,7 @@ router.beforeEach(async function (to, from, next) {
   }
 
   // Guard before access to mainPage
-  if (!result && to.path === '/') {
+  if (!result) {
     next('/login')
   } 
   else {
