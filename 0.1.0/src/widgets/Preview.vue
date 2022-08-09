@@ -81,4 +81,4 @@
         methods: {}
     }
 </script>
-<style lang="scss" scoped src="../../scss/ArtworkRegisterPage/preview.scss"></style>
+<style lang="scss" scoped src="../scss/widgets/preview.scss"></style>

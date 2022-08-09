@@ -47,14 +47,9 @@
                         height: calc(var(--vw, 1vw) * 4.8);
                         display: flex;
                         justify-content: center;
-                        gap: calc(var(--vw, 1vw) * 0.8);
+                        gap: 3px;
                         align-items: center;
                         overflow: visible;
-    
-                        svg {
-                            width: calc(var(--vw, 1vw) * 3.4);
-                            height: calc(var(--vw, 1vw) * 3.4);
-                        }
                     }
     
                     .archiveCount {
