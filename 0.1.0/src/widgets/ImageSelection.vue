@@ -58,6 +58,7 @@
         },
         data() {
             return {
+                imageSelection: null,
                 imageUpload: null,
                 selectedImageSrcs: [],
                 selectedImageFiles: [],
@@ -83,6 +84,7 @@
             }
         },
         mounted() {
+            this.imageSelection = document.getElementById('imageSelection')
             this.imageUpload = document.getElementById('imageUpload')
             this.$nextTick(() => {
                 this.imageUpload.addEventListener('change', this.addImageSlide)
@@ -94,9 +96,12 @@
                 if (this.selectedImageFiles.length > 0) {
                     this.$emit('activate-next-button', true)
                     this.$emit('set-artwork-entity', 'images', this.selectedImageFiles)
+                    this.imageSelection.style.setProperty('padding', 0)
                 }
                 else {
                     this.$emit('activate-next-button', false)
+                    let padding = window.innerWidth/5
+                    this.imageSelection.style.setProperty('padding-bottom', `${padding}px`)
                 }
             },
             async addImageSlide () {
@@ -139,4 +144,4 @@
         }
     }
 </script>
-<style lang="scss" scoped src="../../scss/ArtworkRegisterPage/imageSelection.scss"></style>
+<style lang="scss" scoped src="../scss/widgets/imageSelection.scss"></style>

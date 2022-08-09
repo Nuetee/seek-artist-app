@@ -96,7 +96,8 @@
         <SideBar :minimized="this.minimized" @closeSideBar="this.closeSideBar()"></SideBar>
         <Background :backgroundDisplayFlag="this.minimized" @click="this.popHistory"></Background>
     </div>
-    <TextModification v-if="this.artwork !== null" v-show="!this.isFrontPage && this.textEdit" :originalArtwork="this.artwork"></TextModification>
+    <TextModification v-if="this.artwork !== null" v-show="!this.isFrontPage && this.textEdit"
+        :originalArtwork="this.artwork" @close-text-modification="this.closeEditPage('text')"></TextModification>
 </template>
 <script>
     import RoundProfile from '@/widgets/RoundProfile.vue';
@@ -214,6 +215,9 @@
             },
             showEditPage (page) {
                 (page === 'image') ? (this.imageEdit = true) : (this.textEdit = true)
+            },
+            closeEditPage(page) {
+                (page === 'image') ? (this.imageEdit = false) : (this.textEdit = false)
             },
             openSideBar (event) {
                 if (event.stopPropagation) event.stopPropagation();
