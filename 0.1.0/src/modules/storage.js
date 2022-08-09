@@ -107,7 +107,7 @@ async function sendStorageDelete (target, target_id, file_names) {
 // - dst_index : array of new indices of target file
 // return true, or false if the copy failed
 async function sendStorageCopy (target, target_id, src_indices, dst_indices) {
-    if (src_indices.length !== target_indices.length) {
+    if (src_indices.length !== dst_indices.length) {
         return false
     }
     const src_urls = src_indices.map(i => target + '/' + target_id + '/' + String(i) + '.jpg')
@@ -327,11 +327,14 @@ export async function updateArtworkImages (target_id, original_length, mapping_a
 
     const copy_result = await sendStorageCopy('artwork', target_id, src_indices, dst_indices)
     if (copy_result) {
-        const modify_result = await modifyArtworkImages(target_id, new_indices, files)
+        let modify_result = true
+        if (files.length !== 0) {
+            modify_result = await modifyArtworkImages(target_id, new_indices, files)
+        }
         if (modify_result) {
             if (new_length < original_length) {
                 for (let j = original_length - 1 ; j > new_length - 1 ; j--) {
-                    const delete_result = await sendStorageDelete('artwork', target_id, String(j) + '.jpg')
+                    const delete_result = await sendStorageDelete('artwork', target_id, [String(j) + '.jpg'])
                     if (!delete_result) {
                         return false
                     }

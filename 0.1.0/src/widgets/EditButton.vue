@@ -2,10 +2,10 @@
     <button class="commonButton editButton">
         <div class="inner poppins"
             :style="'background-color: ' + this.color + '; color: ' + ((this.color==='black' ) ? 'white' : 'black' )">
-            <div class="phrase" v-if="this.isEdit">
+            <div class="phrase" v-if="this.isEdit" @click="this.goEdit()">
                 Edit
             </div>
-            <div class="phrase" v-else>
+            <div class="phrase" v-else @click="this.submit()">
                 Done
             </div>
         </div>
@@ -33,6 +33,13 @@
         beforeUnmount() {},
         unmounted() {},
         methods: {
+            goEdit () {
+                this.$emit('switch-page', true)
+            },
+            submit () {
+                this.$emit('submit-artwork')
+                this.$emit('switch-page', false)
+            },
             switchButton (isEdit) {
                 this.isEdit = isEdit
             }

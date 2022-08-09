@@ -1,0 +1,40 @@
+#imageModificationPage {
+    display: flex;
+    flex-direction: column;
+
+    .top {
+        flex: 0 0 calc(var(--vw, 1vw) * 15);
+        height: calc(var(--vw, 1vw) * 15);
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        >div {
+            font-style: normal;
+            font-weight: 500;
+            font-size: 15px;
+            line-height: 22px;
+            /* identical to box height */
+
+            text-align: center;
+            letter-spacing: -0.06em;
+        }
+
+        div[class$="Button"] {
+            width: calc(var(--vw, 1vw) * 10);
+        }
+
+        .prevButton {
+            text-align: left;
+        }
+
+        .nextButton {
+            text-align: right;
+        }
+    }
+
+    ::v-deep(#imageSelection) {
+        height: 100%;
+    }
+}
