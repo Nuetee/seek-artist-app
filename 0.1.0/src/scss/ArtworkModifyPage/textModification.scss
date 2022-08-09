@@ -1,6 +1,7 @@
 #textModificationPage {
     display: flex;
     flex-direction: column;
+    
     .top {
         flex: 0 0 calc(var(--vw, 1vw) * 15);
         height: calc(var(--vw, 1vw) * 15);

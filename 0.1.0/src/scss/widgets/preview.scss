@@ -1,0 +1,98 @@
+#preview {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+
+    .card {
+        height: 100%;
+        width: 100%;
+        position: relative;
+
+        .label {
+            font-size: 12px;
+            font-weight: 300;
+            letter-spacing: -0.06em;
+        }
+
+        .front {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            overflow: hidden;
+
+            .imageContainer {
+                height: 100%;
+                width: 100%;
+                position: relative;
+                overflow: hidden;
+                z-index: 0;
+
+                img {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                }
+            }
+
+            .artworkInfo {
+                z-index: 1;
+                display: grid;
+                grid-template-rows: auto calc(var(--vw, 1vw) * 10);
+                align-items: center;
+                width: calc(100% - calc(var(--vw, 1vw) * 9));
+                margin-left: calc(var(--vw, 1vw) * 4.5);
+                margin-right: calc(var(--vw, 1vw) * 4.5);
+                text-align: left;
+            
+                > div {
+                    overflow: visible;
+                }
+            
+                .artworkTitle {
+                    font-weight: 600;
+                    font-size: 24px;
+                    line-height: 115%;
+                    /* or 28px */
+                
+                    letter-spacing: -0.04em;
+                }
+            
+                .artist {
+                    font-family: 'Noto Sans KR';
+                    font-style: normal;
+                    font-weight: 500;
+                    font-size: 12px;
+                    line-height: 17px;
+                
+                    letter-spacing: -0.06em;
+                    display: flex;
+                    align-items: center;
+                    height: calc(var(--vw, 1vw) * 8);
+
+                    .snsLink {
+                        padding-left: calc(var(--vw, 1vw) * 2);
+                        height: 100%;
+                        position: relative;
+
+                        svg {
+                            position: absolute;
+                            right: 0;
+                            top: 50%;
+                            transform: translate(100%, -50%) scale(0.9);
+                        }
+                    }
+                }
+            }
+        }
+        
+        .front {
+            .artworkInfo {
+                position: absolute;
+                top: calc(var(--vw, 1vw) * 3.6);
+                left: 0;
+            }
+        }
+    }
+}

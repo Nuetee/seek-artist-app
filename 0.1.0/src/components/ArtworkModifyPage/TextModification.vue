@@ -184,7 +184,7 @@
         mounted() {},
         methods: {
             back () {
-                this.$router.replace('/')
+                this.$emit('close-text-modification')
             },
             editComplete () {
                 this.$emit('edit-complete', 'text')
@@ -263,4 +263,4 @@
         }
     }
 </script>
-<style lang="scss" scoped src="../scss/ArtworkModifyPage/textModification.scss"></style>
+<style lang="scss" scoped src="../../scss/ArtworkModifyPage/textModification.scss"></style>

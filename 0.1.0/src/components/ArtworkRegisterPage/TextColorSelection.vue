@@ -24,7 +24,7 @@
 </template>
 <script>
     import ArtworkComponent from '@/widgets/ArtworkComponent.vue';
-    import Preview from './Preview.vue';
+    // import Preview from './Preview.vue';
     
     export default {
         name: 'TextColorSelection',
