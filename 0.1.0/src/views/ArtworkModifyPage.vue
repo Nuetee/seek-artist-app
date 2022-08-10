@@ -63,6 +63,13 @@
                 </swiper-slide>
                 <div class="swiper-pagination"></div>
             </swiper>
+            <transition name="slide">
+                <div v-show="this.isComment" class="commentBar">
+                    <hr>
+                    <CommentComponent ref="commentComponent" @commentUpdate="this.updateDone" :artwork="this.artwork">
+                    </CommentComponent>
+                </div>
+            </transition>
         </div>
         <div class="editPage" v-show="!this.isFrontPage">
             <div>
@@ -88,7 +95,7 @@
             </div>
         </div>
         <div class="buttonContainer">
-            <CommentButton :color="buttonColor" ref="commentButton" @cancel-edit="this.cancelEdit()"></CommentButton>
+            <CommentButton :color="buttonColor" ref="commentButton" @comment-button-click="this.showComment" @cancel-edit="this.cancelEdit()"></CommentButton>
             <EditButton :color="buttonColor" @switch-page="this.switchPage()" @submit-artwork="this.submitArtwork()"
                 ref="editButton">
             </EditButton>
@@ -107,6 +114,7 @@
     import ShareButton from '@/widgets/ShareButton.vue';
     import EditButton from '@/widgets/EditButton.vue';
     import CommentButton from '@/components/ArtworkModifyPage/CommentButton.vue';
+    import CommentComponent from '@/components/ArtworkModifyPage/CommentComponent.vue';
     import SideBar from '@/widgets/SideBar.vue'
 
     import SwiperCore, { Pagination } from 'swiper';
@@ -128,6 +136,7 @@
             RoundProfile,
             ShareButton,
             CommentButton,
+            CommentComponent,
             SideBar,
             EditButton,
             Swiper,
@@ -147,6 +156,8 @@
                 userThumbnailLoadFlag: false,
                 minimized: true,
                 isFrontPage: true,
+                isComment: false,
+                updateInProgress: false,
                 buttonColor: 'black',
                 imageEdit: false,
                 textEdit: false,
@@ -198,7 +209,24 @@
                 document.getElementById('artworkModifyPage').style.setProperty('--color', 'black')
             }
         },
-        updated() {},
+        updated() {
+            const _this = this
+            // Scroll Listener
+            document.getElementById('artworkModifyPage').addEventListener('scroll', async function (event) {
+                if (_this.updateInProgress) {
+                    return false
+                }
+
+                let scroll_height = event.target.scrollHeight
+                let scroll_top = parseInt(event.target.scrollTop) + 1
+                let offset_height = parseInt(event.target.offsetHeight) + 1
+
+                if (scroll_height <= scroll_top + offset_height) {
+                    _this.updateInProgress = true
+                    await _this.$refs.commentComponent.load()
+                }
+            })
+        },
         methods: {
             // - backButton을 눌렀을 때 뒤로가기 이벤트를 실행시키는 함수.
             back() {
@@ -255,6 +283,12 @@
                     return 'display: none'
                 }
                 else return
+            },
+            updateDone () {
+                this.updateInProgress = false
+            },
+            showComment() {
+                this.isComment = true
             }
         }
     }
