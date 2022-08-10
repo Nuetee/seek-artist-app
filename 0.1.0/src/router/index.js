@@ -66,6 +66,13 @@ const router = createRouter({
   routes
 })
 
+const guard_path = [
+  '/',
+  '/artwork-modify',
+  '/artwork-register',
+  '/profile-modify'
+]
+
 // Global navigation guard
 router.beforeEach(async function (to, from, next) {
 
@@ -108,7 +115,7 @@ router.beforeEach(async function (to, from, next) {
   }
 
   // Guard before access to mainPage
-  if (!result) {
+  if (guard_path.includes(to.path) && !result) {
     next('/login')
   } 
   else {
