@@ -1,11 +1,10 @@
 .commentComponent {
+    position: absolute;
+    z-index: 1;
     transition: max-height 0.3s linear;
     flex: 1 0 auto;
 }
-.normal {
-    max-height: 0;
-    overflow: hidden;
-}
 .comment {
+    display: flex;
     max-height: calc(var(--vw, 1vw) * 100);
 }

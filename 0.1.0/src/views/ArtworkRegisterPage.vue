@@ -36,12 +36,6 @@
                     <Description ref="description" @activate-next-button="this.activateNextButton"
                         @set-artwork-entity="this.setArtworkEntity"></Description>
                 </swiper-slide>
-                <!-- <swiper-slide>
-                    <TextColorSelection ref="textColorSelection" 
-                        @activate-next-button="this.activateNextButton"
-                        @set-artwork-entity="this.setArtworkEntity"
-                        :artworkData="this.newArtwork"></TextColorSelection>
-                </swiper-slide> -->
                 <button class="next"></button>
                 <button class="previous"></button>
             </swiper>

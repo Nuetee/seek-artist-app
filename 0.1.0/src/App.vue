@@ -107,6 +107,20 @@
     text-decoration: none;
     color: black;
   }
+
+  .slide-enter-active {
+      transition: all 1s ease-out;
+  }
+
+  .slide-leave-active {
+      transition: all 1s cubic-bezier(1, 0.5, 0.8, 1);
+  }
+
+  .slide-enter-from,
+  .slide-leave-to {
+      transform: translateY(calc(var(--vw, 1vw) * 100));
+      opacity: 0;
+  }
   
   .slide-fade-enter-active {
     transition: all 0.2s ease-out;
