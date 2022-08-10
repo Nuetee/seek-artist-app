@@ -61,7 +61,7 @@
 
             // If fail, go back to login page
             if (result) {
-                this.$router.replace(this.$route.query.state)
+                this.$router.replace('/')
             }
             else {
                 this.$router.replace('/login')
