@@ -34,11 +34,11 @@
         unmounted() {},
         methods: {
             goEdit () {
-                this.$emit('switch-page', true)
+                this.$emit('switch-page')
             },
             submit () {
                 this.$emit('submit-artwork')
-                this.$emit('switch-page', false)
+                this.$emit('switch-page')
             },
             switchButton (isEdit) {
                 this.isEdit = isEdit
