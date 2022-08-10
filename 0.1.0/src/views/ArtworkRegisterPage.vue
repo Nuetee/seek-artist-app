@@ -41,6 +41,13 @@
             </swiper>
         </div>
     </div>
+    <div class="artworkRegisterPopup" v-show="this.registerPopupFlag">
+        <div class="guidance">아트워크를<br />삭제하시겠습니까?</div>
+        <div class="buttonContainer">
+            <div class="registerButton" @click="this.completeRegister()">등록</div>
+            <div class="cancelButton" @click="() => { this.registerPopupFlag = false }">취소</div>
+        </div>
+    </div>
 </template>
 <script>
     import TitleInput from '@/components/ArtworkRegisterPage/TitleInput.vue';
@@ -112,7 +119,8 @@
                         prevEl: '.previous'
                     }
                 },
-                loading: false
+                loading: false,
+                registerPopupFlag: false
             };
         },
         mounted() {
@@ -133,10 +141,12 @@
             * 2. "다음" 버튼을 누른 경우(buttonIndex == 1) 이고 마지막 등록 페이지인 경우 completeRegister 함수를 호출하여 등록을 완료.
             * 3. "<" 버튼을 누른 경우(buttonIndex == 0)이고 첫 등록 페이지인 경우 cancelRegister 함수를 호출하여 등록을 취소한다.
             */
-            async swiperNavigation (buttonIndex) {
+            swiperNavigation (buttonIndex) {
                 if (buttonIndex === 1) {
                     if (this.swiperIndex === 3) {
-                        await this.completeRegister()
+                        this.registerPopupFlag = true
+                        return
+                        // await this.completeRegister()
                     }
                 }
                 else {
@@ -179,7 +189,8 @@
                 /* result === true면 artwork 등록 */
                 else {
                     this.loading = true
-
+                    this.registerPopupFlag = false
+                    
                     // artwork 등록 code
                     const current_artist = getAuth()
                     const dimension_string = String(this.newArtwork.size.x) 

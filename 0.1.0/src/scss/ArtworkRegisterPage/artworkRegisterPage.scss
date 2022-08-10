@@ -62,3 +62,43 @@
         }
     }
 }
+.artworkRegisterPopup {
+    position: absolute;
+    z-index: 2;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(var(--vw, 1vw) * 65);
+    height: calc(var(--vw, 1vw) * 55);
+    border-radius: calc(var(--vw, 1vw) * 3);
+    border: none;
+    background-color: white;
+    padding-left: var(--padding, 5vw);
+    padding-right: var(--padding, 5vw);
+    display: grid;
+    grid-template-rows: 2fr 1fr;
+
+    font-size: 18px;
+    line-height: 140%;
+    text-align: center;
+    letter-spacing: -0.06em;
+
+    color: #000000;
+
+    .guidance {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid black;
+    }
+
+    .buttonContainer {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        .registerButton {
+            font-weight: bold;
+        }
+    }
+}

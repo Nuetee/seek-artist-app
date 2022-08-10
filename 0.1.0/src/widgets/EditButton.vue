@@ -5,7 +5,7 @@
             <div class="phrase" v-if="this.isEdit" @click="this.goEdit()">
                 Edit
             </div>
-            <div class="phrase" v-else @click="this.submit()">
+            <div class="phrase" v-else @click="this.submitPopup()">
                 Done
             </div>
         </div>
@@ -36,9 +36,10 @@
             goEdit () {
                 this.$emit('switch-page')
             },
-            submit () {
-                this.$emit('submit-artwork')
-                this.$emit('switch-page')
+            submitPopup () {
+                this.$emit('show-submit-popup', true)
+                // this.$emit('submit-artwork')
+                // this.$emit('switch-page')
             },
             switchButton (isEdit) {
                 this.isEdit = isEdit

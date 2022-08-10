@@ -5,8 +5,8 @@
             <div class="header">
                 <div class="backButton" @click="this.back">
                     <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7 13L1 7L7 1" stroke="black" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" />
+                        <path d="M7 13L1 7L7 1" :stroke="this.artwork.getColor()" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                 </div>
                 <RoundProfile v-if="this.userThumbnailLoadFlag" :profile="this.userThumbnail"
@@ -63,13 +63,13 @@
                 </swiper-slide>
                 <div class="swiper-pagination"></div>
             </swiper>
-            <transition name="slide">
-                <div v-show="this.isComment" class="commentBar">
-                    <hr>
-                    <CommentComponent ref="commentComponent" @commentUpdate="this.updateDone" :artwork="this.artwork">
-                    </CommentComponent>
+            <div id="commentBar">
+                <div class="commentBarHeader">
+                    <div class="drawingBar"></div>
                 </div>
-            </transition>
+                <CommentComponent ref="commentComponent" @commentUpdate="this.updateDone" :artwork="this.artwork">
+                </CommentComponent>
+            </div>
         </div>
         <div class="editPage" v-show="!this.isFrontPage">
             <div>
@@ -93,13 +93,30 @@
                     </svg>
                 </div>
             </div>
+            <div class="popup" v-show="this.deletePopupFlag">
+                <div class="guidance">아트워크를<br />삭제하시겠습니까?</div>
+                <div class="buttonContainer">
+                    <div class="firstButton deleteButton" @click="this.deleteArtwork()">삭제</div>
+                    <div class="cancelButton" @click="() => { this.deletePopupFlag = false }">취소</div>
+                </div>
+            </div>
+            <div class="popup" v-show="this.submitPopupFlag">
+                <div class="guidance">수정사항 반영에는<br />최대 10분이<br/>소요될 수 있습니다.</div>
+                <div class="buttonContainer">
+                    <div class="firstButton modifyButton" @click="this.submitArtwork()">수정</div>
+                    <div class="cancelButton" @click="() => { this.submitPopupFlag = false }">취소</div>
+                </div>
+            </div>
         </div>
         <div class="buttonContainer">
-            <CommentButton :color="buttonColor" ref="commentButton" @comment-button-click="this.showComment" @cancel-edit="this.cancelEdit()"></CommentButton>
-            <EditButton :color="buttonColor" @switch-page="this.switchPage()" @submit-artwork="this.submitArtwork()"
-                ref="editButton">
+            <CommentButton ref="commentButton" :color="buttonColor" @comment-button-click="this.showComment"
+                @cancel-edit="this.cancelEdit()"></CommentButton>
+            <EditButton ref="editButton" :color="buttonColor" @switch-page="this.switchPage()"
+                @show-submit-popup="(isShow) => { this.submitPopupFlag = isShow }">
             </EditButton>
-            <ShareButton :color="buttonColor" :artwork="this.artwork" ref="shareButton"></ShareButton>
+            <ShareButton ref="shareButton" :color="buttonColor" :artwork="this.artwork"
+                @show-delete-popup="(isShow) => { this.deletePopupFlag = isShow }">
+            </ShareButton>
         </div>
         <SideBar :minimized="this.minimized" @closeSideBar="this.closeSideBar()"></SideBar>
         <Background :backgroundDisplayFlag="this.minimized" @click="this.popHistory"></Background>
@@ -108,6 +125,10 @@
         :originalArtwork="this.artwork" @close-text-modification="this.closeEditPage"></TextModification>
     <ImageModification ref="imageModification" v-if="this.artwork !== null" v-show="!this.isFrontPage && this.imageEdit"
         :originalArtwork="this.artwork" @close-text-modification="this.closeEditPage"></ImageModification>
+    <Background :backgroundDisplayFlag="!this.loading"></Background>
+    <div v-if="this.loading" id="loading">
+        <va-progress-circle indeterminate />
+    </div>
 </template>
 <script>
     import RoundProfile from '@/widgets/RoundProfile.vue';
@@ -124,6 +145,8 @@
     import { cropImage } from '@/modules/image';
     import { Artwork } from '@/classes/artwork';
     import { isAuth, getAuth } from '@/modules/auth';
+    import { deleteArtworkDirectory } from '@/modules/storage';
+
     import Background from '@/widgets/Background.vue';
     import TextModification from '@/components/ArtworkModifyPage/TextModification.vue';
     import ImageModification from '@/components/ArtworkModifyPage/ImageModification.vue'
@@ -156,16 +179,27 @@
                 userThumbnailLoadFlag: false,
                 minimized: true,
                 isFrontPage: true,
-                isComment: false,
+                submitPopupFlag: false,
+                deletePopupFlag: false,
+                loading: false,
+                
+                commentBar: null,
+                commentBarHeight: null,
+
                 updateInProgress: false,
                 buttonColor: 'black',
                 imageEdit: false,
                 textEdit: false,
+
+                touchStart: 0,
+                touchEnd: 0,
+
                 swiperOptions: {
                     slidesPerView: 1,
                     spaceBetween: 0,
                     loop: false,
                     centeredSlides: true,
+                    resistanceRatio: 0,
                     pagination: {
                         el: '.swiper-pagination'
                     }
@@ -180,22 +214,20 @@
                     return
                 }
             }
+
             let artwork = await new Artwork(this.id).init()
             this.artwork = artwork
 
             this.buttonColor = artwork.getColor()
-            let artworkImages = await artwork.getAllImages()
-            let container_ratio = window.innerWidth/window.innerHeight
+            await this.getArtworkImages()
+            
+            this.commentBar = document.getElementById('commentBar')
+            this.commentBarHeight = this.commentBar.clientHeight
+            this.drawingBar = document.getElementsByClassName('drawingBar')[0]
+            this.drawingBar.addEventListener('touchstart', this.setTouchStart)
+            this.drawingBar.addEventListener('touchmove', this.setTouchMove)
+            this.drawingBar.addEventListener('touchend', this.setTouchEnd)
 
-            for(let i = 0; i < artworkImages.length; i++) {
-                let style = await cropImage(artworkImages[i], container_ratio)
-
-                let imageInfo = new Object()
-                imageInfo.src = artworkImages[i]
-                imageInfo.style = style
-
-                this.artworkImageInfo.push(imageInfo)
-            }
 
             if(isAuth()) {
                 // Fetch profile thumbnail and set
@@ -228,6 +260,20 @@
             })
         },
         methods: {
+            async getArtworkImages () {
+                let artworkImages = await this.artwork.getAllImages()
+                let container_ratio = window.innerWidth / window.innerHeight
+
+                for (let i = 0; i < artworkImages.length; i++) {
+                    let style = await cropImage(artworkImages[i], container_ratio)
+
+                    let imageInfo = new Object()
+                    imageInfo.src = artworkImages[i]
+                    imageInfo.style = style
+
+                    this.artworkImageInfo.push(imageInfo)
+                }
+            },
             // - backButton을 눌렀을 때 뒤로가기 이벤트를 실행시키는 함수.
             back() {
                 window.history.back()
@@ -237,9 +283,29 @@
                 this.$refs.imageModification.back()
                 this.switchPage()
             },
+            async deleteArtwork() {
+                if (!this.artwork) {
+                    return
+                }
+                else {
+                    // await this.artwork.deleteArtwork()
+
+                    // For development
+                    await deleteArtworkDirectory(this.artwork.getPageID())
+                    await this.artwork.deletePreArtwork()
+                    this.$router.replace('/')
+                }
+            },
             async submitArtwork () {
+                this.submitPopupFlag = false
+                this.loading = true
                 await this.$refs.textModification.submit()
                 await this.$refs.imageModification.submit()
+                this.artworkImageInfo = []
+                await this.getArtworkImages()
+                this.loading = false
+                this.isFrontPage = false
+                this.switchPage()
             },
             switchPage () {
                 if (this.isFrontPage) {
@@ -288,7 +354,55 @@
                 this.updateInProgress = false
             },
             showComment() {
-                this.isComment = true
+                if (this.commentBar === null) {
+                    this.commentBar = document.getElementById('commentBar')
+                    this.commentBarHeight = this.commentBar.clientHeight
+                }
+                if (this.drawingBar === null) {
+                    this.drawingBar = document.getElementsByClassName('drawingBar')[0]
+                    this.drawingBar.addEventListener('touchstart', this.setTouchStart)
+                    this.drawingBar.addEventListener('touchmove', this.setTouchMove)
+                    this.drawingBar.addEventListener('touchend', this.setTouchEnd)
+                }
+
+                this.commentBar.style.setProperty('bottom', `${this.commentBarHeight - 10}px`)
+            },
+            /*
+            * 1. touchEvent가 발생한 지점의 y position 값을 touchStart에 저장.
+            * 2. draw event가 발생중임을 drawStart에 저장
+            */
+            setTouchStart(event) {
+                this.touchStart = event.changedTouches[0].clientY
+                this.drawStart = true
+                this.commentBar.style.setProperty('transition', 'none')
+            },
+            setTouchMove (event) {
+                if (this.drawStart === false)
+                    return
+
+                let touchMove = event.changedTouches[0].clientY;
+                
+                let distance = touchMove - this.touchStart
+
+                if (distance > 0) {
+                    let commentBarInitialBottom = this.commentBarHeight - 10
+
+                    this.commentBar.style.setProperty('bottom', `${commentBarInitialBottom - distance}px`)
+                }
+            },
+            setTouchEnd (event) {
+                if (this.drawStart === false)
+                    return
+                
+                this.commentBar.style.setProperty('transition', 'bottom 0.5s')
+                let touchEnd = event.changedTouches[0].clientY
+
+                let distance = touchEnd - this.touchStart
+                const standardDistance = window.innerWidth * 0.2
+
+                if (distance > standardDistance) {
+                    this.commentBar.style.setProperty('bottom', '0')
+                }
             }
         }
     }
