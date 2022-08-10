@@ -311,7 +311,7 @@ export async function updateArtworkImages (target_id, original_length, mapping_a
 
     for (let i = 0 ; i < mapping_array.length ; i++) {
         const index = mapping_array[i]
-        if (index) {
+        if (index !== null) {
             if (index < original_length) {
                 src_indices.push(index)
                 dst_indices.push(i)
@@ -325,10 +325,13 @@ export async function updateArtworkImages (target_id, original_length, mapping_a
         }
     }
 
-    const copy_result = await sendStorageCopy('artwork', target_id, src_indices, dst_indices)
+    let copy_result = true 
+    if (src_indices.length > 0) {
+        copy_result = await sendStorageCopy('artwork', target_id, src_indices, dst_indices)
+    }
     if (copy_result) {
         let modify_result = true
-        if (files.length !== 0) {
+        if (files.length > 0) {
             modify_result = await modifyArtworkImages(target_id, new_indices, files)
         }
         if (modify_result) {
