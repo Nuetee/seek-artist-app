@@ -227,9 +227,6 @@
                 if (!result) {
                     alert('프로필 수정에 실패했습니다.')
                 }
-                else {
-                    this.$router.replace('/')
-                }
             },
             async changeUnit () {
                 this.unit = this.old_unit

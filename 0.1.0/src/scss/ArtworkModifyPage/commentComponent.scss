@@ -1,10 +1,1 @@
-.commentComponent {
-    position: absolute;
-    z-index: 1;
-    transition: max-height 0.3s linear;
-    flex: 1 0 auto;
-}
-.comment {
-    display: flex;
-    max-height: calc(var(--vw, 1vw) * 100);
-}
+
