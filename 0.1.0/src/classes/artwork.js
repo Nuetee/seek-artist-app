@@ -175,8 +175,13 @@ export class Artwork {
         return result
     }
 
-    putThreeDimensional = async function  (three_dimensional) {
+    putThreeDimensional = async function (three_dimensional) {
         const result = await this.putArtworkData('three_dimensional', three_dimensional)
+        return result
+    }
+
+    putColor = async function  (color) {
+        const result = await this.putArtworkData('color', color)
         return result
     }
 

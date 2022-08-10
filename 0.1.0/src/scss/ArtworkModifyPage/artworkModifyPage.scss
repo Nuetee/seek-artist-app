@@ -51,6 +51,10 @@
                         gap: 3px;
                         align-items: center;
                         overflow: visible;
+
+                        svg {
+                            overflow: visible;
+                        }
                     }
     
                     .archiveCount {

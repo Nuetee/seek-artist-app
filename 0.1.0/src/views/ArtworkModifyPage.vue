@@ -95,16 +95,19 @@
             </div>
         </div>
         <div class="buttonContainer">
-            <CommentButton :color="buttonColor" @comment-button-click="this.showComment" ref="commentButton"></CommentButton>
-            <EditButton :color="buttonColor" @click="this.switchPage" ref="editButton">
+            <CommentButton :color="buttonColor" ref="commentButton" @comment-button-click="this.showComment" @cancel-edit="this.cancelEdit()"></CommentButton>
+            <EditButton :color="buttonColor" @switch-page="this.switchPage()" @submit-artwork="this.submitArtwork()"
+                ref="editButton">
             </EditButton>
             <ShareButton :color="buttonColor" :artwork="this.artwork" ref="shareButton"></ShareButton>
         </div>
         <SideBar :minimized="this.minimized" @closeSideBar="this.closeSideBar()"></SideBar>
         <Background :backgroundDisplayFlag="this.minimized" @click="this.popHistory"></Background>
     </div>
-    <TextModification v-if="this.artwork !== null" v-show="!this.isFrontPage && this.textEdit"
-        :originalArtwork="this.artwork" @close-text-modification="this.closeEditPage('text')"></TextModification>
+    <TextModification ref="textModification" v-if="this.artwork !== null" v-show="!this.isFrontPage && this.textEdit"
+        :originalArtwork="this.artwork" @close-text-modification="this.closeEditPage"></TextModification>
+    <ImageModification ref="imageModification" v-if="this.artwork !== null" v-show="!this.isFrontPage && this.imageEdit"
+        :originalArtwork="this.artwork" @close-text-modification="this.closeEditPage"></ImageModification>
 </template>
 <script>
     import RoundProfile from '@/widgets/RoundProfile.vue';
@@ -123,6 +126,7 @@
     import { isAuth, getAuth } from '@/modules/auth';
     import Background from '@/widgets/Background.vue';
     import TextModification from '@/components/ArtworkModifyPage/TextModification.vue';
+    import ImageModification from '@/components/ArtworkModifyPage/ImageModification.vue'
 
     SwiperCore.use([Pagination]);
 
@@ -138,7 +142,8 @@
             Swiper,
             SwiperSlide,
             Background,
-            TextModification
+            TextModification,
+            ImageModification
         },
         data() {
             return {
@@ -227,6 +232,15 @@
             back() {
                 window.history.back()
             },
+            cancelEdit () {
+                this.$refs.textModification.back()
+                this.$refs.imageModification.back()
+                this.switchPage()
+            },
+            async submitArtwork () {
+                await this.$refs.textModification.submit()
+                await this.$refs.imageModification.submit()
+            },
             switchPage () {
                 if (this.isFrontPage) {
                     this.buttonColor = 'black'
@@ -234,7 +248,7 @@
                 else {
                     this.buttonColor = this.artwork.getColor()
                 }
-
+                
                 this.$refs.commentButton.switchButton(!this.isFrontPage)
                 this.$refs.editButton.switchButton(!this.isFrontPage)
                 this.$refs.shareButton.switchButton(!this.isFrontPage)

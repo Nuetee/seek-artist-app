@@ -54,13 +54,20 @@
             Preview
         },
         props: {
-            artworkData: Object
+            originalImageFiles: {
+                type: Array,
+                default: []
+            },
+            originalTextColor: {
+                type: String,
+                default: 'black'
+            },
+            artworkData: Object,
         },
         data() {
             return {
                 imageSelection: null,
                 imageUpload: null,
-                selectedImageSrcs: [],
                 selectedImageFiles: [],
                 textColor: 'black',
                 swiperOptions: {
@@ -83,9 +90,14 @@
                 this.$emit('set-artwork-entity', 'textColor', newVal)
             }
         },
+        created() {
+            this.textColor = this.originalTextColor
+            this.selectedImageFiles = this.originalImageFiles
+        },
         mounted() {
             this.imageSelection = document.getElementById('imageSelection')
             this.imageUpload = document.getElementById('imageUpload')
+            
             this.$nextTick(() => {
                 this.imageUpload.addEventListener('change', this.addImageSlide)
             })
