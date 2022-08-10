@@ -42,7 +42,7 @@
         </div>
     </div>
     <div class="artworkRegisterPopup" v-show="this.registerPopupFlag">
-        <div class="guidance">아트워크를<br />삭제하시겠습니까?</div>
+        <div class="guidance">아트워크를<br />등록하시겠습니까?</div>
         <div class="buttonContainer">
             <div class="registerButton" @click="this.completeRegister()">등록</div>
             <div class="cancelButton" @click="() => { this.registerPopupFlag = false }">취소</div>
