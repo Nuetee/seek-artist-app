@@ -88,8 +88,8 @@
             </div>
         </div>
         <div class="buttonContainer">
-            <CommentButton :color="buttonColor" ref="commentButton"></CommentButton>
-            <EditButton :color="buttonColor" @switch-page="this.switchPage" @submit-artwork="this.submitArtwork()"
+            <CommentButton :color="buttonColor" ref="commentButton" @cancel-edit="this.cancelEdit()"></CommentButton>
+            <EditButton :color="buttonColor" @switch-page="this.switchPage()" @submit-artwork="this.submitArtwork()"
                 ref="editButton">
             </EditButton>
             <ShareButton :color="buttonColor" :artwork="this.artwork" ref="shareButton"></ShareButton>
@@ -204,6 +204,11 @@
             back() {
                 window.history.back()
             },
+            cancelEdit () {
+                this.$refs.textModification.back()
+                this.$refs.imageModification.back()
+                this.switchPage()
+            },
             async submitArtwork () {
                 await this.$refs.textModification.submit()
                 await this.$refs.imageModification.submit()
@@ -215,7 +220,7 @@
                 else {
                     this.buttonColor = this.artwork.getColor()
                 }
-
+                
                 this.$refs.commentButton.switchButton(!this.isFrontPage)
                 this.$refs.editButton.switchButton(!this.isFrontPage)
                 this.$refs.shareButton.switchButton(!this.isFrontPage)
