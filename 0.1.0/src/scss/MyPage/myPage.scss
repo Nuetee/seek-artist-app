@@ -31,15 +31,22 @@
                 font-weight: 300;
                 font-size: 18px;
                 line-height: 27px;
+                color: black;
             }
         }
         .sideBarOpenButtonContainer {
             height: calc(var(--vw, 1vw) * 8);
+            overflow: visible;
             display: flex;
 
             .sideBarOpenButton {
                 height: calc(var(--vw, 1vw) * 5);
                 align-self: flex-end;
+                overflow: visible;
+
+                svg {
+                    overflow: visible;
+                }
             }
         }
 

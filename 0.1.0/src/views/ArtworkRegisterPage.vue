@@ -128,6 +128,15 @@
             this.navigationButtons.push(document.getElementsByClassName('next')[0])
             
             this.navigationButtons[1].disabled = true
+
+            // border-radius가 설정된 progress bar를 만들어 기존 progress bar의 child로 추가.
+            const progressbar = document.createElement("div")
+            progressbar.style.width = "100%"
+            progressbar.style.height = "100%"
+            progressbar.style.borderRadius = '2px'
+            progressbar.style.backgroundColor = "black"
+            progressbar.style.overflow = "hidden"
+            document.getElementsByClassName('swiper-pagination-progressbar-fill')[0].appendChild(progressbar)
         },
         methods: {
             back () {

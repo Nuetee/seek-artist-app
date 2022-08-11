@@ -154,11 +154,16 @@
             justify-content: center;
 
             .drawingBar {
-                display: inline-block;
+                height: 100%;
                 width: calc(var(--vw, 1vw) * 8);
-                height: calc(var(--vw, 1vw));
-                border-radius: calc(var(--vw, 1vw) * 0.5);
-                background-color: #D9D9D9;
+
+                div {
+                    display: inline-block;
+                    width: 100%;
+                    height: calc(var(--vw, 1vw));
+                    border-radius: calc(var(--vw, 1vw) * 0.5);
+                    background-color: #D9D9D9;
+                }
             }
         }
     }

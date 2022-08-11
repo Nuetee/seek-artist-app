@@ -65,7 +65,9 @@
             </swiper>
             <div id="commentBar">
                 <div class="commentBarHeader">
-                    <div class="drawingBar"></div>
+                    <div class="drawingBar">
+                        <div></div>
+                    </div>
                 </div>
                 <CommentComponent ref="commentComponent" @commentUpdate="this.updateDone" :artwork="this.artwork">
                 </CommentComponent>
@@ -101,7 +103,7 @@
                 </div>
             </div>
             <div class="popup" v-show="this.submitPopupFlag">
-                <div class="guidance">수정사항 반영에는<br />최대 10분이<br/>소요될 수 있습니다.</div>
+                <div class="guidance">수정사항 반영에는<br />최대 10분이<br />소요될 수 있습니다.</div>
                 <div class="buttonContainer">
                     <div class="firstButton modifyButton" @click="this.submitArtwork()">수정</div>
                     <div class="cancelButton" @click="() => { this.submitPopupFlag = false }">취소</div>
@@ -216,8 +218,9 @@
             }
 
             let artwork = await new Artwork(this.id).init()
+            
             this.artwork = artwork
-
+            
             this.buttonColor = artwork.getColor()
             await this.getArtworkImages()
             

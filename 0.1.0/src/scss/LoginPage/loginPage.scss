@@ -1,5 +1,4 @@
 #loginPage {
-
     .frontImage {
         height: calc(var(--vh, 1vh) * 75);
         display: flex;
@@ -7,9 +6,28 @@
         justify-content: center;
         align-items: center;
 
-        img {
-            width: 45%;
+        .logo {
+            display: inline-block;
+            
+            div.poppins {
+                margin-left: calc(var(--vw, 1vw) * 2);
+                display: inline;
+                font-style: normal;
+                font-weight: 300;
+                font-size: 25px;
+                line-height: 37px;
+                color: black;
+            }
+
+            img {
+                height: auto;
+                width: 45%;
+            }
         }
+
+        // img {
+        //     width: 45%;
+        // }
 
         .catchPhrase {
             margin-top: var(--padding, 5vw);
