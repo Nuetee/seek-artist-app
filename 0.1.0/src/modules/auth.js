@@ -47,13 +47,19 @@ export async function refresh (provider, access_token, refresh_token, expireTime
 // Store via Vuex
 export async function save (user_id, provider, access_token, profile_image, thumbnail_image) {
     const user = await new User(user_id).init()
-    store.dispatch('setUser', {
-        user: user,
-        provider: provider,
-        access_token: access_token,
-        profile_image: profile_image,
-        thumbnail_image: thumbnail_image
-    })
+    if (user) {
+        store.dispatch('setUser', {
+            user: user,
+            provider: provider,
+            access_token: access_token,
+            profile_image: profile_image,
+            thumbnail_image: thumbnail_image
+        })
+        return true
+    }
+    else {
+        return false
+    }
 }
 
 // Logout and remove cookie
