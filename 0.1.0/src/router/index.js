@@ -68,7 +68,7 @@ const router = createRouter({
 
 const guard_path = [
   '/',
-  '/artwork-modify',
+  // '/artwork-modify',
   '/artwork-register',
   '/profile-modify'
 ]

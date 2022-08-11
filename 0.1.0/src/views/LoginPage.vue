@@ -1,7 +1,10 @@
 <template>
     <div id="loginPage">
         <div class="frontImage">
-            <img src="@/assets/seek_logo.png">
+            <div class="logo">
+                <img src="@/assets/seek_logo.png">
+                <div class="poppins">for artist</div>
+            </div>
             <div class="catchPhrase">
                 취향에 딱 맞는
                 <br />
