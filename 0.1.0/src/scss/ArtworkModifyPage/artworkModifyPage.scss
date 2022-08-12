@@ -84,8 +84,14 @@
                 }
     
                 .snsLink {
-                    svg {
-                        transform: scale(0.9);
+                    display: flex;
+                    align-items: center;
+                    justify-items: center;
+                    flex-wrap: nowrap;
+                    a {
+                        svg {
+                            flex: 0 0 auto;
+                        }
                     }
                 }
             }
@@ -142,6 +148,11 @@
         border-top-right-radius: calc(var(--vw, 1vw) * 5);
         padding: var(--padding, 5vw);
         padding-top: calc(var(--vw, 1vw) * 12);
+        overflow-y: scroll;
+        -ms-overflow-style: none;
+        /* IE and Edge */
+        scrollbar-width: none;
+        /* Firefox */
 
         .commentBarHeader {
             position: absolute;
@@ -166,6 +177,16 @@
                 }
             }
         }
+    }
+
+    #commentBar::-webkit-scrollbar {
+        display: none;
+        /* Chrome, Safari, Opera*/
+        // 스크롤바 잔상 없애기
+        height: 0;
+        background: transparent;
+        /* Optional: just make scrollbar invisible */
+        -webkit-appearance: none;
     }
     
     .editPage {

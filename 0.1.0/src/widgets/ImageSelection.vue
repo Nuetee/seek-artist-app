@@ -16,7 +16,12 @@
                 <Preview :textColor="this.textColor" :title="this.artworkData.title" :image="image"></Preview>
             </swiper-slide>
             <swiper-slide>
-                <label for="imageUpload"> + </label>
+                <label for="imageUpload">
+                    <svg class="plusIcon" width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M26 2V50" stroke="#959595" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 26H50" stroke="#959595" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </label>
             </swiper-slide>
         </swiper>
         <div v-show="this.selectedImageFiles.length">텍스트 색상</div>
