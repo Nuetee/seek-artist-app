@@ -187,6 +187,7 @@
                 
                 commentBar: null,
                 commentBarHeight: null,
+                resizeFlag: true,
                 commentOpened: false,
 
                 updateInProgress: false,
@@ -217,6 +218,8 @@
                     return
                 }
             }
+
+            window.addEventListener('resize', this.setCommentBarPosition)
 
             let artwork = await new Artwork(this.id).init()
             
@@ -275,7 +278,12 @@
         methods: {
             async getArtworkImages () {
                 let artworkImages = await this.artwork.getAllImages()
+
                 let container_ratio = window.innerWidth / window.innerHeight
+
+                if (window.innerWidth >= 480) {
+                    container_ratio = 480 / window.innerHeight
+                }
 
                 for (let i = 0; i < artworkImages.length; i++) {
                     let style = await cropImage(artworkImages[i], container_ratio)
@@ -367,12 +375,32 @@
             updateDone () {
                 this.updateInProgress = false
             },
+            setCommentBarPosition() {
+                if (this.commentOpened === false) {
+                    return
+                }
+                this.commentBar.style.setProperty('transition', 'none')
+                this.commentBarHeight = this.commentBar.clientHeight
+                this.commentBar.style.setProperty('bottom', `${this.commentBarHeight - 10}px`)
+
+                const _this = this
+
+                if (this.resizeFlag) {
+                    this.resizeFlag = false
+
+                    setTimeout(() => {
+                        _this.commentBar.style.setProperty('transition', 'bottom 0.5s')
+                        _this.resizeFlag = true
+                    }, 300)
+                }
+            },
             async showComment() {
                 const _this = this
                 if (this.commentBar === null) {
                     this.commentBar = document.getElementById('commentBar')
-                    this.commentBarHeight = this.commentBar.clientHeight
                 }
+                this.commentBarHeight = this.commentBar.clientHeight
+
                 if (this.drawingBar === null) {
                     this.drawingBar = document.getElementsByClassName('drawingBar')[0]
                     this.drawingBar.addEventListener('touchstart', this.setTouchStart)
@@ -381,6 +409,7 @@
                 }
 
                 this.commentBar.style.setProperty('bottom', `${this.commentBarHeight - 10}px`)
+
                 setTimeout(() => {
                     _this.commentOpened = true
                 }, 500)

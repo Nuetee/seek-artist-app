@@ -139,5 +139,9 @@
                 }
             }
         }
+        
+        .tabBody {
+            margin-top: var(--padding, 5vw);
+        }
     }
 }
