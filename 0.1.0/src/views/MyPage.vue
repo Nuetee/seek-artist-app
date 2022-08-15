@@ -23,9 +23,38 @@
             <ProfileModifyButton></ProfileModifyButton>
         </div>
         <div class="bottom">
-            <div class="myArtwork">내 아트워크</div>
+            <div class="tab">
+                <div class="navigationBar">
+                    <va-tabs id="tabs" v-model="this.tab_index" color="black" grow>
+                        <template #tabs>
+                            <va-tab class="tabName" :class="(this.tab_index ? 'nonActive' : '')" color="black"
+                                @click="this.clickTab(tab_index)">
+                                전시
+                            </va-tab>
+                            <va-tab class="tabName" :class="(this.tab_index ? '' : 'nonActive')" color="black"
+                                @click="this.clickTab(tab_index)">
+                                내 아트워크
+                            </va-tab>
+                        </template>
+                    </va-tabs>
+                </div>
+            </div>
+            <div class="tabBody">
+                <swiper v-bind="this.swiperOptions" @slideChange="this.slideChange">
+                    <swiper-slide>
+                        <div>전시</div>
+                    </swiper-slide>
+                    <swiper-slide>
+                        <ArtworkCardList v-if="this.loadFlag" :artworkIdList="this.artworkIdList">
+                        </ArtworkCardList>
+                    </swiper-slide>
+                    <div class="nextButton"></div>
+                    <div class="prevButton"></div>
+                </swiper>
+            </div>
+            <!-- <div class="myArtwork">내 아트워크</div>
             <ArtworkCardList v-if="this.loadFlag" :artworkIdList="this.artworkIdList">
-            </ArtworkCardList>
+            </ArtworkCardList> -->
         </div>
         <SideBar :minimized="this.minimized"></SideBar>
         <UploadButton></UploadButton>
@@ -40,7 +69,12 @@
     import SideBar from '@/widgets/SideBar.vue';
     import UploadButton from '@/components/MyPage/UploadButton.vue';
     import Background from '../widgets/Background.vue';
+
+    import { Swiper, SwiperSlide } from 'swiper/vue';
+    import SwiperCore, { Navigation } from 'swiper';
     import { isAuth, getAuth } from '@/modules/auth';
+
+    SwiperCore.use([Navigation])
 
     export default {
         name: 'MyPage',
@@ -50,7 +84,9 @@
             ArtworkCardList,
             SideBar,
             UploadButton,
-            Background
+            Background,
+            Swiper,
+            SwiperSlide,
         },
         data() {
             return {
@@ -60,7 +96,21 @@
                 loadFlag: false,
                 artworkIdList: [],
                 nothingToUpdate: false,
-                updateInProgress: false
+                updateInProgress: false,
+
+                tab_index: 0,
+                pre_activated_tab: 0,
+
+                swiperOptions: {
+                    slidesPerView: 1,
+                    loop: false,
+                    centeredSlides: true,
+                    allowTouchMove: true,
+                    navigation: {
+                        nextEl: '.nextButton',
+                        prevEl: '.prevButton'
+                    }
+                },
             };
         },
         async created() {
@@ -101,6 +151,44 @@
             })
         },
         methods: {
+            /*
+            * - Navigation Button이 눌렸을 경우 호출되는 함수.
+            * 1. 활성 버튼과 클릭한 버튼이 같으면 그대로 return.
+            * 2. 활성 버튼보다 클릭 버튼의 순서가 뒤인 경우 next slide 로 넘김.
+            * 3. 활성 버튼보다 클릭 버튼의 순서가 잎인 경우 previous slide 로 넘김.
+            * 4. 버튼의 활성 여부에 따라 버튼의 font color 지정
+            * 5. clickedButton의 order를 activeSlideOrder에 저장
+            * 6. 부모 component에 바뀐 활성 버튼의 순서를 전달.
+            */
+            changeSlide(pre_activated_tab, clicked_tab) {
+                if (pre_activated_tab === clicked_tab) {
+                    return
+                }
+                else if (pre_activated_tab < clicked_tab) {
+                    document.getElementsByClassName('nextButton')[0].click()
+                }
+                else {
+                    document.getElementsByClassName('prevButton')[0].click()
+                }
+            },
+            slideChange(swiper) {
+                this.tab_index = swiper.activeIndex
+                this.pre_activated_tab = swiper.activeIndex
+            },
+            clickTab (activated_tab) {
+                // if clicked button is activated button, then return.
+                if (this.pre_activated_tab === activated_tab)
+                    return
+                else {
+                    // emit button click signal to Parent component
+                    this.changeSlide(this.pre_activated_tab, activated_tab)
+
+                    // set activatedButtonOrder as clicked button's Index
+                    this.pre_activated_tab = activated_tab
+
+                    return
+                }
+            },
             /*
             * - sideBarOpenButton(class)에 click event가 발생하면 호출되는 함수.
             * 1. 부모 DOM Element로의 click event 전파를 차단한다.
