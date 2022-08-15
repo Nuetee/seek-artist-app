@@ -1,11 +1,14 @@
 <template>
     <button class="commonButton editButton">
-        <div class="inner poppins"
+        <div class="inner poppins" v-if="this.isEdit" @click="this.goEdit()"
             :style="'background-color: ' + this.color + '; color: ' + ((this.color==='black' ) ? 'white' : 'black' )">
-            <div class="phrase" v-if="this.isEdit" @click="this.goEdit()">
+            <div class="phrase">
                 Edit
             </div>
-            <div class="phrase" v-else @click="this.submitPopup()">
+        </div>
+        <div class="inner poppins"  v-else @click="this.submitPopup()"
+            :style="'background-color: ' + this.color + '; color: ' + ((this.color==='black' ) ? 'white' : 'black' )">
+            <div class="phrase">
                 Done
             </div>
         </div>

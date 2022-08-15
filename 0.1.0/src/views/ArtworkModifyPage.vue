@@ -63,7 +63,7 @@
                 </swiper-slide>
                 <div class="swiper-pagination"></div>
             </swiper>
-            <div id="commentBar">
+            <div ref="commentBar" id="commentBar">
                 <div class="commentBarHeader">
                     <div class="drawingBar">
                         <div></div>
@@ -187,6 +187,7 @@
                 
                 commentBar: null,
                 commentBarHeight: null,
+                commentOpened: false,
 
                 updateInProgress: false,
                 buttonColor: 'black',
@@ -231,6 +232,15 @@
             this.drawingBar.addEventListener('touchmove', this.setTouchMove)
             this.drawingBar.addEventListener('touchend', this.setTouchEnd)
 
+            document.getElementsByClassName('frontPage')[0].addEventListener('click', (e)=> {
+                if (_this.$refs.commentBar !== undefined 
+                    && _this.$refs.commentBar.contains(e.target) === false) {
+                    if (_this.commentOpened) {
+                        _this.commentBar.style.setProperty('bottom', '0')
+                        _this.commentOpened = false
+                    }
+                }
+            })
 
             if(isAuth()) {
                 // Fetch profile thumbnail and set
@@ -291,6 +301,7 @@
                     return
                 }
                 else {
+                    // await deleteArtworkDirectory(this.artwork.getPageID())
                     // await this.artwork.deleteArtwork()
 
                     // For development
@@ -356,7 +367,8 @@
             updateDone () {
                 this.updateInProgress = false
             },
-            showComment() {
+            async showComment() {
+                const _this = this
                 if (this.commentBar === null) {
                     this.commentBar = document.getElementById('commentBar')
                     this.commentBarHeight = this.commentBar.clientHeight
@@ -369,6 +381,9 @@
                 }
 
                 this.commentBar.style.setProperty('bottom', `${this.commentBarHeight - 10}px`)
+                setTimeout(() => {
+                    _this.commentOpened = true
+                }, 500)
             },
             /*
             * 1. touchEvent가 발생한 지점의 y position 값을 touchStart에 저장.
@@ -405,6 +420,7 @@
 
                 if (distance > standardDistance) {
                     this.commentBar.style.setProperty('bottom', '0')
+                    this.commentOpened = false
                 }
             }
         }

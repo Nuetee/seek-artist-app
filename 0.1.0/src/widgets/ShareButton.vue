@@ -77,7 +77,7 @@
             share () {
                 let shareTitle = this.artwork.getName()
                 let shareText = this.artwork.getName() + ' ' + this.artwork.getArtist()
-                let shareUrl = window.location.href
+                let shareUrl = 'https://se-ek.com' + this.$route.path + '?id=' + this.$route.query.id
 
                 if (navigator.share) {
                     navigator.share({
@@ -101,11 +101,11 @@
                     textarea.select()
                     document.execCommand("copy");
                     document.body.removeChild(textarea);
-                    this.$gtag.event('click', {
-                        event_category: 'artwork',
-                        event_label: 'share',
-                        value: this.artwork.getID()
-                    })
+                    // this.$gtag.event('click', {
+                    //     event_category: 'artwork',
+                    //     event_label: 'share',
+                    //     value: this.artwork.getID()
+                    // })
                     alert("페이지 주소를 클립보드에 복사했습니다.")
                 }
             }
