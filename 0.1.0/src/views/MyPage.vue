@@ -42,7 +42,7 @@
             <div class="tabBody">
                 <swiper v-bind="this.swiperOptions" @slideChange="this.slideChange">
                     <swiper-slide>
-                        <div>전시</div>
+                        <div></div>
                     </swiper-slide>
                     <swiper-slide>
                         <ArtworkCardList v-if="this.loadFlag" :artworkIdList="this.artworkIdList">
@@ -98,10 +98,11 @@
                 nothingToUpdate: false,
                 updateInProgress: false,
 
-                tab_index: 0,
-                pre_activated_tab: 0,
+                tab_index: 1,
+                pre_activated_tab: 1,
 
                 swiperOptions: {
+                    initialSlide: 1,
                     slidesPerView: 1,
                     loop: false,
                     centeredSlides: true,

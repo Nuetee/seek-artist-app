@@ -51,9 +51,10 @@
             .swiper-pagination-progressbar {
                 height: calc(var(--vw, 1vw) * 1.1);
                 border-radius: 5px;
+                overflow: hidden;
                 
                 .swiper-pagination-progressbar-fill {
-                    background-color: transparent !important;
+                    background-color: black;
                 }
             }
 
