@@ -15,9 +15,6 @@ import ArtworkRegisterPage from '../views/ArtworkRegisterPage.vue'
 import ArtworkModifyPage from '../views/ArtworkModifyPage.vue'
 import ProfileModifyPage from '../views/ProfileModifyPage.vue'
 
-// test
-// import TextModification from '../components/ArtworkModifyPage/TextModification.vue'
-
 const routes = [
   {
     path: '/',
@@ -34,13 +31,6 @@ const routes = [
     name: 'artworkModifyPage',
     component: ArtworkModifyPage
   },
-  // test
-  // {
-  //   path: '/text-modify',
-  //   name: 'textModification',
-  //   component: TextModification
-  // },
-  //
   {
     path: '/profile-modify',
     name: 'profileModifyPage',
@@ -68,7 +58,7 @@ const router = createRouter({
 
 const guard_path = [
   '/',
-  // '/artwork-modify',
+  '/artwork-modify',
   '/artwork-register',
   '/profile-modify'
 ]
@@ -90,7 +80,7 @@ router.beforeEach(async function (to, from, next) {
 
       // Authentication success
       if (auth_result) {
-        await save(
+        result = await save(
           auth_result.user_id, 
           'kakao', 
           auth_result.access_token, 
@@ -101,7 +91,6 @@ router.beforeEach(async function (to, from, next) {
           auth_result.access_token, 
           auth_result.refresh_token, 
           auth_result.expire_time)
-        result = true
       }
       else {
         logout('kakao')
