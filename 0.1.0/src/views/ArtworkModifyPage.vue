@@ -187,6 +187,7 @@
                 
                 commentBar: null,
                 commentBarHeight: null,
+                drawingBar: null,
                 resizeFlag: true,
                 commentOpened: false,
 
@@ -195,6 +196,7 @@
                 imageEdit: false,
                 textEdit: false,
 
+                drawStart: false,
                 touchStart: 0,
                 touchEnd: 0,
 
@@ -450,6 +452,9 @@
                 if (distance > standardDistance) {
                     this.commentBar.style.setProperty('bottom', '0')
                     this.commentOpened = false
+                }
+                else {
+                    this.commentBar.style.setProperty('bottom', `${this.commentBarHeight - 10}px`)
                 }
             }
         }
