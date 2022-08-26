@@ -54,11 +54,21 @@
                 </swiper>
             </div>
         </div>
-        <div ref="selectBar" id="selectBar">
+        <div v-show="this.barOpened" ref="selectBar" id="selectBar">
+            <router-link to="/artwork-register">
+                <div>
+                    아트워크
+                </div>
+            </router-link><br><br>
+            <router-link to="/exhibition-register">
+                <div>
+                    전시
+                </div>
+            </router-link>
         </div>
         <SideBar :minimized="this.minimized"></SideBar>
         <UploadButton @click="this.showSelectBar"></UploadButton>
-        <Background :backgroundDisplayFlag="this.minimized" @click="this.popHistory">
+        <Background :backgroundDisplayFlag="this.minimized && !this.barOpened" @click="this.popHistory">
         </Background>
     </div>
 </template>
@@ -93,7 +103,6 @@
                 minimized: true,
                 user: null,
                 selectBar: null,
-                selectBarHeight: null,
                 barOpened: false,
                 profile: '',
                 loadFlag: false,
@@ -144,6 +153,15 @@
             this.loadFlag = true
 
             window.addEventListener('resize', this.setSelectBarPosition)
+            document.getElementById('myPage').addEventListener('click', (e)=> {
+                if (_this.$refs.selectBar !== undefined 
+                    && _this.$refs.selectBar.contains(e.target) === false) {
+                    if (_this.barOpened) {
+                        _this.selectBar.style.setProperty('bottom', '0')
+                        _this.barOpened = false
+                    }
+                }
+            })
         },
         mounted () {
             const _this = this
@@ -226,9 +244,8 @@
                 if (this.selectBar === null) {
                     this.selectBar = document.getElementById('selectBar')
                 }
-                this.selectBarHeight = this.selectBar.clientHeight
 
-                this.selectBar.style.setProperty('bottom', `${this.selectBarHeight - 10}px`)
+                this.selectBar.style.setProperty('bottom', '150px')
 
                 setTimeout(() => {
                     _this.barOpened = true
@@ -239,8 +256,7 @@
                     return
                 }
                 this.selectBar.style.setProperty('transition', 'none')
-                this.selectBarHeight = this.selectBar.clientHeight
-                this.selectBar.style.setProperty('bottom', `${this.selectBarHeight - 10}px`)
+                this.selectBar.style.setProperty('bottom', '150px')
 
                 const _this = this
 
