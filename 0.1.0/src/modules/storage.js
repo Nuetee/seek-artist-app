@@ -273,6 +273,20 @@ export async function getArtworkRepresentImage (target_id) {
     return await sendStorageRequest('image', 'artwork', 'represent', target_id)
 }
 
+// Get signed urls for exhibition's images
+// - target_id : exhibition's page_id
+// return an array of signed urls, or [] if the respond is not given successfully
+export async function getExhibitionImages (target_id) {
+    return await sendStorageRequest('image', 'exhibition', 'all', target_id)
+}
+
+// Get signed urls for exhibition's images
+// - target_id : exhibition's page_id
+// return an array of signed urls, or [] if the respond is not given successfully
+export async function getExhibitionThumbnailImage (target_id) {
+    return await sendStorageRequest('image', 'exhibition', 'thumbnail', target_id)
+}
+
 // Upload artwork's all images
 // - target_id : artwork's id
 // return the result of upload
