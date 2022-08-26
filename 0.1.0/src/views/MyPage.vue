@@ -54,8 +54,10 @@
                 </swiper>
             </div>
         </div>
+        <div ref="selectBar" id="selectBar">
+        </div>
         <SideBar :minimized="this.minimized"></SideBar>
-        <UploadButton></UploadButton>
+        <UploadButton @click="this.showSelectBar"></UploadButton>
         <Background :backgroundDisplayFlag="this.minimized" @click="this.popHistory">
         </Background>
     </div>
@@ -90,8 +92,12 @@
             return {
                 minimized: true,
                 user: null,
+                selectBar: null,
+                selectBarHeight: null,
+                barOpened: false,
                 profile: '',
                 loadFlag: false,
+                resizeFlag: true,
                 artworkIdList: [],
                 exhibitionIdList: [],
                 nothingToUpdate: false,
@@ -136,6 +142,8 @@
                 this.nothingToUpdate = true
             }
             this.loadFlag = true
+
+            window.addEventListener('resize', this.setSelectBarPosition)
         },
         mounted () {
             const _this = this
@@ -211,6 +219,38 @@
             popHistory() {
                 if (!this.minimized) {
                     window.history.back()
+                }
+            },
+            async showSelectBar() {
+                const _this = this
+                if (this.selectBar === null) {
+                    this.selectBar = document.getElementById('selectBar')
+                }
+                this.selectBarHeight = this.selectBar.clientHeight
+
+                this.selectBar.style.setProperty('bottom', `${this.selectBarHeight - 10}px`)
+
+                setTimeout(() => {
+                    _this.barOpened = true
+                }, 300)
+            },
+            setSelectBarPosition() {
+                if (this.barOpened === false) {
+                    return
+                }
+                this.selectBar.style.setProperty('transition', 'none')
+                this.selectBarHeight = this.selectBar.clientHeight
+                this.selectBar.style.setProperty('bottom', `${this.selectBarHeight - 10}px`)
+
+                const _this = this
+
+                if (this.resizeFlag) {
+                    this.resizeFlag = false
+
+                    setTimeout(() => {
+                        _this.selectBar.style.setProperty('transition', 'bottom 0.5s')
+                        _this.resizeFlag = true
+                    }, 300)
                 }
             },
             async rebuild(offset, length) {

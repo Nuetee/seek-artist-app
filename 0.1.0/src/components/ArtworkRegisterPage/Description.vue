@@ -1,9 +1,11 @@
 <template>
     <div id="description">
         <div class="background">
-            <textarea v-model="this.description" cols="auto" rows="auto"
+            <textarea v-if="this.isExhibition" v-model="this.description" cols="auto" rows="auto"
+                placeholder="전시에 대한 설명을 써주세요!"></textarea>
+            <textarea v-else v-model="this.description" cols="auto" rows="auto"
                 placeholder="500자를 넘어갈 경우, 나머지 설명은 팝업창으로 볼 수 있습니다."></textarea>
-            <div class="letterCount">{{ this.formValidCheck + '/500' }}</div>
+            <div v-if="!this.isExhibition" class="letterCount">{{ this.formValidCheck + '/500' }}</div>
         </div>
     </div>
 </template>
@@ -11,6 +13,12 @@
     export default {
         name: 'Description',
         components: {},
+        props: {
+            isExhibition: {
+                type: Boolean,
+                default: false
+            }
+        },
         data() {
             return {
                 description: '',
@@ -25,7 +33,9 @@
                 else {
                     if (this.description) {
                         this.$emit('activate-next-button', true)
-                        this.$emit('set-artwork-entity', 'description', this.description)
+                        (this.isExhibition)
+                            ? this.$emit('set-exhibition-entity', 'description', this.description)
+                            : this.$emit('set-artwork-entity', 'description', this.description)
                     }
                     else
                         this.$emit('activate-next-button', false)
@@ -50,7 +60,9 @@
                 else {
                     if (this.description) {
                         this.$emit('activate-next-button', true)
-                        this.$emit('set-artwork-entity', 'description', this.description)
+                        (this.isExhibition)
+                            ? this.$emit('set-exhibition-entity', 'description', this.description)
+                            : this.$emit('set-artwork-entity', 'description', this.description)
                     }
                     else
                         this.$emit('activate-next-button', false)

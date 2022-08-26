@@ -1,6 +1,7 @@
 <template>
     <div id="imageSelection">
-        <div>권장 비율 3 : 5</div>
+        <div v-if="this.isExhibition">대표 이미지를 올려주세요</div>
+        <div v-else>권장 비율 3 : 5</div>
         <input type="file" id="imageUpload" accept="image/*" multiple>
         <swiper v-bind="this.swiperOptions">
             <swiper-slide v-for="(image, i) in this.selectedImageFiles">
@@ -24,8 +25,8 @@
                 </label>
             </swiper-slide>
         </swiper>
-        <div v-show="this.selectedImageFiles.length">텍스트 색상</div>
-        <div class="textColorButtonContainer" v-show="this.selectedImageFiles.length">
+        <div v-show="!this.isExhibition && this.selectedImageFiles.length">텍스트 색상</div>
+        <div class="textColorButtonContainer" v-show="!this.isExhibition && this.selectedImageFiles.length">
             <input type="radio" v-model="this.textColor" name="textColor" id="black" value="black">
             <label for="black">
                 <svg v-if="this.textColor==='black'" width="18" height="13" viewBox="0 0 18 13" fill="none"
@@ -68,6 +69,11 @@
                 default: 'black'
             },
             artworkData: Object,
+            exhibitionData: Object,
+            isExhibition: {
+                type: Boolean,
+                default: false
+            }
         },
         data() {
             return {
@@ -112,7 +118,9 @@
                 await this.$nextTick()
                 if (this.selectedImageFiles.length > 0) {
                     this.$emit('activate-next-button', true)
-                    this.$emit('set-artwork-entity', 'images', this.selectedImageFiles)
+                    (this.isExhibition)
+                        ? this.$emit('set-exhibition-entity', 'images', this.selectedImageFiles)
+                        : this.$emit('set-artwork-entity', 'images', this.selectedImageFiles)
                     this.imageSelection.style.setProperty('padding', 0)
                 }
                 else {
