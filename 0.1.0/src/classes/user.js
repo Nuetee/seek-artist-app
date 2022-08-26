@@ -89,6 +89,20 @@ export class User {
         }
     }
 
+    getOwnExhibitions = async function (offset, limit) {
+        const { status, data } = await sendRequest('post', '/artist/exhibition', {
+            target_id : this.id,
+            offset : offset,
+            limit : limit
+        }) 
+        if (status < 500) {
+            return data[0].map(x => x.page_id)
+        }
+        else {
+            return []
+        }
+    }
+
     postArtwork = async function (name, year, dimension, three_dimensional, material, information, color) {
         if (name && year && dimension
             && material && information && color) {
