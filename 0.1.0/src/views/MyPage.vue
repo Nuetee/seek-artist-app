@@ -42,7 +42,8 @@
             <div class="tabBody">
                 <swiper v-bind="this.swiperOptions" @slideChange="this.slideChange">
                     <swiper-slide>
-                        <div></div>
+                        <ArtworkCardList v-if="this.loadFlag" :exhibitionIdList="this.exhibitionIdList">
+                        </ArtworkCardList>
                     </swiper-slide>
                     <swiper-slide>
                         <ArtworkCardList v-if="this.loadFlag" :artworkIdList="this.artworkIdList">
@@ -52,9 +53,6 @@
                     <div class="prevButton"></div>
                 </swiper>
             </div>
-            <!-- <div class="myArtwork">내 아트워크</div>
-            <ArtworkCardList v-if="this.loadFlag" :artworkIdList="this.artworkIdList">
-            </ArtworkCardList> -->
         </div>
         <SideBar :minimized="this.minimized"></SideBar>
         <UploadButton></UploadButton>
@@ -95,14 +93,15 @@
                 profile: '',
                 loadFlag: false,
                 artworkIdList: [],
+                exhibitionIdList: [],
                 nothingToUpdate: false,
                 updateInProgress: false,
 
-                tab_index: 1,
-                pre_activated_tab: 1,
+                tab_index: 0,
+                pre_activated_tab: 0,
 
                 swiperOptions: {
-                    initialSlide: 1,
+                    initialSlide: 0,
                     slidesPerView: 1,
                     loop: false,
                     centeredSlides: true,
@@ -216,8 +215,10 @@
             },
             async rebuild(offset, length) {
                 const newArtworkIdList = await this.user.getOwnArtworks(offset, length)
+                const newExhibitionIdList = await this.user.getOwnExhibitions(offset, length)
                 this.artworkIdList = this.artworkIdList.concat(newArtworkIdList)
-                if (newArtworkIdList.length < 12) {
+                this.exhibitionIdList = this.exhibitionIdList.concat(newExhibitionIdList)
+                if (newArtworkIdList.length < 12 && newExhibitionIdList.length < 12) {
                     this.nothingToUpdate = true
                 }
             },
