@@ -393,3 +393,110 @@ export async function putArtworkDirectory (target_id) {
 export async function deleteArtworkDirectory (target_id) {
     return await sendStorageDeleteDirectory('artwork', target_id)
 }
+
+// Upload exhibition's all images
+// - target_id : exhibition's id
+// return the result of upload
+export async function putExhibitionImages (target_id, files) {
+    if (!files) {
+        return false
+    }
+    const name_array = Array.from(
+            Array(files.length).keys()
+        ).map(x => String(x) + '.jpg')
+    return await sendStorageUpload('exhibition', target_id, name_array, files)
+}
+
+// Upload (or overwrite) exhibition's images for given indices
+// - target_id : exhibition's id
+// return the result of upload
+async function modifyExhibitionImages (target_id, indices, files) {
+    const name_array = indices.map(x => String(x) + '.jpg')
+    return await sendStorageUpload('exhibition', target_id, name_array, files)
+}
+
+// Update exhibition's images
+// - original_length : length of original image list
+// - mapping_array : list of mapped index for new image list
+// ex. [0, 1, 2, 3] -> [1, null, 3, null, null]
+// - target_id : exhibition's id
+// return the result of upload
+export async function updateExhibitionImages (target_id, original_length, mapping_array, files) {
+    if (!files) {
+        return false
+    }
+    const src_indices = []
+    const dst_indices = []
+    const new_indices = []
+    const new_length = mapping_array.length
+
+    for (let i = 0 ; i < mapping_array.length ; i++) {
+        const index = mapping_array[i]
+        if (index !== null) {
+            if (index < original_length) {
+                src_indices.push(index)
+                dst_indices.push(i)
+            }
+            else {
+                return false
+            }
+        }
+        else {
+            new_indices.push(i)
+        }
+    }
+
+    let copy_result = true 
+    if (src_indices.length > 0) {
+        copy_result = await sendStorageCopy('exhibition', target_id, src_indices, dst_indices)
+    }
+    if (copy_result) {
+        let modify_result = true
+        if (files.length > 0) {
+            modify_result = await modifyExhibitionImages(target_id, new_indices, files)
+        }
+        if (modify_result) {
+            if (new_length < original_length) {
+                for (let j = original_length - 1 ; j > new_length - 1 ; j--) {
+                    const delete_result = await sendStorageDelete('exhibition', target_id, [String(j) + '.jpg'])
+                    if (!delete_result) {
+                        return false
+                    }
+                }
+            }
+            return true
+        }
+    }
+    return false
+}
+
+// Upload exhibition's thumbnail (representative) image
+// - target_id : exhibition's id
+// return the result of upload
+export async function putExhibitionThumbnailImage (target_id, file) {
+    if (!file) {
+        return false
+    }
+    return await sendStorageUpload('exhibition', target_id, ['thumbnail/thumbnail.jpg'], [file])
+}
+
+// Delete exhibition's thumbnail (representative) image
+// - target_id : exhibition's id
+// return the result of upload
+export async function deleteExhibitionThumbnailImage (target_id) {
+    return await sendStorageDelete('exhibition', target_id, ['thumbnail/thumbnail.jpg'])
+}
+
+// Create exhibition's directory
+// - target_id : exhibition's id
+// return the result of upload
+export async function putExhibitionDirectory (target_id) {
+    return await sendStoragePutDirectory('exhibition', target_id)
+}
+
+// Delete exhibition's directory
+// - target_id : exhibition's id
+// return the result of upload
+export async function deleteExhibitionDirectory (target_id) {
+    return await sendStorageDeleteDirectory('exhibition', target_id)
+}
