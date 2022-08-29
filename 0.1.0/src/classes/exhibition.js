@@ -103,4 +103,30 @@ export class Exhibition {
         return this.artwork_list
     }
 
+    deletePreExhibition = async function () {
+        const { status, data } = await sendRequest('delete', '/exhibition', {
+            registered : false,
+            target_id : this.page_id
+        })
+        if (status < 500) {
+            return data
+        }
+        else {
+            return false
+        }
+    }
+
+    deleteExhibition = async function () {
+        const { status, data } = await sendRequest('delete', '/exhibition', {
+            registered : true,
+            target_id : this.page_id
+        })
+        if (status < 500) {
+            return data
+        }
+        else {
+            return false
+        }
+    }
+
 }

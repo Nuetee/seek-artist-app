@@ -13,6 +13,7 @@ import { authByToken } from '@/modules/kakao'
 import MyPage from '../views/MyPage.vue'
 import ArtworkRegisterPage from '../views/ArtworkRegisterPage.vue'
 import ArtworkModifyPage from '../views/ArtworkModifyPage.vue'
+import ExhibitionRegisterPage from '../views/ExhibitionRegisterPage.vue'
 import ProfileModifyPage from '../views/ProfileModifyPage.vue'
 
 const routes = [
@@ -25,6 +26,11 @@ const routes = [
     path: '/artwork-register',
     name: 'artworkRegisterPage',
     component: ArtworkRegisterPage
+  },
+  {
+    path: '/exhibition-register',
+    name: 'exhibitionRegisterPage',
+    component: ExhibitionRegisterPage
   },
   {
     path: '/artwork-modify',
@@ -60,6 +66,7 @@ const guard_path = [
   '/',
   '/artwork-modify',
   '/artwork-register',
+  '/exhibition-register',
   '/profile-modify'
 ]
 

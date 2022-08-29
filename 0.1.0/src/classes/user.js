@@ -123,6 +123,20 @@ export class User {
         return null
     }
 
+    postExhibition = async function (name, information) {
+        if (name && information && color) {
+            const { status, data } = await sendRequest('post', '/exhibition', {
+                owner_id : this.id,
+                name : name,
+                information : information
+            })
+            if (status < 500) {
+                return data.page_id
+            }
+        }
+        return null
+    }
+
     putUserData = async function (target, value) {
         const { status, data } = await sendRequest('put', '/artist/' + target, {
             target_id : this.id,
