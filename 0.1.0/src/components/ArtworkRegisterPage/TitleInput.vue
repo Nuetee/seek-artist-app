@@ -45,23 +45,19 @@
                 immediate: true
             }
         },
-        beforeCreate() {},
-        created() {},
-        beforeMount() {},
-        mounted() {},
-        beforeUpdate() {},
-        updated() {},
-        beforeUnmount() {},
-        unmounted() {},
         methods: {
             async formValidCheck () {
                 await this.$nextTick()
 
                 if (this.title.length > 0) {
                     this.$emit('activate-next-button', true)
-                    (this.isExhibition) 
-                        ? this.$emit('set-exhibition-entity', 'title', this.title)
-                        : this.$emit('set-artwork-entity', 'title', this.title)
+                    
+                    if (this.isExhibition) {
+                        this.$emit('set-exhibition-entity', 'title', this.title)
+                    }
+                    else {
+                        this.$emit('set-artwork-entity', 'title', this.title)
+                    }
                 }
                 else {
                     this.$emit('activate-next-button', false)

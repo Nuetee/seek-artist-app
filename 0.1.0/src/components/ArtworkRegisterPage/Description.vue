@@ -33,9 +33,13 @@
                 else {
                     if (this.description) {
                         this.$emit('activate-next-button', true)
-                        (this.isExhibition)
-                            ? this.$emit('set-exhibition-entity', 'description', this.description)
-                            : this.$emit('set-artwork-entity', 'description', this.description)
+                        
+                        if (this.isExhibition) {
+                            this.$emit('set-exhibition-entity', 'description', this.description)
+                        }
+                        else {
+                            this.$emit('set-artwork-entity', 'description', this.description)
+                        }
                     }
                     else
                         this.$emit('activate-next-button', false)
@@ -60,9 +64,13 @@
                 else {
                     if (this.description) {
                         this.$emit('activate-next-button', true)
-                        (this.isExhibition)
-                            ? this.$emit('set-exhibition-entity', 'description', this.description)
-                            : this.$emit('set-artwork-entity', 'description', this.description)
+                        
+                        if (this.isExhibition) {
+                            this.$emit('set-exhibition-entity', 'description', this.description)
+                        }
+                        else {
+                            this.$emit('set-artwork-entity', 'description', this.description)
+                        }
                     }
                     else
                         this.$emit('activate-next-button', false)

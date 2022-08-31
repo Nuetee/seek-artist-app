@@ -118,9 +118,14 @@
                 await this.$nextTick()
                 if (this.selectedImageFiles.length > 0) {
                     this.$emit('activate-next-button', true)
-                    (this.isExhibition)
-                        ? this.$emit('set-exhibition-entity', 'images', this.selectedImageFiles)
-                        : this.$emit('set-artwork-entity', 'images', this.selectedImageFiles)
+                    
+                    if (this.isExhibition) {
+                        this.$emit('set-exhibition-entity', 'images', this.selectedImageFiles)
+                    }
+                    else {
+                        this.$emit('set-artwork-entity', 'images', this.selectedImageFiles)
+                    }
+                    
                     this.imageSelection.style.setProperty('padding', 0)
                 }
                 else {
