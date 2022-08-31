@@ -125,7 +125,7 @@
                     else {
                         this.$emit('set-artwork-entity', 'images', this.selectedImageFiles)
                     }
-                    
+
                     this.imageSelection.style.setProperty('padding', 0)
                 }
                 else {

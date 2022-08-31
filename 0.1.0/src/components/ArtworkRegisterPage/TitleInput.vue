@@ -2,22 +2,13 @@
     <div id="titleInput">
         <div>
             <textarea 
-                v-if="this.isExhibition"
                 v-model="this.title" 
                 name="title" 
                 id="title" 
                 cols="30" 
                 rows="1" 
-                placeholder="전시명을 입력하세요">
-            </textarea>
-            <textarea 
-                v-else 
-                v-model="this.title" 
-                name="title" 
-                id="title" 
-                cols="30" 
-                rows="1" 
-                placeholder="작품명을 입력하세요">
+                :placeholder="(this.isExhibition)? '전시명을 입력하세요' :  '작품명을 입력하세요'"
+                @keydown="this.preventTab($event)">
             </textarea>
         </div>
     </div>
@@ -61,6 +52,11 @@
                 }
                 else {
                     this.$emit('activate-next-button', false)
+                }
+            },
+            preventTab (event) {
+                if (event.keyCode === 9) {
+                    event.preventDefault()
                 }
             }
         }

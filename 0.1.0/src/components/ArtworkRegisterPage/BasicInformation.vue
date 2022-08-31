@@ -42,7 +42,7 @@
         <div class="manufacturedDate">
             <div class="label">제작연도</div>
             <div class="background poppins">
-                <input class="input" placeholder="2022" type="number" min="0" v-model="this.year" />
+                <input class="input" placeholder="2022" type="number" min="0" v-model="this.year" @keydown="this.preventTab($event)" />
             </div>
         </div>
     </div>
@@ -89,6 +89,11 @@ export default {
             }
             else {
                 this.$emit('activate-next-button', false)
+            }
+        },
+        preventTab (event) {
+            if (event.keyCode === 9) {
+                event.preventDefault()
             }
         }
     }
