@@ -1,6 +1,6 @@
 <template>
     <div class="artworkCard" v-if="this.loadFlag" @click="this.redirectMain">
-        <ArtworkImageContainer :is-artwork="this.is_artwork" :image-src="this.cardImage" :order="this.order"></ArtworkImageContainer>
+        <ArtworkImageContainer :isArtwork="this.is_artwork" :image-src="this.cardImage" :order="this.order"></ArtworkImageContainer>
         <ArtworkInfo :exhibition="this.exhibition" :artwork="this.artwork"></ArtworkInfo>
     </div>
 </template>
