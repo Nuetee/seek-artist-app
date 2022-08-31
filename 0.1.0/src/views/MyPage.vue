@@ -112,11 +112,11 @@
                 nothingToUpdate: false,
                 updateInProgress: false,
 
-                tab_index: 0,
-                pre_activated_tab: 0,
+                tab_index: 1,
+                pre_activated_tab: 1,
 
                 swiperOptions: {
-                    initialSlide: 0,
+                    initialSlide: 1,
                     slidesPerView: 1,
                     loop: false,
                     centeredSlides: true,
@@ -155,6 +155,7 @@
             window.addEventListener('resize', this.setSelectBarPosition)
             document.getElementById('myPage').addEventListener('click', (e)=> {
                 if (_this.$refs.selectBar !== undefined 
+                    && _this.$refs.selectBar !== null
                     && _this.$refs.selectBar.contains(e.target) === false) {
                     if (_this.barOpened) {
                         _this.selectBar.style.setProperty('bottom', '0')
@@ -245,7 +246,7 @@
                     this.selectBar = document.getElementById('selectBar')
                 }
 
-                this.selectBar.style.setProperty('bottom', '150px')
+                this.selectBar.style.setProperty('bottom', '200px')
 
                 setTimeout(() => {
                     _this.barOpened = true
@@ -256,7 +257,7 @@
                     return
                 }
                 this.selectBar.style.setProperty('transition', 'none')
-                this.selectBar.style.setProperty('bottom', '150px')
+                this.selectBar.style.setProperty('bottom', '200px')
 
                 const _this = this
 
