@@ -40,7 +40,7 @@
                     </div>
                 </div>
                 <div class="bottom">
-                    <div class="artist">{{ this.artwork.getArtist().nickname }}</div>
+                    <div class="artist">{{ this.artwork.getArtistName() }}</div>
                     <div class="snsLink" v-if="this.artwork.getArtist().getSNS() !== ''">
                         <a :href="this.artwork.getArtist().getSNS()">
                             <svg width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -224,6 +224,7 @@
             window.addEventListener('resize', this.setCommentBarPosition)
 
             let artwork = await new Artwork(this.id).init()
+            await artwork.initializePage()
             
             this.artwork = artwork
             
