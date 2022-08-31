@@ -165,4 +165,11 @@
         scrollbar-width: none;
         /* Firefox */
     }
+
+    #selectBar::-webkit-scrollbar {
+        display: none;
+        height: 0;
+        background: transparent;
+        -webkit-appearance: none;
+    }
 }
