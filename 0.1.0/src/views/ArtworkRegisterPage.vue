@@ -19,10 +19,12 @@
             </div>
         </div>
         <div class="bottom">
-            <swiper v-bind="this.swiperOptions" Change="this.slideChange">
+            <swiper v-bind="this.swiperOptions" @slideChange="this.slideChange">
                 <swiper-slide>
-                    <TitleInput ref="titleInput" @activate-next-button="this.activateNextButton"
-                        @set-artwork-entity="this.setArtworkEntity"></TitleInput>
+                    <TitleInput ref="titleInput"
+                        @activate-next-button="this.activateNextButton"
+                        @set-artwork-entity="this.setArtworkEntity"
+                        :isExhibition="false"></TitleInput>
                 </swiper-slide>
                 <swiper-slide>
                     <ImageSelection ref="imageSelection" @activate-next-button="this.activateNextButton"
