@@ -1,5 +1,8 @@
 <template>
-    <div :class="[this.order, 'artworkImageContainer']">
+    <div v-if="this.isArtwork" :class="[this.order, 'artworkImageContainer']">
+        <img v-show="!this.firstResize" :src="this.imageSrc" :style="this.artworkImageStyle">
+    </div>
+    <div v-else :class="[this.order, 'exhibitionImageContainer']">
         <img v-show="!this.firstResize" :src="this.imageSrc" :style="this.artworkImageStyle">
     </div>
 </template>
@@ -10,7 +13,11 @@
         name: 'ArtworkImageContainer',
         props: {
             order: String,
-            imageSrc: String
+            imageSrc: String,
+            isArtwork: {
+                type: Boolean,
+                default: true
+            }
         },
         data() {
             return {
@@ -33,17 +40,21 @@
             observer.observe(artworkImageContainer, {box : 'content-box'});
         },
         methods: {
-            loaded(event) {
+            loaded (event) {
                 console.log(event)
             },
             async setArtworkImageStyle (ratio) {
                 if (this.firstResize) {
                     this.firstResize = false;
-                    let artworkImageContainer = document.getElementsByClassName(this.order)[0]
-                    setTimeout(function () {
+
+                    if (this.isArtwork) {
+                        let artworkImageContainer = document.getElementsByClassName(this.order + ' artworkImageContainer')[0]
                         artworkImageContainer.style.opacity = 1
-                    }, 100)
-                    
+                    }
+                    else {
+                        let exhibitionImageContainer = document.getElementsByClassName(this.order + ' exhibitionImageContainer')[0]
+                        exhibitionImageContainer.style.opacity = 1
+                    }
                 }
                 this.artworkImageStyle = await cropImage(this.imageSrc, ratio)
             },
