@@ -107,6 +107,10 @@
                 registerPopupFlag: false
             };
         },
+        beforeCreate() {
+            alert('전시 등록 기능은 추후에 제공될 예정입니다.')
+            this.$router.replace('/')
+        },
         mounted() {
             this.navigationButtons.push(document.getElementsByClassName('previous')[0])
             this.navigationButtons.push(document.getElementsByClassName('next')[0])
