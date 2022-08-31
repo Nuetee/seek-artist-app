@@ -28,7 +28,8 @@
                 </swiper-slide>
                 <swiper-slide>
                     <ImageSelection ref="imageSelection" @activate-next-button="this.activateNextButton"
-                        @set-artwork-entity="this.setArtworkEntity" :artworkData="this.newArtwork"></ImageSelection>
+                        @set-artwork-entity="this.setArtworkEntity" :artworkData="this.newArtwork"
+                        :originalImageFiles="[]"></ImageSelection>
                 </swiper-slide>
                 <swiper-slide>
                     <BasicInformation ref="basicInformation" @activate-next-button="this.activateNextButton"
