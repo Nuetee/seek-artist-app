@@ -35,8 +35,16 @@
                     await _this.setArtworkImageStyle(ratio)
                 }
             })
+            
+            let class_name
+            if (this.isArtwork) {
+                class_name = this.order + ' ' +'artworkImageContainer'
+            }
+            else {
+                class_name = this.order + ' ' +'exhibitionImageContainer'
+            }
 
-            let artworkImageContainer = document.getElementsByClassName(this.order)[0]
+            let artworkImageContainer = document.getElementsByClassName(class_name)[0]
             observer.observe(artworkImageContainer, {box : 'content-box'});
         },
         methods: {

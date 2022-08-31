@@ -9,7 +9,7 @@
     margin-bottom: calc(var(--vw, 1vw) * 2);
     z-index: 0;
 
-    ::v-deep(.artworkImageContainer) {
+    ::v-deep(.artworkImageContainer), ::v-deep(.exhibitionImageContainer) {
         border: none;
         width: 100%;
         height: calc(var(--vw, 1vw) * 43);
