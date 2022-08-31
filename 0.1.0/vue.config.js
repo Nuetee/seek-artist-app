@@ -24,6 +24,12 @@ module.exports = defineConfig({
       overlay: false
     }
   },
+  pwa: {
+    name: 'seek for artist',
+    workboxOptions: {
+      exclude: ['_redirects']
+    }
+  },
   productionSourceMap: process.env.NODE_ENV === 'production'
     ? false
     : true,
