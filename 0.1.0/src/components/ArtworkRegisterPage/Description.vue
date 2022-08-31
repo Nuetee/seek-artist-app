@@ -1,10 +1,9 @@
 <template>
     <div id="description">
         <div class="background">
-            <textarea v-if="this.isExhibition" v-model="this.description" cols="auto" rows="auto"
-                placeholder="전시에 대한 설명을 써주세요!"></textarea>
-            <textarea v-else v-model="this.description" cols="auto" rows="auto"
-                placeholder="500자를 넘어갈 경우, 나머지 설명은 팝업창으로 볼 수 있습니다."></textarea>
+            <textarea v-model="this.description" cols="auto" rows="auto"
+                :placeholder="(this.isExhibition) ? '전시에 대한 설명을 써주세요!' : '500자를 넘어갈 경우, 나머지 설명은 팝업창으로 볼 수 있습니다.'"
+                @keydown="this.preventTab($event)"></textarea>
             <div v-if="!this.isExhibition" class="letterCount">{{ this.formValidCheck + '/500' }}</div>
         </div>
     </div>
@@ -48,14 +47,6 @@
                 return this.description.length
             }
         },
-        beforeCreate() {},
-        created() {},
-        beforeMount() {},
-        mounted() {},
-        beforeUpdate() {},
-        updated() {},
-        beforeUnmount() {},
-        unmounted() {},
         methods: {
             descriptionValidCheck () {
                 if (this.isFirst) {
@@ -74,6 +65,11 @@
                     }
                     else
                         this.$emit('activate-next-button', false)
+                }
+            },
+            preventTab (event) {
+                if (event.keyCode === 9) {
+                    event.preventDefault()
                 }
             }
         }
