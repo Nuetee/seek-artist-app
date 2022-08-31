@@ -1,6 +1,6 @@
 <template>
     <div class="artworkCard" v-if="this.loadFlag" @click="this.redirectMain">
-        <ArtworkImageContainer :image-src="this.cardImage" :order="this.order"></ArtworkImageContainer>
+        <ArtworkImageContainer :is-artwork="this.is_artwork" :image-src="this.cardImage" :order="this.order"></ArtworkImageContainer>
         <ArtworkInfo :exhibition="this.exhibition" :artwork="this.artwork"></ArtworkInfo>
     </div>
 </template>
@@ -32,6 +32,7 @@
                 artwork: null,
                 artworkInfo: null,
                 exhibition: null,
+                is_artwork: true,
                 cardImage: '',
                 loadFlag: false
             };
@@ -43,7 +44,8 @@
                 this.artwork = artwork
                 this.cardImage = await this.artwork.getThumbnailImage()
             }
-            else if(this.exhibitionId){
+            else if (this.exhibitionId){
+                this.is_artwork = false
                 const exhibition = await new Exhibition(this.exhibitionId).init()
                 this.exhibition = exhibition
                 this.cardImage = await this.exhibition.getThumbnailImage()
