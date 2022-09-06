@@ -1,7 +1,6 @@
 <template>
-    <div id="imageSelection">
-        <div v-if="this.isExhibition">대표 이미지를 올려주세요</div>
-        <div v-else>권장 비율 3 : 5</div>
+    <div id="imageSelection" :class="this.isExhibition ? 'exhibitionImageSelection' : ''">
+        <div v-if="!this.isExhibition">권장 비율 3 : 5</div>
         <input type="file" id="imageUpload" accept="image/*" multiple>
         <swiper v-bind="this.swiperOptions">
             <swiper-slide v-for="(image, i) in this.selectedImageFiles">
@@ -14,9 +13,10 @@
                     <path d="M5.79999 9H12.2" :stroke="this.textColor" stroke-width="1.3" stroke-linecap="round"
                         stroke-linejoin="round" />
                 </svg>
-                <Preview :textColor="this.textColor" :title="this.artworkData.title" :image="image"></Preview>
+                <Preview v-if="!this.isExhibition" :textColor="this.textColor" :title="this.artworkData.title" :image="image"></Preview>
+                <ExhibitionPreview v-else :image="image"></ExhibitionPreview>
             </swiper-slide>
-            <swiper-slide>
+            <swiper-slide v-if="!this.isExhibition || !this.selectedImageFiles.length">
                 <label for="imageUpload">
                     <svg class="plusIcon" width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M26 2V50" stroke="#959595" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -51,13 +51,15 @@
     import { Swiper, SwiperSlide } from 'swiper/vue';
     import 'swiper/css';
     import Preview from './Preview.vue';
+    import ExhibitionPreview from '@/components/ExhibitionPage/ExhibitionPreview.vue'
 
     export default {
         name: 'ImageSelection',
         components: {
             Swiper,
             SwiperSlide,
-            Preview
+            Preview,
+            ExhibitionPreview
         },
         props: {
             originalImageFiles: {
@@ -83,7 +85,7 @@
                 textColor: 'black',
                 swiperOptions: {
                     slidesPerView: 'auto',
-                    spaceBetween: 20,
+                    spaceBetween: this.isExhibition ? 0 : 20,
                     loop: false,
                     centerInsufficientSlides: true,
                     allowTouchMove: true,
@@ -138,6 +140,12 @@
                 const selectedfiles = this.imageUpload.files
                 let fileLength = selectedfiles.length
 
+                if (this.isExhibition && fileLength > 1) {
+                    alert("포스터 이미지는 한장만 선택 가능합니다.")
+                    while(selectedfiles.length == 1) {
+                        selectedfiles.pop()
+                    }
+                }
                 for (let i = 0; i < fileLength; i++) {
                     let imageFile = new Object()
                     imageFile = selectedfiles[i]
