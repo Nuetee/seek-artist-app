@@ -32,6 +32,9 @@
                     <Description :isExhibition="true" ref="description" @activate-next-button="this.activateNextButton"
                         @set-exhibition-entity="this.setExhibitionEntity"></Description>
                 </swiper-slide>
+                <swiper-slide>
+                    <LinkUpload></LinkUpload>
+                </swiper-slide>
                 <button class="next"></button>
                 <button class="previous"></button>
             </swiper>
@@ -49,6 +52,7 @@
     import TitleInput from '@/components/ArtworkRegisterPage/TitleInput.vue';
     import ImageSelection from '@/widgets/ImageSelection.vue';
     import Description from '@/components/ArtworkRegisterPage/Description.vue';
+    import LinkUpload from '@/components/ExhibitionPage/LinkUpload.vue';
     import Background from '@/widgets/Background.vue';
     
     import { getAuth } from '@/modules/auth';
@@ -77,6 +81,7 @@
             ImageSelection,
             Description,
             Background,
+            LinkUpload
         },
         data() {
             return {
@@ -107,10 +112,6 @@
                 registerPopupFlag: false
             };
         },
-        beforeCreate() {
-            alert('전시 등록 기능은 추후에 제공될 예정입니다.')
-            this.$router.replace('/')
-        },
         mounted() {
             this.navigationButtons.push(document.getElementsByClassName('previous')[0])
             this.navigationButtons.push(document.getElementsByClassName('next')[0])
@@ -121,7 +122,7 @@
             back () {
                 this.$router.replace('/')
             },
-            /*
+            /**
             * - "다음" 또는 "<(이전)" 버튼을 누르면 활성화 되는 함수
             * - buttonIndex를 parameter로 받는다. "<"버튼은 buttonIndex == 0, "다음" 버튼은 buttonIndex == 1.
             * 1. "<" 또는 "다음" 버튼을 눌렀을 때, 실제 swiperNavigation이 binding 돼 있는 버튼의 click 이벤트를 발생시킨다.
@@ -131,7 +132,7 @@
             */
             swiperNavigation (buttonIndex) {
                 if (buttonIndex === 1) {
-                    if (this.swiperIndex === 2) {
+                    if (this.swiperIndex === 3) {
                         this.registerPopupFlag = true
                         return
                     }
@@ -143,7 +144,7 @@
                 }
                 this.navigationButtons[buttonIndex].click()
             },
-            /*
+            /**
             * - 작품 등록을 완료시키는 함수.
             * 1. 완료버튼이 비활성화 된 상태인 경우 등록을 하지 않고 return.
             * 2. 등록할 exhibition의 정보를 담고있는 Object newExhibition에 정보들이 누락되지 않았는지 검사하여 result에 저장.
