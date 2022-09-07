@@ -27,16 +27,19 @@
                         :isExhibition="false"></TitleInput>
                 </swiper-slide>
                 <swiper-slide>
-                    <ImageSelection ref="imageSelection" @activate-next-button="this.activateNextButton"
+                    <ImageSelection ref="imageSelection" 
+                        @activate-next-button="this.activateNextButton"
                         @set-artwork-entity="this.setArtworkEntity" :artworkData="this.newArtwork"
                         :originalImageFiles="[]"></ImageSelection>
                 </swiper-slide>
                 <swiper-slide>
-                    <BasicInformation ref="basicInformation" @activate-next-button="this.activateNextButton"
+                    <BasicInformation ref="basicInformation" 
+                        @activate-next-button="this.activateNextButton"
                         @set-artwork-entity="this.setArtworkEntity"></BasicInformation>
                 </swiper-slide>
                 <swiper-slide>
-                    <Description ref="description" @activate-next-button="this.activateNextButton"
+                    <Description ref="description" 
+                        @activate-next-button="this.activateNextButton"
                         @set-artwork-entity="this.setArtworkEntity"></Description>
                 </swiper-slide>
                 <button class="next"></button>

@@ -4,7 +4,7 @@
             <textarea v-model="this.description" cols="auto" rows="auto"
                 :placeholder="(this.isExhibition) ? '전시에 대한 설명을 써주세요!' : '500자를 넘어갈 경우, 나머지 설명은 팝업창으로 볼 수 있습니다.'"
                 @keydown="this.preventTab($event)"></textarea>
-            <div v-if="!this.isExhibition" class="letterCount">{{ this.formValidCheck + '/500' }}</div>
+            <div v-show="!this.isExhibition" class="letterCount">{{ this.formValidCheck + '/500' }}</div>
         </div>
     </div>
 </template>
@@ -45,6 +45,11 @@
                 }
 
                 return this.description.length
+            }
+        },
+        mounted () {
+            if (this.isExhibition) {
+                this.isFirst = false
             }
         },
         methods: {
