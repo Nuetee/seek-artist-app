@@ -1,6 +1,6 @@
 <template>
     <div class="exhibitionPreview">
-        <img v-show="this.imageStyle" :src="this.image.src" ref="posterImage">
+        <img :src="this.image.src" ref="posterImage">
     </div>
 </template>
 <script>
@@ -10,7 +10,7 @@
         components: {},
         props: {
             image: {
-                type: String,
+                type: Object,
                 default: null
             }
         },

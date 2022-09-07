@@ -1,0 +1,52 @@
+#linkUpload {
+    > div {
+        margin-top: calc(var(--vw, 1vw) * 12);
+        padding-bottom: calc(var(--vw, 1vw) * 8);
+
+        .title {
+            width: 100%;
+            text-align: left;
+            font-weight: 500;
+            font-size: 15px;
+            line-height: 22px;
+            letter-spacing: -0.06em;
+        
+            color: #000000;
+        }
+
+        .body {
+            > * {
+                margin-top: calc(var(--vw, 1vw) * 3);
+                margin-bottom: calc(var(--vw, 1vw) * 3);
+            }
+
+            input {
+                border: none;
+                border-radius: calc(var(--vw, 1vw) * 2.5);
+                background-color: #F5F5F5;
+                width: 100%;
+                height: calc(var(--vw, 1vw) * 12);
+                text-align: center;
+            
+                &::placeholder {
+                    color: #959595;
+                }
+            }
+
+            .link_addition {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 500;
+                font-size: 16px;
+                line-height: 115%;
+                letter-spacing: -0.04em;
+                color: #959595;
+            }
+        }
+    }
+
+    .goodsLinkContainer {
+        border-bottom: 1px solid #AEAEAE;
+    }
+}
