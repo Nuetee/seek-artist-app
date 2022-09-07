@@ -42,7 +42,6 @@
             showUploadOptions() {
                 let upload_button_height = document.defaultView.getComputedStyle(this.$refs.uploadButton).getPropertyValue('height').replace("px", "")
                 let border_radius = document.defaultView.getComputedStyle(this.$refs.uploadButton).getPropertyValue('border-radius').replace("px", "")
-                console.log(border_radius)
 
                 let height_parameter = 2.5
                 let border_parameter = 1.25

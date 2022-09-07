@@ -1,10 +1,17 @@
 <template>
     <div id="imageSelection" :class="this.isExhibition ? 'exhibitionImageSelection' : ''">
-        <div v-if="!this.isExhibition">권장 비율 3 : 5</div>
+        <div v-if="!this.isExhibition">
+            권장 비율 3 : 5
+        </div>
         <input type="file" id="imageUpload" accept="image/*" multiple>
         <swiper v-bind="this.swiperOptions">
             <swiper-slide v-for="(image, i) in this.selectedImageFiles">
-                <div class="thumbnail poppins" v-if="i===0" :style="'color: ' + this.textColor">Main</div>
+                <div class="thumbnail poppins"
+                    v-if="i===0"
+                    :style="'color: ' + this.textColor"
+                >
+                    Main
+                </div>
                 <svg @click="this.deleteImageSlide(i)" width="18" height="18" viewBox="0 0 18 18" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -132,7 +139,7 @@
                 }
                 else {
                     this.$emit('activate-next-button', false)
-                    let padding = window.innerWidth/5
+                    let padding = window.innerWidth / 5
                     this.imageSelection.style.setProperty('padding-bottom', `${padding}px`)
                 }
             },

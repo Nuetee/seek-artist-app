@@ -25,11 +25,13 @@
                         @set-exhibition-entity="this.setExhibitionEntity"></TitleInput>
                 </swiper-slide>
                 <swiper-slide>
-                    <ImageSelection :isExhibition="true" ref="imageSelection" @activate-next-button="this.activateNextButton"
+                    <ImageSelection :isExhibition="true" ref="imageSelection" 
+                        @activate-next-button="this.activateNextButton"
                         @set-exhibition-entity="this.setExhibitionEntity" :exhibitionData="this.newExhibition"></ImageSelection>
                 </swiper-slide>
                 <swiper-slide>
-                    <Description :isExhibition="true" ref="description" @activate-next-button="this.activateNextButton"
+                    <Description :isExhibition="true" ref="description" 
+                        @activate-next-button="this.activateNextButton"
                         @set-exhibition-entity="this.setExhibitionEntity"></Description>
                 </swiper-slide>
                 <swiper-slide>
@@ -85,14 +87,16 @@
         },
         data() {
             return {
-                presentStep: ['전시명 입력', '대표 이미지 선택', '전시 설명 입력'],
+                presentStep: ['전시명 입력', '대표 이미지 선택', '전시 설명 입력', '링크 업로드'],
                 swiperIndex: 0,
                 navigationButtons: [],
                 fontColor: '#959595;',
                 newExhibition: {
                     title: null,
                     images: null,
-                    description: null
+                    description: null,
+                    goodsLink: null,
+                    videoLink: null,
                 },
                 swiperOptions: {
                     slidesPerView: 1,
@@ -238,8 +242,8 @@
                     case 2:
                         this.$refs.description.descriptionValidCheck()
                         break
-                    // case 4:
-                    //     await this.$refs.textColorSelection.formValidCheck()
+                    // case 3:
+                    //     await this.$refs.linkUpload.formValidCheck()
                     //     break 
                 }
             },
@@ -250,7 +254,7 @@
             */
             activateNextButton (isActive) {
                 this.navigationButtons[1].disabled = !isActive
-
+                
                 if (isActive) {
                     this.fontColor = '#000000'
                 }
@@ -272,6 +276,12 @@
                         break
                     case 'description':
                         this.newExhibition.description = value
+                    case 'goods_link': {
+                        this.newExhibition.goodsLink = value
+                    }
+                    case 'video_link': {
+                        this.newExhibition.videoLink = value
+                    }
                 }
             }
         }

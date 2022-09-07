@@ -56,7 +56,7 @@
         </div>
         <SideBar :minimized="this.minimized"></SideBar>
         <UploadButton></UploadButton>
-        <Background :backgroundDisplayFlag="this.minimized && !this.barOpened" @click="this.popHistory">
+        <Background :backgroundDisplayFlag="this.minimized" @click="this.popHistory">
         </Background>
     </div>
 </template>

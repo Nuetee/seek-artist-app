@@ -131,8 +131,9 @@
 
 .exhibitionImageSelection {
     padding-bottom: 0 !important;
+    
     .thumbnail {
-        display: none;
+        display: none !important;
     }
 
     ::v-deep(.swiper) {
