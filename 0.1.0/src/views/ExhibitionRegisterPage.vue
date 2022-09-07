@@ -25,12 +25,17 @@
                         @set-exhibition-entity="this.setExhibitionEntity"></TitleInput>
                 </swiper-slide>
                 <swiper-slide>
-                    <ImageSelection :isExhibition="true" ref="imageSelection" @activate-next-button="this.activateNextButton"
+                    <ImageSelection :isExhibition="true" ref="imageSelection" 
+                        @activate-next-button="this.activateNextButton"
                         @set-exhibition-entity="this.setExhibitionEntity" :exhibitionData="this.newExhibition"></ImageSelection>
                 </swiper-slide>
                 <swiper-slide>
-                    <Description :isExhibition="true" ref="description" @activate-next-button="this.activateNextButton"
+                    <Description :isExhibition="true" ref="description" 
+                        @activate-next-button="this.activateNextButton"
                         @set-exhibition-entity="this.setExhibitionEntity"></Description>
+                </swiper-slide>
+                <swiper-slide>
+                    <LinkUpload></LinkUpload>
                 </swiper-slide>
                 <button class="next"></button>
                 <button class="previous"></button>
@@ -49,6 +54,7 @@
     import TitleInput from '@/components/ArtworkRegisterPage/TitleInput.vue';
     import ImageSelection from '@/widgets/ImageSelection.vue';
     import Description from '@/components/ArtworkRegisterPage/Description.vue';
+    import LinkUpload from '@/components/ExhibitionPage/LinkUpload.vue';
     import Background from '@/widgets/Background.vue';
     
     import { getAuth } from '@/modules/auth';
@@ -77,17 +83,20 @@
             ImageSelection,
             Description,
             Background,
+            LinkUpload
         },
         data() {
             return {
-                presentStep: ['전시명 입력', '대표 이미지 선택', '전시 설명 입력'],
+                presentStep: ['전시명 입력', '대표 이미지 선택', '전시 설명 입력', '링크 업로드'],
                 swiperIndex: 0,
                 navigationButtons: [],
                 fontColor: '#959595;',
                 newExhibition: {
                     title: null,
                     images: null,
-                    description: null
+                    description: null,
+                    goodsLink: null,
+                    videoLink: null,
                 },
                 swiperOptions: {
                     slidesPerView: 1,
@@ -107,10 +116,6 @@
                 registerPopupFlag: false
             };
         },
-        beforeCreate() {
-            alert('전시 등록 기능은 추후에 제공될 예정입니다.')
-            this.$router.replace('/')
-        },
         mounted() {
             this.navigationButtons.push(document.getElementsByClassName('previous')[0])
             this.navigationButtons.push(document.getElementsByClassName('next')[0])
@@ -121,7 +126,7 @@
             back () {
                 this.$router.replace('/')
             },
-            /*
+            /**
             * - "다음" 또는 "<(이전)" 버튼을 누르면 활성화 되는 함수
             * - buttonIndex를 parameter로 받는다. "<"버튼은 buttonIndex == 0, "다음" 버튼은 buttonIndex == 1.
             * 1. "<" 또는 "다음" 버튼을 눌렀을 때, 실제 swiperNavigation이 binding 돼 있는 버튼의 click 이벤트를 발생시킨다.
@@ -131,7 +136,7 @@
             */
             swiperNavigation (buttonIndex) {
                 if (buttonIndex === 1) {
-                    if (this.swiperIndex === 2) {
+                    if (this.swiperIndex === 3) {
                         this.registerPopupFlag = true
                         return
                     }
@@ -143,7 +148,7 @@
                 }
                 this.navigationButtons[buttonIndex].click()
             },
-            /*
+            /**
             * - 작품 등록을 완료시키는 함수.
             * 1. 완료버튼이 비활성화 된 상태인 경우 등록을 하지 않고 return.
             * 2. 등록할 exhibition의 정보를 담고있는 Object newExhibition에 정보들이 누락되지 않았는지 검사하여 result에 저장.
@@ -237,8 +242,8 @@
                     case 2:
                         this.$refs.description.descriptionValidCheck()
                         break
-                    // case 4:
-                    //     await this.$refs.textColorSelection.formValidCheck()
+                    // case 3:
+                    //     await this.$refs.linkUpload.formValidCheck()
                     //     break 
                 }
             },
@@ -249,7 +254,7 @@
             */
             activateNextButton (isActive) {
                 this.navigationButtons[1].disabled = !isActive
-
+                
                 if (isActive) {
                     this.fontColor = '#000000'
                 }
@@ -271,6 +276,12 @@
                         break
                     case 'description':
                         this.newExhibition.description = value
+                    case 'goods_link': {
+                        this.newExhibition.goodsLink = value
+                    }
+                    case 'video_link': {
+                        this.newExhibition.videoLink = value
+                    }
                 }
             }
         }

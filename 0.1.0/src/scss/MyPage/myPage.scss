@@ -145,31 +145,31 @@
         }
     }
 
-    #selectBar {
-        position: absolute;
-        z-index: 3;
-        bottom: 0;
-        left: 0;
-        transform: translate(0%, 100%);
-        transition: bottom 0.5s;
-        width: 100%;
-        height: 80%;
-        background-color: white;
-        border-top-left-radius: calc(var(--vw, 1vw) * 5);
-        border-top-right-radius: calc(var(--vw, 1vw) * 5);
-        padding: var(--padding, 5vw);
-        padding-top: calc(var(--vw, 1vw) * 12);
-        overflow-y: scroll;
-        -ms-overflow-style: none;
-        /* IE and Edge */
-        scrollbar-width: none;
-        /* Firefox */
-    }
+    // #selectBar {
+    //     position: absolute;
+    //     z-index: 3;
+    //     bottom: 0;
+    //     left: 0;
+    //     transform: translate(0%, 100%);
+    //     transition: bottom 0.5s;
+    //     width: 100%;
+    //     height: 80%;
+    //     background-color: white;
+    //     border-top-left-radius: calc(var(--vw, 1vw) * 5);
+    //     border-top-right-radius: calc(var(--vw, 1vw) * 5);
+    //     padding: var(--padding, 5vw);
+    //     padding-top: calc(var(--vw, 1vw) * 12);
+    //     overflow-y: scroll;
+    //     -ms-overflow-style: none;
+    //     /* IE and Edge */
+    //     scrollbar-width: none;
+    //     /* Firefox */
+    // }
 
-    #selectBar::-webkit-scrollbar {
-        display: none;
-        height: 0;
-        background: transparent;
-        -webkit-appearance: none;
-    }
+    // #selectBar::-webkit-scrollbar {
+    //     display: none;
+    //     height: 0;
+    //     background: transparent;
+    //     -webkit-appearance: none;
+    // }
 }

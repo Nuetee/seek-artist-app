@@ -54,21 +54,9 @@
                 </swiper>
             </div>
         </div>
-        <div v-show="this.barOpened" ref="selectBar" id="selectBar">
-            <router-link to="/artwork-register">
-                <div>
-                    아트워크
-                </div>
-            </router-link><br><br>
-            <router-link to="/exhibition-register">
-                <div>
-                    전시
-                </div>
-            </router-link>
-        </div>
         <SideBar :minimized="this.minimized"></SideBar>
-        <UploadButton @click="this.showSelectBar"></UploadButton>
-        <Background :backgroundDisplayFlag="this.minimized && !this.barOpened" @click="this.popHistory">
+        <UploadButton></UploadButton>
+        <Background :backgroundDisplayFlag="this.minimized" @click="this.popHistory">
         </Background>
     </div>
 </template>
@@ -102,11 +90,8 @@
             return {
                 minimized: true,
                 user: null,
-                selectBar: null,
-                barOpened: false,
                 profile: '',
                 loadFlag: false,
-                resizeFlag: true,
                 artworkIdList: [],
                 exhibitionIdList: [],
                 nothingToUpdate: false,
@@ -152,17 +137,17 @@
             }
             this.loadFlag = true
 
-            window.addEventListener('resize', this.setSelectBarPosition)
-            document.getElementById('myPage').addEventListener('click', (e)=> {
-                if (_this.$refs.selectBar !== undefined 
-                    && _this.$refs.selectBar !== null
-                    && _this.$refs.selectBar.contains(e.target) === false) {
-                    if (_this.barOpened) {
-                        _this.selectBar.style.setProperty('bottom', '0')
-                        _this.barOpened = false
-                    }
-                }
-            })
+            // window.addEventListener('resize', this.setSelectBarPosition)
+            // document.getElementById('myPage').addEventListener('click', (e)=> {
+            //     if (_this.$refs.selectBar !== undefined 
+            //         && _this.$refs.selectBar !== null
+            //         && _this.$refs.selectBar.contains(e.target) === false) {
+            //         if (_this.barOpened) {
+            //             _this.selectBar.style.setProperty('bottom', '0')
+            //             _this.barOpened = false
+            //         }
+            //     }
+            // })
         },
         mounted () {
             const _this = this
@@ -240,36 +225,24 @@
                     window.history.back()
                 }
             },
-            async showSelectBar() {
-                const _this = this
-                if (this.selectBar === null) {
-                    this.selectBar = document.getElementById('selectBar')
-                }
+            // setSelectBarPosition() {
+            //     if (this.barOpened === false) {
+            //         return
+            //     }
+            //     this.selectBar.style.setProperty('transition', 'none')
+            //     this.selectBar.style.setProperty('bottom', '200px')
 
-                this.selectBar.style.setProperty('bottom', '200px')
+            //     const _this = this
 
-                setTimeout(() => {
-                    _this.barOpened = true
-                }, 300)
-            },
-            setSelectBarPosition() {
-                if (this.barOpened === false) {
-                    return
-                }
-                this.selectBar.style.setProperty('transition', 'none')
-                this.selectBar.style.setProperty('bottom', '200px')
+            //     if (this.resizeFlag) {
+            //         this.resizeFlag = false
 
-                const _this = this
-
-                if (this.resizeFlag) {
-                    this.resizeFlag = false
-
-                    setTimeout(() => {
-                        _this.selectBar.style.setProperty('transition', 'bottom 0.5s')
-                        _this.resizeFlag = true
-                    }, 300)
-                }
-            },
+            //         setTimeout(() => {
+            //             _this.selectBar.style.setProperty('transition', 'bottom 0.5s')
+            //             _this.resizeFlag = true
+            //         }, 300)
+            //     }
+            // },
             async rebuild(offset, length) {
                 const newArtworkIdList = await this.user.getOwnArtworks(offset, length)
                 const newExhibitionIdList = await this.user.getOwnExhibitions(offset, length)

@@ -64,6 +64,14 @@
                         height: 100%;
                     }
                 }
+
+                #imageSelection {
+                    .swiper {
+                        .swiper-slide {
+                            width: 100%;
+                        }
+                    }
+                }
             }
         }
     }

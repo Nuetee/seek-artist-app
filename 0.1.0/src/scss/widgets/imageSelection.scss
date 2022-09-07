@@ -128,3 +128,15 @@
         }
     }
 }
+
+.exhibitionImageSelection {
+    padding-bottom: 0 !important;
+    
+    .thumbnail {
+        display: none !important;
+    }
+
+    ::v-deep(.swiper) {
+        width: calc(var(--vw, 1vw) * 75) !important;
+    }
+}
