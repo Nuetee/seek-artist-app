@@ -15,6 +15,7 @@ import ArtworkRegisterPage from '../views/ArtworkRegisterPage.vue'
 import ArtworkModifyPage from '../views/ArtworkModifyPage.vue'
 import ExhibitionRegisterPage from '../views/ExhibitionRegisterPage.vue'
 import ProfileModifyPage from '../views/ProfileModifyPage.vue'
+import Test from '../views/Test.vue'
 
 const routes = [
   {
@@ -41,6 +42,11 @@ const routes = [
     path: '/profile-modify',
     name: 'profileModifyPage',
     component: ProfileModifyPage
+  },
+  {
+    path: '/test',
+    name: 'testPage',
+    component: Test
   },
   {
     path: '/login',
