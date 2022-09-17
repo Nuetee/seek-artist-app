@@ -1,7 +1,7 @@
 <template>
   <div>
     <input type="file" id="videoUpload" accept="video/mp4">
-    <button @click="this.submit" type="submit"></button>
+    <button @click="this.submit" type="submit">Submit</button>
   </div>
 </template>
 
@@ -11,7 +11,7 @@ import { transcode } from '@/modules/image';
 export default {
     methods: {
         submit () {
-            const video = document.getElementById('videoUpload')
+            const video = document.getElementById('videoUpload').files
             console.log(video)
         }
     }
