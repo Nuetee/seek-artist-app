@@ -64,14 +64,6 @@
                 isComment: true
             };
         },
-        beforeCreate() {},
-        created() {},
-        beforeMount() {},
-        mounted() {},
-        beforeUpdate() {},
-        updated() {},
-        beforeUnmount() {},
-        unmounted() {},
         methods: {
             cancle() {
                 this.$emit('cancel-edit')

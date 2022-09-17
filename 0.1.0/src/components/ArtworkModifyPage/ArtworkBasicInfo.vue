@@ -1,6 +1,6 @@
 <template>
     <div class="artworkBasicInfo">
-        <ArtworkMoreInfo @show-more="this.$emit('show-more')" :artwork="this.artwork"></ArtworkMoreInfo>
+        <ArtworkMoreInfo :artwork="this.artwork"></ArtworkMoreInfo>
         <ArtworkTableInfo :artwork="this.artwork"></ArtworkTableInfo>
     </div>
 </template>
@@ -22,15 +22,6 @@
                 sampleData: ''
             };
         },
-        beforeCreate() {},
-        created() {},
-        beforeMount() {},
-        mounted() {},
-        beforeUpdate() {},
-        updated() {},
-        beforeUnmount() {},
-        unmounted() {},
-        methods: {}
     }
 </script>
 <style lang="scss" scoped src="../../scss/ArtworkModifyPage/artworkBasicInfo.scss"></style>

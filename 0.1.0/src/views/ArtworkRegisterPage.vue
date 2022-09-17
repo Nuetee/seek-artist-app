@@ -19,7 +19,10 @@
             </div>
         </div>
         <div class="bottom">
-            <swiper v-bind="this.swiperOptions" @slideChange="this.slideChange">
+            <swiper
+                v-bind="this.swiperOptions"
+                @slideChange="this.slideChange"
+                @init="this.getSlidesNumber">
                 <swiper-slide>
                     <TitleInput ref="titleInput"
                         @activate-next-button="this.activateNextButton"
@@ -31,6 +34,12 @@
                         @activate-next-button="this.activateNextButton"
                         @set-artwork-entity="this.setArtworkEntity" :artworkData="this.newArtwork"
                         :originalImageFiles="[]"></ImageSelection>
+                </swiper-slide>
+                <swiper-slide>
+                    <VideoInsert ref="videoInsert"
+                        @activate-next-button="this.activateNextButton"
+                        @set-artwork-entity="this.setArtworkEntity"
+                    ></VideoInsert>
                 </swiper-slide>
                 <swiper-slide>
                     <BasicInformation ref="basicInformation" 
@@ -58,6 +67,7 @@
 <script>
     import TitleInput from '@/components/ArtworkRegisterPage/TitleInput.vue';
     import ImageSelection from '@/widgets/ImageSelection.vue';
+    import VideoInsert from '@/widgets/VideoInsert.vue'
     import BasicInformation from '@/components/ArtworkRegisterPage/BasicInformation.vue';
     import Description from '@/components/ArtworkRegisterPage/Description.vue';
     
@@ -89,16 +99,19 @@
             BasicInformation,
             Description,
             Background,
+            VideoInsert
         },
         data() {
             return {
                 presentStep: ['작품명 입력', '이미지 선택', '상세정보 입력', '작품 설명 입력'],
                 swiperIndex: 0,
+                numberOfSlides: 0,
                 navigationButtons: [],
                 fontColor: '#959595;',
                 newArtwork: {
                     title: null,
                     images: null,
+                    video: null,
                     material: null,
                     threeDimensional: null,
                     size: {
@@ -136,6 +149,9 @@
             this.navigationButtons[1].disabled = true
         },
         methods: {
+            getSlidesNumber (swiper) {
+                this.numberOfSlides = swiper.slides.length
+            },
             back () {
                 this.$router.replace('/')
             },
@@ -149,10 +165,9 @@
             */
             swiperNavigation (buttonIndex) {
                 if (buttonIndex === 1) {
-                    if (this.swiperIndex === 3) {
+                    if (this.swiperIndex === (this.numberOfSlides - 1)) {
                         this.registerPopupFlag = true
                         return
-                        // await this.completeRegister()
                     }
                 }
                 else {
@@ -182,9 +197,11 @@
                         result = result && this.newArtwork[i].x && this.newArtwork[i].y
                         continue
                     }
+                    else if (i === 'video') {
+                        continue
+                    }
                     result = result && this.newArtwork[i]
                 }
-
                 result = result && ((this.newArtwork.threeDimensional !== null) || this.newArtwork.size.z)
 
                 /* result === false면 artwork에 누락된 정보 있음. 처음부터 등록 */
@@ -196,7 +213,7 @@
                 else {
                     this.loading = true
                     this.registerPopupFlag = false
-                    
+
                     // artwork 등록 code
                     const current_artist = getAuth()
                     const dimension_string = String(this.newArtwork.size.x) 
@@ -274,14 +291,14 @@
                         await this.$refs.imageSelection.formValidCheck()
                         break
                     case 2:
-                        this.$refs.basicInformation.formValidCheck()
+                        this.$refs.videoInsert.formValidCheck()
                         break
                     case 3:
+                        this.$refs.basicInformation.formValidCheck()
+                        break
+                    case 4:
                         this.$refs.description.descriptionValidCheck()
                         break
-                    // case 4:
-                    //     await this.$refs.textColorSelection.formValidCheck()
-                    //     break 
                 }
             },
             /*
@@ -310,6 +327,9 @@
                         break
                     case 'images':
                         this.newArtwork.images = value
+                        break
+                    case 'video':
+                        this.newArtwork.video = value
                         break
                     case 'material':
                         this.newArtwork.material = value
