@@ -65,6 +65,7 @@ export class Artwork {
             this.material = page_data.material
             this.information = page_data.information
             this.color = page_data.color
+            this.is_video = page_data.is_video.data[0]
         }   
     }
 
@@ -78,6 +79,15 @@ export class Artwork {
 
     getRepresentImage = async function () {
         return await getArtworkRepresentImage(this.page_id)
+    }
+
+    getVideo = async function () {
+        if (this.is_video) {
+            return await getArtworkRepresentVideo(this.page_id)
+        }
+        else {
+            return null
+        }
     }
 
     getID () {
@@ -140,6 +150,10 @@ export class Artwork {
         else {
             return []
         }
+    }
+
+    isVideo () {
+        return this.is_video
     }
 
     putArtworkData = async function (target, value) {
