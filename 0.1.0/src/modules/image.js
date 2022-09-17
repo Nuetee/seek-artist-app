@@ -1,3 +1,6 @@
+// Import FFmpeg wasm library
+import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg"
+
 // Change given file's data URI to Binary large object
 // - dataURI : URI of given image data
 function dataURItoBlob (dataURI) {
@@ -75,4 +78,37 @@ export async function resizeImage (file, max_size) {
         }
         reader.readAsDataURL(file)
     })
+    
+}
+
+// Get new file form of m3u8 and ts files
+// - file : file source of video (mp4, less than 7 min and 150MB)
+export async function transcode (directory) {
+    const ffmpeg = (process.env.NODE_ENV === 'production')
+        ? createFFmpeg()
+        : createFFmpeg({
+            log: true
+        })
+
+    await ffmpeg.load()
+    ffmpeg.FS("writeFile", "0.mp4", await fetchFile(directory))
+
+    await ffmpeg.run("-i", "0.mp4", 
+        "-profile:v", "baseline",
+        "-strict", "-2",
+        "-level", "3.0",
+        "-start-number", "0",
+        "-hls_time", "200",
+        "-hls_list_size", "0",
+        "-f", "fls",
+        "0.m3u8"
+    )
+
+    const data = ffmpeg.FS("readFile", "0.m3u8")
+    const result = URL.createObjectURL(
+        new Blob([data.buffer], {
+            type: "application/x-mpegURL"
+        })
+    )
+    return result
 }
