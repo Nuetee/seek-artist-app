@@ -4,7 +4,6 @@
     </div>
 </template>
 <script>
-    import { cropImage } from '@/modules/image';
     export default {
         name: 'ExhibitionPreview',
         components: {},
