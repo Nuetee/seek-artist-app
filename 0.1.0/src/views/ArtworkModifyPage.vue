@@ -63,7 +63,7 @@
                 </swiper-slide>
                 <div class="swiper-pagination"></div>
             </swiper>
-            <div ref="commentBar" id="commentBar">
+            <!-- <div ref="commentBar" id="commentBar">
                 <div class="commentBarHeader">
                     <div class="drawingBar">
                         <div></div>
@@ -71,7 +71,18 @@
                 </div>
                 <CommentComponent ref="commentComponent" @commentUpdate="this.updateDone" :artwork="this.artwork">
                 </CommentComponent>
-            </div>
+            </div> -->
+            <Drawer ref="commentDrawer" :class="'comment'">
+                <template v-slot:default>
+                    <CommentComponent ref="commentComponent" @commentUpdate="this.updateDone" :artwork="this.artwork">
+                    </CommentComponent>
+                </template>
+            </Drawer>
+            <Drawer ref="informationDrawer" :class="'information'">
+                <template v-slot:default>
+                    <ArtworkInformation :artwork="this.artwork"></ArtworkInformation>
+                </template>
+            </Drawer>
         </div>
         <div class="editPage" v-show="!this.isFrontPage">
             <div>
@@ -111,7 +122,8 @@
             </div>
         </div>
         <div class="buttonContainer">
-            <CommentButton ref="commentButton" :color="buttonColor" @comment-button-click="this.showComment"
+            <CommentButton ref="commentButton" :color="buttonColor"     
+                @comment-button-click="this.showComment"
                 @cancel-edit="this.cancelEdit()"></CommentButton>
             <EditButton ref="editButton" :color="buttonColor" @switch-page="this.switchPage()"
                 @show-submit-popup="(isShow) => { this.submitPopupFlag = isShow }">
@@ -152,6 +164,8 @@
     import Background from '@/widgets/Background.vue';
     import TextModification from '@/components/ArtworkModifyPage/TextModification.vue';
     import ImageModification from '@/components/ArtworkModifyPage/ImageModification.vue'
+    import Drawer from '@/widgets/Drawer.vue';
+    import ArtworkInformation from '@/components/ArtworkModifyPage/ArtworkInformation.vue'
 
     SwiperCore.use([Pagination]);
 
@@ -168,7 +182,9 @@
             SwiperSlide,
             Background,
             TextModification,
-            ImageModification
+            ImageModification,
+            Drawer,
+            ArtworkInformation
         },
         data() {
             return {
@@ -231,20 +247,30 @@
             this.buttonColor = artwork.getColor()
             await this.getArtworkImages()
             
-            this.commentBar = document.getElementById('commentBar')
-            this.commentBarHeight = this.commentBar.clientHeight
-            this.drawingBar = document.getElementsByClassName('drawingBar')[0]
-            this.drawingBar.addEventListener('touchstart', this.setTouchStart)
-            this.drawingBar.addEventListener('touchmove', this.setTouchMove)
-            this.drawingBar.addEventListener('touchend', this.setTouchEnd)
+            // this.commentBar = document.getElementById('commentBar')
+            // this.commentBarHeight = this.commentBar.clientHeight
+            // this.drawingBar = document.getElementsByClassName('drawingBar')[0]
+            // this.drawingBar.addEventListener('touchstart', this.setTouchStart)
+            // this.drawingBar.addEventListener('touchmove', this.setTouchMove)
+            // this.drawingBar.addEventListener('touchend', this.setTouchEnd)
 
             document.getElementsByClassName('frontPage')[0].addEventListener('click', (e)=> {
-                if (_this.$refs.commentBar !== undefined 
-                    && _this.$refs.commentBar.contains(e.target) === false) {
-                    if (_this.commentOpened) {
-                        _this.commentBar.style.setProperty('bottom', '0')
-                        _this.commentOpened = false
-                    }
+                // if (_this.$refs.commentBar !== undefined 
+                //     && _this.$refs.commentBar.contains(e.target) === false) {
+                //     if (_this.commentOpened) {
+                //         _this.commentBar.style.setProperty('bottom', '0')
+                //         _this.commentOpened = false
+                //     }
+                // }
+                if (_this.$refs.informationDrawer.drawer_opened) {
+                    _this.$refs.informationDrawer.closeDrawer()
+                    _this.$refs.commentDrawer.closeDrawer()
+                }
+                else if (!_this.$refs.commentDrawer.drawer_opened) {
+                    _this.$refs.informationDrawer.showDrawer()
+                }
+                else {
+                    _this.$refs.commentDrawer.closeDrawer()
                 }
             })
 
@@ -260,7 +286,7 @@
                 document.getElementById('artworkModifyPage').style.setProperty('--color', 'black')
             }
         },
-        updated() {
+        updated () {
             const _this = this
             // Scroll Listener
             document.getElementById('artworkModifyPage').addEventListener('scroll', async function (event) {
@@ -397,25 +423,26 @@
                     }, 300)
                 }
             },
-            async showComment() {
-                const _this = this
-                if (this.commentBar === null) {
-                    this.commentBar = document.getElementById('commentBar')
-                }
-                this.commentBarHeight = this.commentBar.clientHeight
+            showComment() {
+                this.$refs.commentDrawer.showDrawer()
+                // const _this = this
+                // if (this.commentBar === null) {
+                //     this.commentBar = document.getElementById('commentBar')
+                // }
+                // this.commentBarHeight = this.commentBar.clientHeight
 
-                if (this.drawingBar === null) {
-                    this.drawingBar = document.getElementsByClassName('drawingBar')[0]
-                    this.drawingBar.addEventListener('touchstart', this.setTouchStart)
-                    this.drawingBar.addEventListener('touchmove', this.setTouchMove)
-                    this.drawingBar.addEventListener('touchend', this.setTouchEnd)
-                }
+                // if (this.drawingBar === null) {
+                //     this.drawingBar = document.getElementsByClassName('drawingBar')[0]
+                //     this.drawingBar.addEventListener('touchstart', this.setTouchStart)
+                //     this.drawingBar.addEventListener('touchmove', this.setTouchMove)
+                //     this.drawingBar.addEventListener('touchend', this.setTouchEnd)
+                // }
 
-                this.commentBar.style.setProperty('bottom', `${this.commentBarHeight - 10}px`)
+                // this.commentBar.style.setProperty('bottom', `${this.commentBarHeight - 10}px`)
 
-                setTimeout(() => {
-                    _this.commentOpened = true
-                }, 500)
+                // setTimeout(() => {
+                //     _this.commentOpened = true
+                // }, 500)
             },
             /*
             * 1. touchEvent가 발생한 지점의 y position 값을 touchStart에 저장.
