@@ -312,12 +312,17 @@
                     return
                 }
                 else {
-                    // await deleteArtworkDirectory(this.artwork.getPageID())
-                    // await this.artwork.deleteArtwork()
-
-                    // For development
                     await deleteArtworkDirectory(this.artwork.getPageID())
-                    await this.artwork.deletePreArtwork()
+
+                    // For production
+                    if (process.env.NODE_ENV === 'production') {
+                        await this.artwork.deleteArtwork()
+                    }
+                    // For development
+                    else {
+                        await this.artwork.deletePreArtwork()
+                    }
+                
                     this.$router.replace('/')
                 }
             },
