@@ -144,14 +144,12 @@
                 }
             },
             async addImageSlide () {
-                const selectedfiles = this.imageUpload.files
+                let selectedfiles = this.imageUpload.files
                 let fileLength = selectedfiles.length
 
                 if (this.isExhibition && fileLength > 1) {
                     alert("포스터 이미지는 한장만 선택 가능합니다.")
-                    while(selectedfiles.length == 1) {
-                        selectedfiles.pop()
-                    }
+                    fileLength = 1
                 }
                 for (let i = 0; i < fileLength; i++) {
                     let imageFile = new Object()
