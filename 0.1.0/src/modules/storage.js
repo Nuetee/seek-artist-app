@@ -267,7 +267,7 @@ export async function getArtworkImages (target_id) {
             }
             else {
                 const objects = data.Contents.reduce(function (res, obj) {
-                    if (obj.Key !== url) {
+                    if (obj.Key.split('/').length === 3 && obj.Key !== url) {
                         res.push(process.env.VUE_APP_STORAGE_URL + '/' + obj.Key)
                     } 
                     return res
@@ -314,7 +314,7 @@ export async function getExhibitionImages (target_id) {
             }
             else {
                 const objects = data.Contents.reduce(function (res, obj) {
-                    if (obj.Key !== url) {
+                    if (obj.Key.split('/').length === 3 && obj.Key !== url) {
                         res.push(process.env.VUE_APP_STORAGE_URL + '/' + obj.Key)
                     } 
                     return res
