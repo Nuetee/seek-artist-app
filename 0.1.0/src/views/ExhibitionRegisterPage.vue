@@ -19,9 +19,12 @@
             </div>
         </div>
         <div class="bottom">
-            <swiper v-bind="this.swiperOptions" @slideChange="this.slideChange">
+            <swiper v-bind="this.swiperOptions"
+                @slideChange="this.slideChange"
+                @init="this.getSlidesNumber">
                 <swiper-slide>
-                    <TitleInput :isExhibition="true" ref="titleInput" @activate-next-button="this.activateNextButton"
+                    <TitleInput :isExhibition="true" ref="titleInput" 
+                        @activate-next-button="this.activateNextButton"
                         @set-exhibition-entity="this.setExhibitionEntity"></TitleInput>
                 </swiper-slide>
                 <swiper-slide>
@@ -35,7 +38,10 @@
                         @set-exhibition-entity="this.setExhibitionEntity"></Description>
                 </swiper-slide>
                 <swiper-slide>
-                    <LinkUpload></LinkUpload>
+                    <LinkUpload
+                        ref="linkUpload"
+                        @activate-next-button="this.activateNextButton"
+                        @set-exhibition-entity="this.setExhibitionEntity"></LinkUpload>
                 </swiper-slide>
                 <button class="next"></button>
                 <button class="previous"></button>
@@ -89,6 +95,7 @@
             return {
                 presentStep: ['전시명 입력', '대표 이미지 선택', '전시 설명 입력', '링크 업로드'],
                 swiperIndex: 0,
+                numberOfSlides: 0,
                 navigationButtons: [],
                 fontColor: '#959595;',
                 newExhibition: {
@@ -123,6 +130,10 @@
             this.navigationButtons[1].disabled = true
         },
         methods: {
+            getSlidesNumber (swiper) {
+                this.numberOfSlides = swiper.slides.length
+                console.log(this.numberOfSlides)
+            },
             back () {
                 this.$router.replace('/')
             },
@@ -136,7 +147,7 @@
             */
             swiperNavigation (buttonIndex) {
                 if (buttonIndex === 1) {
-                    if (this.swiperIndex === 3) {
+                    if (this.swiperIndex === (this.numberOfSlides - 1)) {
                         this.registerPopupFlag = true
                         return
                     }
@@ -156,6 +167,7 @@
             * 4. 정보가 모두 담긴 경우 (result === true) 등록 절차 진행
             */
             async completeRegister () {
+                console.log('-1')
                 if (this.navigationButtons[1].disabled)
                     return
                 
@@ -165,14 +177,17 @@
                         continue
                     result = result && this.newExhibition[i]
                 }
+                console.log('0')
 
                 /* result === false면 exhibition에 누락된 정보 있음. 처음부터 등록 */
                 if (!result) {
                     // 처음으로 돌아가는 code.
                     this.$router.replace(this.$router.currentRoute)
+                    console.log('1')
                 }
                 /* result === true면 exhibition 등록 */
                 else {
+                    console.log('2')
                     this.loading = true
                     this.registerPopupFlag = false
                     
@@ -244,9 +259,9 @@
                     case 2:
                         this.$refs.description.descriptionValidCheck()
                         break
-                    // case 3:
-                    //     await this.$refs.linkUpload.formValidCheck()
-                    //     break 
+                    case 3:
+                        await this.$refs.linkUpload.formValidCheck()
+                        break 
                 }
             },
             /*
@@ -255,6 +270,7 @@
             * 2. parameter isActive에 따라 "다음" 버튼 폰트 색상 변경.
             */
             activateNextButton (isActive) {
+                console.log(isActive)
                 this.navigationButtons[1].disabled = !isActive
                 
                 if (isActive) {

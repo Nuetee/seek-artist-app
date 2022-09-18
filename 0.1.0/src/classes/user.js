@@ -124,7 +124,7 @@ export class User {
     }
 
     postExhibition = async function (name, information) {
-        if (name && information && color) {
+        if (name && information) {
             const { status, data } = await sendRequest('post', '/exhibition', {
                 owner_id : this.id,
                 name : name,
