@@ -161,7 +161,9 @@
                 
                 let result = true
                 for (let i in this.newExhibition) {
-                    result = result && this.newArtwork[i]
+                    if (i === 'goodsLink' || i === 'videoLink') 
+                        continue
+                    result = result && this.newExhibition[i]
                 }
 
                 /* result === false면 exhibition에 누락된 정보 있음. 처음부터 등록 */
