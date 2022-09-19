@@ -138,7 +138,6 @@
         :originalArtwork="this.artwork" @close-text-modification="this.closeEditPage"></TextModification>
     <ImageModification ref="imageModification" v-if="this.artwork !== null" v-show="!this.isFrontPage && this.imageEdit"
         :originalArtwork="this.artwork" @close-text-modification="this.closeEditPage"></ImageModification>
-    <!-- <Background :backgroundDisplayFlag="!this.loading"></Background> -->
     <div v-if="this.loading" id="loading">
         <va-progress-circle indeterminate />
     </div>
@@ -160,7 +159,6 @@
     import { isAuth, getAuth } from '@/modules/auth';
     import { deleteArtworkDirectory } from '@/modules/storage';
 
-    import Background from '@/widgets/Background.vue';
     import TextModification from '@/components/ArtworkModifyPage/TextModification.vue';
     import ImageModification from '@/components/ArtworkModifyPage/ImageModification.vue'
     import Drawer from '@/widgets/Drawer.vue';
@@ -179,7 +177,6 @@
             EditButton,
             Swiper,
             SwiperSlide,
-            Background,
             TextModification,
             ImageModification,
             Drawer,
@@ -246,21 +243,8 @@
             this.buttonColor = artwork.getColor()
             await this.getArtworkImages()
             
-            // this.commentBar = document.getElementById('commentBar')
-            // this.commentBarHeight = this.commentBar.clientHeight
-            // this.drawingBar = document.getElementsByClassName('drawingBar')[0]
-            // this.drawingBar.addEventListener('touchstart', this.setTouchStart)
-            // this.drawingBar.addEventListener('touchmove', this.setTouchMove)
-            // this.drawingBar.addEventListener('touchend', this.setTouchEnd)
 
             document.getElementsByClassName('frontPage')[0].addEventListener('click', (e)=> {
-                // if (_this.$refs.commentBar !== undefined 
-                //     && _this.$refs.commentBar.contains(e.target) === false) {
-                //     if (_this.commentOpened) {
-                //         _this.commentBar.style.setProperty('bottom', '0')
-                //         _this.commentOpened = false
-                //     }
-                // }
                 if (_this.$refs.informationDrawer.drawer_opened) {
                     _this.$refs.informationDrawer.closeDrawer()
                     _this.$refs.commentDrawer.closeDrawer()
@@ -420,24 +404,6 @@
             },
             showComment() {
                 this.$refs.commentDrawer.showDrawer()
-                // const _this = this
-                // if (this.commentBar === null) {
-                //     this.commentBar = document.getElementById('commentBar')
-                // }
-                // this.commentBarHeight = this.commentBar.clientHeight
-
-                // if (this.drawingBar === null) {
-                //     this.drawingBar = document.getElementsByClassName('drawingBar')[0]
-                //     this.drawingBar.addEventListener('touchstart', this.setTouchStart)
-                //     this.drawingBar.addEventListener('touchmove', this.setTouchMove)
-                //     this.drawingBar.addEventListener('touchend', this.setTouchEnd)
-                // }
-
-                // this.commentBar.style.setProperty('bottom', `${this.commentBarHeight - 10}px`)
-
-                // setTimeout(() => {
-                //     _this.commentOpened = true
-                // }, 500)
             },
             /*
             * 1. touchEvent가 발생한 지점의 y position 값을 touchStart에 저장.
