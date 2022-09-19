@@ -63,15 +63,6 @@
                 </swiper-slide>
                 <div class="swiper-pagination"></div>
             </swiper>
-            <!-- <div ref="commentBar" id="commentBar">
-                <div class="commentBarHeader">
-                    <div class="drawingBar">
-                        <div></div>
-                    </div>
-                </div>
-                <CommentComponent ref="commentComponent" @commentUpdate="this.updateDone" :artwork="this.artwork">
-                </CommentComponent>
-            </div> -->
             <Drawer ref="commentDrawer" :class="'comment'">
                 <template v-slot:default>
                     <CommentComponent ref="commentComponent" @commentUpdate="this.updateDone" :artwork="this.artwork">
