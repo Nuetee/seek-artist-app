@@ -100,4 +100,4 @@
         }
     }
 </script>
-<style lang="scss" scoped src="../../scss/ExhibitionPage/linkUpload.scss"></style>
+<style lang="scss" scoped src="../../scss/ExhibitionRegisterPage/linkUpload.scss"></style>

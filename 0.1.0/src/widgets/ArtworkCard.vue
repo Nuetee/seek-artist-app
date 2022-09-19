@@ -65,12 +65,12 @@
                     })
                 }
                 else if (this.exhibitionId) {
-                    // this.$router.push({
-                    //     path: '/exhibition-modify',
-                    //     query: {
-                    //         id: _this.exhibitionId
-                    //     }
-                    // })
+                    this.$router.push({
+                        path: '/exhibition-modify',
+                        query: {
+                            id: _this.exhibitionId
+                        }
+                    })
                 }
             }
         }
