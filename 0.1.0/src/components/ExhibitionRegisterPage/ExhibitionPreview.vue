@@ -33,4 +33,4 @@
         methods: {}
     }
 </script>
-<style lang="scss" scoped src="../../scss/ExhibitionPage/exhibitionPreview.scss"></style>
+<style lang="scss" scoped src="../../scss/ExhibitionRegisterPage/exhibitionPreview.scss"></style>

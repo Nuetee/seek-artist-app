@@ -1,0 +1,28 @@
+@font-face {
+    font-family: 'SF Pro Rounded';
+    src: url('../../fonts/FontsFree-Net-SF-Pro-Rounded-Regular.ttf');
+}
+.exhibitionEditButton {
+    position: fixed;
+    bottom: calc(var(--vw, 1vw) * 10);
+    left: 50%;
+    width: calc(var(--vw, 1vw) * 33);
+    height: calc(var(--vw, 1vw) * 14);
+    border-radius: calc(var(--vw, 1vw) * 7);
+    z-index: 1;
+
+    transform: translate(-50%, 0);
+
+    background-color: black;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: 'SF Pro Rounded';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 115%;
+    color: white;
+}
