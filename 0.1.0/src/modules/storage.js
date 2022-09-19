@@ -23,27 +23,6 @@ const s3 = new AWS.S3({
     }
 })
 
-// Send request for source's signed url
-// - type : 'image', 'video', 'file'
-// - target : 'user', 'artist', 'artwork', 'advertisement'
-// - sub-target : 'profile', 'background', 'represent', 'all' or empty string
-// return the signed url (or an array of urls), or empty string (or []) if the respond is not given successfully
-async function sendStorageRequest (type, target, sub_target, target_id) {
-    const url = '/storage/' + type + '/' + target + '/' + sub_target
-    const body = {
-        target_id: target_id,
-    }
-    const { status, data } = await sendRequest('get', url, body)
-    return new Promise(function (resolve) {
-        if (status < 500) {
-            resolve(data)
-        }
-        else {
-            (sub_target === 'all') ? resolve([]) : resolve("");
-        }
-    })
-}
-
 // Send request for uploading files
 // - target : 'user', 'artist', 'artwork', 'advertisement'
 // - file_names : an array of file names
@@ -296,7 +275,7 @@ export async function getArtworkRepresentImage (target_id) {
 // - target_id : artwork's page_id
 // return rtmp url of the video, or empty string if the respond is not given successfully
 export async function getArtworkRepresentVideo (target_id) {
-    return process.env.VUE_APP_STORAGE_URL + '/artwork/' + target_id + '/video/0.m3u8'
+    return process.env.VUE_APP_STORAGE_URL + '/artwork/' + target_id + '/video/0.mp4'
 }
 
 // Get signed urls for exhibition's images
@@ -416,6 +395,16 @@ export async function putArtworkThumbnailImage (target_id, file) {
         return false
     }
     return await sendStorageUpload('artwork', target_id, ['thumbnail/thumbnail.jpg'], [file])
+}
+
+// Upload artwork's (representative) video
+// - target_id : artwork's id
+// return the result of upload
+export async function putArtworkVideo (target_id, file) {
+    if (!file) {
+        return false
+    }
+    return await sendStorageUpload('artwork', target_id, ['video/0.mp4'], [file])
 }
 
 // Delete artwork's thumbnail (representative) image

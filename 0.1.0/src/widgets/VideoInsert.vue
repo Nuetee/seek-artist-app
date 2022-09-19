@@ -33,7 +33,6 @@
                 video_upload_element: null,
                 video_element: null,
                 video_url: null,
-                // ts, m3u8로 convert한 file 담는 객체
                 video_file_object: null
             };
         },
@@ -55,7 +54,11 @@
 
             this.video_upload_element.addEventListener('change', () => {
                 const video_file = this.video_upload_element.files[0]
-                // 임시, convert 필요.
+                if (video_file.size > 157286400){
+                    alert("영상 크기는 150MB 이하까지 가능합니다.")
+                    this.video_container_element.value = ''
+                    return
+                }
                 this.video_file_object = video_file
                 this.video_url = URL.createObjectURL(video_file)
                 this.video_element.style.setProperty('display', 'inline')
@@ -72,7 +75,6 @@
                 this.video_element.style.setProperty('display', 'none')
             },
             formValidCheck () {
-                console.log('videoformval')
                 this.$emit('activate-next-button', true)
                 this.$emit('set-artwork-entity', 'video', this.video_file_object)
             }
