@@ -1,6 +1,6 @@
 <template>
     <div id="artworkRegisterPage">
-        <Background :backgroundDisplayFlag="!this.loading"></Background>
+        <Background :background_display="!this.loading"></Background>
         <div v-if="this.loading" id="loading">
             <va-progress-circle indeterminate />
         </div>
@@ -14,7 +14,7 @@
             </div>
             <div class="presentStep"> {{ this.presentStep[this.swiperIndex] }} </div>
             <div class="nextButton" @click="this.swiperNavigation(1)" :style="'color: ' + this.fontColor">
-                <div v-if="this.swiperIndex === 3">완료</div>
+                <div v-if="this.swiperIndex === 4">완료</div>
                 <div v-else>다음</div>
             </div>
         </div>
