@@ -161,7 +161,7 @@
                         this.selectedImageFiles.push(imageFile)
                     }
                 }
-                imageUpload.value = ''
+                this.imageUpload.value = ''
             },
             /*
             * 이미지 슬라이드를 삭제하는 함수. deleteButton을 누르면 호출.

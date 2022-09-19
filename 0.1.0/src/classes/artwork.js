@@ -4,7 +4,8 @@ import { sendRequest } from '../modules/api'
 import { 
     getArtworkImages,
     getArtworkThumbnailImage,
-    getArtworkRepresentImage
+    getArtworkRepresentImage,
+    getArtworkRepresentVideo
 } from '../modules/storage'
 import { User } from './user'
 
