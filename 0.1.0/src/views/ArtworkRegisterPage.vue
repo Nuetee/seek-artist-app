@@ -78,6 +78,7 @@
         putArtworkDirectory,
         putArtworkImages,
         putArtworkThumbnailImage,
+        putArtworkVideo,
         deleteArtworkDirectory
     } from '@/modules/storage';
 
@@ -103,7 +104,7 @@
         },
         data() {
             return {
-                presentStep: ['작품명 입력', '이미지 선택', '상세정보 입력', '작품 설명 입력'],
+                presentStep: ['작품명 입력', '이미지 선택', '영상 첨부', '상세정보 입력', '작품 설명 입력'],
                 swiperIndex: 0,
                 numberOfSlides: 0,
                 navigationButtons: [],
@@ -222,6 +223,7 @@
                             ? ' x ' + String(this.newArtwork.size.z)
                             : '')
                         + ' ' + this.newArtwork.unit
+
                     const new_page_id = await current_artist.postArtwork(
                         this.newArtwork.title,
                         this.newArtwork.year,
@@ -229,7 +231,8 @@
                         this.newArtwork.threeDimensional,
                         this.newArtwork.material,
                         this.newArtwork.description,
-                        this.newArtwork.textColor
+                        this.newArtwork.textColor,
+                        (this.newArtwork.video !== null)
                     )
                     if (!new_page_id) {
                         this.$router.replace('/')
@@ -250,16 +253,26 @@
                         x: 400,
                         y: 400
                     })
+
                     const directory_result = await putArtworkDirectory(new_page_id)
                     if (directory_result) {
                         const image_result = await putArtworkImages(new_page_id, resized_files)
                         if (image_result) {
-                                const thumbnail_result = await putArtworkThumbnailImage(new_page_id, thumbnail)
-                                if (thumbnail_result) {
+                            const thumbnail_result = await putArtworkThumbnailImage(new_page_id, thumbnail)
+                            if (thumbnail_result) {
+                                if (this.newArtwork.video !== null) {
+                                    const video_result = await putArtworkVideo(new_page_id, this.newArtwork.video)
+                                    if (video_result) {
+                                        this.$router.replace('/')
+                                        return
+                                    }
+                                }
+                                else {
                                     this.$router.replace('/')
                                     return
                                 }
                             }
+                        }
                     }
                     await this.cancelRegister(new_page_id)
                     this.loading = false

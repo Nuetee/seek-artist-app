@@ -5,7 +5,7 @@ import {
     doLike,
     isLiked
 } from '../modules/event'
-import { Artwork } from './artwork'
+
 import store from '../store'
 
 if (process.env.NODE_ENV === 'production') {
@@ -103,7 +103,7 @@ export class User {
         }
     }
 
-    postArtwork = async function (name, year, dimension, three_dimensional, material, information, color) {
+    postArtwork = async function (name, year, dimension, three_dimensional, material, information, color, is_video) {
         if (name && year && dimension
             && material && information && color) {
             const { status, data } = await sendRequest('post', '/artwork', {
@@ -114,7 +114,8 @@ export class User {
                 three_dimensional : three_dimensional,
                 material : material,
                 information : information,
-                color : color
+                color : color,
+                is_video : is_video
             })
             if (status < 500) {
                 return data.page_id
