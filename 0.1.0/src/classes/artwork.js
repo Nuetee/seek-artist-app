@@ -30,6 +30,7 @@ export class Artwork {
     three_dimensional
     material
     information
+    is_video
 
     constructor (page_id) {
         this.page_id = page_id
