@@ -132,14 +132,13 @@
                 @show-delete-popup="(isShow) => { this.deletePopupFlag = isShow }">
             </ShareButton>
         </div>
-        <SideBar :minimized="this.minimized" @closeSideBar="this.closeSideBar()"></SideBar>
-        <Background :backgroundDisplayFlag="this.minimized" @click="this.popHistory"></Background>
+        <SideBar ref="sideBar"></SideBar>
     </div>
     <TextModification ref="textModification" v-if="this.artwork !== null" v-show="!this.isFrontPage && this.textEdit"
         :originalArtwork="this.artwork" @close-text-modification="this.closeEditPage"></TextModification>
     <ImageModification ref="imageModification" v-if="this.artwork !== null" v-show="!this.isFrontPage && this.imageEdit"
         :originalArtwork="this.artwork" @close-text-modification="this.closeEditPage"></ImageModification>
-    <Background :backgroundDisplayFlag="!this.loading"></Background>
+    <!-- <Background :backgroundDisplayFlag="!this.loading"></Background> -->
     <div v-if="this.loading" id="loading">
         <va-progress-circle indeterminate />
     </div>
@@ -384,16 +383,7 @@
                 (page === 'image') ? (this.imageEdit = false) : (this.textEdit = false)
             },
             openSideBar (event) {
-                if (event.stopPropagation) event.stopPropagation();
-                else event.cancelBubble = true; // IE 대응
-                
-                window.history.pushState(null, '', location.href)
-                this.minimized = false
-            },
-            closeSideBar() {
-                if (!this.minimized) {
-                    window.history.back()
-                }
+                this.$refs.sideBar.openSideBar(event)
             },
             popHistory() {
                 if (!this.minimized) {

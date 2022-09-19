@@ -1,16 +1,13 @@
 <template>
-    <div id="background" :style="this.background_display ? 'display:none' : ''"></div>
+    <div class="exhibitionEditButton">
+        <div class="previewMode">Edit</div>
+        <div class="editMode" style="display:none">Done</div>
+    </div>
 </template>
 <script>
     export default {
-        name: 'Background',
+        name: 'ExhibitionEditButton',
         components: {},
-        props: {
-            background_display: {
-                type: Boolean,
-                default: false
-            }
-        },
         data() {
             return {
                 sampleData: ''
@@ -27,4 +24,4 @@
         methods: {}
     }
 </script>
-<style lang="scss" scoped src="../scss/widgets/background.scss"></style>
+<style lang="scss" scoped src="../../scss/ExhibitionModifyPage/exhibitionEditButton.scss"></style>
