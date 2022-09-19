@@ -14,6 +14,7 @@ import MyPage from '../views/MyPage.vue'
 import ArtworkRegisterPage from '../views/ArtworkRegisterPage.vue'
 import ArtworkModifyPage from '../views/ArtworkModifyPage.vue'
 import ExhibitionRegisterPage from '../views/ExhibitionRegisterPage.vue'
+import ExhibitionModifyPage from '../views/ExhibitionModifyPage.vue'
 import ProfileModifyPage from '../views/ProfileModifyPage.vue'
 
 const routes = [
@@ -31,6 +32,11 @@ const routes = [
     path: '/exhibition-register',
     name: 'exhibitionRegisterPage',
     component: ExhibitionRegisterPage
+  },
+  {
+    path: '/exhibition-modify',
+    name: 'exhibitionModifyPage',
+    component: ExhibitionModifyPage
   },
   {
     path: '/artwork-modify',

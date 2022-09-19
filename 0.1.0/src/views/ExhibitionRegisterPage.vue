@@ -60,7 +60,7 @@
     import TitleInput from '@/components/ArtworkRegisterPage/TitleInput.vue';
     import ImageSelection from '@/widgets/ImageSelection.vue';
     import Description from '@/components/ArtworkRegisterPage/Description.vue';
-    import LinkUpload from '@/components/ExhibitionPage/LinkUpload.vue';
+    import LinkUpload from '@/components/ExhibitionRegisterPage/LinkUpload.vue';
     import Background from '@/widgets/Background.vue';
     
     import { getAuth } from '@/modules/auth';

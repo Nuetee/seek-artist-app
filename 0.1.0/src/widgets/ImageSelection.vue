@@ -58,7 +58,7 @@
     import { Swiper, SwiperSlide } from 'swiper/vue';
     import 'swiper/css';
     import Preview from './Preview.vue';
-    import ExhibitionPreview from '@/components/ExhibitionPage/ExhibitionPreview.vue'
+    import ExhibitionPreview from '@/components/ExhibitionRegisterPage/ExhibitionPreview.vue'
 
     export default {
         name: 'ImageSelection',

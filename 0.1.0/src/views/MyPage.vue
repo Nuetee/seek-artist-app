@@ -54,10 +54,8 @@
                 </swiper>
             </div>
         </div>
-        <SideBar :minimized="this.minimized"></SideBar>
+        <SideBar ref="sideBar"></SideBar>
         <UploadButton></UploadButton>
-        <Background :backgroundDisplayFlag="this.minimized" @click="this.popHistory">
-        </Background>
     </div>
 </template>
 <script>
@@ -136,18 +134,6 @@
                 this.nothingToUpdate = true
             }
             this.loadFlag = true
-
-            // window.addEventListener('resize', this.setSelectBarPosition)
-            // document.getElementById('myPage').addEventListener('click', (e)=> {
-            //     if (_this.$refs.selectBar !== undefined 
-            //         && _this.$refs.selectBar !== null
-            //         && _this.$refs.selectBar.contains(e.target) === false) {
-            //         if (_this.barOpened) {
-            //             _this.selectBar.style.setProperty('bottom', '0')
-            //             _this.barOpened = false
-            //         }
-            //     }
-            // })
         },
         mounted () {
             const _this = this
@@ -201,48 +187,9 @@
                     return
                 }
             },
-            /*
-            * - sideBarOpenButton(class)에 click event가 발생하면 호출되는 함수.
-            * 1. 부모 DOM Element로의 click event 전파를 차단한다.
-            * 2. history.pushState() 메서드를 통해 브라우저의 세션기록에 더비 상태를 추가한다. (뒤로가기를 눌렀을 때, 이전 페이지로 이동하지 않도록 하기 위함.)
-            * 3. this.minimized = false 로 설정하여 sideBar가 펼쳐지게 한다.
-            */
-            openSideBar(event) {
-                if (event.stopPropagation) event.stopPropagation();
-                else event.cancelBubble = true; // IE 대응
-
-                window.history.pushState(null, '', location.href)
-                this.minimized = false
+            openSideBar (event) {
+                this.$refs.sideBar.openSideBar(event)
             },
-            /*
-            * - sideBar component가 접히도록 하는 함수.
-            * 1. sideBar component에 props로 넘기는 data인 this.minimized == false인 경우, sideBar가 펼쳐져 있는 상태
-            * 2. sideBar가 펼쳐진 상태에서 background를 터치한 경우라면 history.back() 메서드를 통해 뒤로가기 이벤트를 발생시킴.
-            * 3. 뒤로가기 이벤트는 window.onpopstate를 발생시키고, 여기서 this.minimized = true로 바꿔줌.
-            */
-            popHistory() {
-                if (!this.minimized) {
-                    window.history.back()
-                }
-            },
-            // setSelectBarPosition() {
-            //     if (this.barOpened === false) {
-            //         return
-            //     }
-            //     this.selectBar.style.setProperty('transition', 'none')
-            //     this.selectBar.style.setProperty('bottom', '200px')
-
-            //     const _this = this
-
-            //     if (this.resizeFlag) {
-            //         this.resizeFlag = false
-
-            //         setTimeout(() => {
-            //             _this.selectBar.style.setProperty('transition', 'bottom 0.5s')
-            //             _this.resizeFlag = true
-            //         }, 300)
-            //     }
-            // },
             async rebuild(offset, length) {
                 const newArtworkIdList = await this.user.getOwnArtworks(offset, length)
                 const newExhibitionIdList = await this.user.getOwnExhibitions(offset, length)
