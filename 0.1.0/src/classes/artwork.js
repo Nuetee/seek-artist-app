@@ -4,7 +4,8 @@ import { sendRequest } from '../modules/api'
 import { 
     getArtworkImages,
     getArtworkThumbnailImage,
-    getArtworkRepresentImage
+    getArtworkRepresentImage,
+    getArtworkRepresentVideo
 } from '../modules/storage'
 import { User } from './user'
 
@@ -29,6 +30,7 @@ export class Artwork {
     three_dimensional
     material
     information
+    is_video
 
     constructor (page_id) {
         this.page_id = page_id
