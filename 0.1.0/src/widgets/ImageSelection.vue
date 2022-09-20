@@ -1,11 +1,15 @@
 <template>
     <div id="imageSelection" :class="this.isExhibition ? 'exhibitionImageSelection' : ''">
         <div v-if="!this.isExhibition">
-            권장 비율 3 : 5
+            &middot 권장 비율 3 : 5<br/>
+            &middot 영상 최대 1개 선택 가능(150MB이하)
         </div>
-        <input type="file" id="imageUpload" accept="image/*" multiple>
+        <!-- Exhibition 등록의 경우 하나의 사진 파일만 선택 가능 -->
+        <input v-if="this.isExhibition" type="file" id="imageUpload" accept="image/*"/>
+        <!-- Artwork 등록의 경우 여러개의 사진/동영상 파일 선택 가능 -->
+        <input v-else type="file" id="imageUpload" accept="image/*, video/mp4" multiple/>
         <swiper v-bind="this.swiperOptions">
-            <swiper-slide v-for="(image, i) in this.selectedImageFiles">
+            <swiper-slide v-for="(file, i) in this.selectedFiles">
                 <div class="thumbnail poppins"
                     v-if="i===0"
                     :style="'color: ' + this.textColor"
@@ -20,10 +24,11 @@
                     <path d="M5.79999 9H12.2" :stroke="this.textColor" stroke-width="1.3" stroke-linecap="round"
                         stroke-linejoin="round" />
                 </svg>
-                <Preview v-if="!this.isExhibition" :textColor="this.textColor" :title="this.artworkData.title" :image="image"></Preview>
-                <ExhibitionPreview v-else :image="image"></ExhibitionPreview>
+                <Preview v-if="!this.isExhibition && file.type.includes('image')" :textColor="this.textColor" :title="this.artworkData.title" :image="file"></Preview>
+                <video v-else-if="!this.isExhibition && file.type.includes('video')" id="video" :src="file.src" controls></video>
+                <ExhibitionPreview v-else :image="file"></ExhibitionPreview>
             </swiper-slide>
-            <swiper-slide v-if="!this.isExhibition || !this.selectedImageFiles.length">
+            <swiper-slide v-if="!this.isExhibition || !this.selectedFiles.length">
                 <label for="imageUpload">
                     <svg class="plusIcon" width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M26 2V50" stroke="#959595" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -32,8 +37,8 @@
                 </label>
             </swiper-slide>
         </swiper>
-        <div v-show="!this.isExhibition && this.selectedImageFiles.length">텍스트 색상</div>
-        <div class="textColorButtonContainer" v-show="!this.isExhibition && this.selectedImageFiles.length">
+        <div v-show="!this.isExhibition && this.selectedFiles.length">텍스트 색상</div>
+        <div class="textColorButtonContainer" v-show="!this.isExhibition && this.selectedFiles.length">
             <input type="radio" v-model="this.textColor" name="textColor" id="black" value="black">
             <label for="black">
                 <svg v-if="this.textColor==='black'" width="18" height="13" viewBox="0 0 18 13" fill="none"
@@ -88,7 +93,9 @@
             return {
                 imageSelection: null,
                 imageUpload: null,
+                selectedFiles: [],
                 selectedImageFiles: [],
+                selectedVideo: null,
                 textColor: 'black',
                 swiperOptions: {
                     slidesPerView: 'auto',
@@ -100,7 +107,7 @@
             };
         },
         watch: {
-            selectedImageFiles: {
+            selectedFiles: {
                 deep: true,
                 async handler() {
                     await this.formValidCheck()
@@ -112,7 +119,7 @@
         },
         created() {
             this.textColor = this.originalTextColor
-            this.selectedImageFiles = this.originalImageFiles
+            this.selectedFiles = this.originalImageFiles
         },
         mounted() {
             this.imageSelection = document.getElementById('imageSelection')
@@ -133,6 +140,7 @@
                     }
                     else {
                         this.$emit('set-artwork-entity', 'images', this.selectedImageFiles)
+                        this.$emit('set-artwork-entity', 'video', this.selectedVideo)
                     }
 
                     this.imageSelection.style.setProperty('padding', 0)
@@ -144,21 +152,33 @@
                 }
             },
             async addImageSlide () {
-                let selectedfiles = this.imageUpload.files
-                let fileLength = selectedfiles.length
-
+                let added_files = this.imageUpload.files
+                let fileLength = added_files.length
+                
                 if (this.isExhibition && fileLength > 1) {
                     alert("포스터 이미지는 한장만 선택 가능합니다.")
                     fileLength = 1
                 }
                 for (let i = 0; i < fileLength; i++) {
-                    let imageFile = new Object()
-                    imageFile = selectedfiles[i]
-                    imageFile.src = URL.createObjectURL(selectedfiles[i])
-                    imageFile.style = await cropImage(imageFile.src, 3 / 5)
+                    let current_file = new Object()
+                    current_file = added_files[i]
+                    current_file.src = URL.createObjectURL(added_files[i])
+                   
+                    if (this.checkFile(current_file.name, current_file.type)) {
+                        if (current_file.type.includes('image')) {
+                            current_file.style = await cropImage(current_file.src, 3 / 5)
 
-                    if (this.checkImage(imageFile.name)) {
-                        this.selectedImageFiles.push(imageFile)
+                            this.selectedImageFiles.push(current_file)
+                        }
+                        else if (current_file.type.includes('video')) {
+                            if (current_file.size > 157286400){
+                                alert("영상 크기는 150MB 이하까지 가능합니다.")
+                                continue
+                            }
+                            this.selectedVideo = current_file
+                        }
+
+                        this.selectedFiles.push(current_file)
                     }
                 }
                 this.imageUpload.value = ''
@@ -168,20 +188,40 @@
             * 현재 화면에 위치한 slide index를 parameter로 받는다.
             */
             deleteImageSlide (i) {
-                this.selectedImageFiles.splice(i, 1)
-            },
-            checkImage (imageName) {
-                const length = this.selectedImageFiles.length
-                if (length >= 5) {
-                    alert('이미지는 최대 5장까지 첨부 가능합니다.')
-                    return false
+                if (this.selectedFiles[i].type.includes('image')) {
+                    let j = 0
+                    while (this.selectedImageFiles[j] !== this.selectedFiles[i]) {
+                        j++
+                    }
+                    this.selectedImageFiles.splice(j, 1)
                 }
-                for (let i = 0; i < length; i++) {
-                    if (this.selectedImageFiles[i].name === imageName) {
-                        alert('중복된 이미지는 업로드 할 수 없습니다.')
+                else if (this.selectedFiles[i].type.includes('video')) {
+                    this.selectedVideo = null
+                }
+
+                this.selectedFiles.splice(i, 1)
+            },
+            checkFile (file_Name, file_type) {
+                if (file_type.includes('image')) {
+                    const length = this.selectedImageFiles.length
+                    if (length >= 5) {
+                        alert('이미지는 최대 5장까지 첨부 가능합니다.')
+                        return false
+                    }
+                    for (let i = 0; i < length; i++) {
+                        if (this.selectedImageFiles[i].name === file_Name) {
+                            alert('중복된 이미지는 업로드 할 수 없습니다.')
+                            return false
+                        }
+                    }
+                }
+                else if (file_type.includes('video')) {
+                    if(this.selectedVideo !== null) {
+                        alert('영상은 하나만 첨부 가능합니다.')
                         return false
                     }
                 }
+                
                 return true
             }
         }

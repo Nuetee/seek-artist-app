@@ -14,7 +14,7 @@
             </div>
             <div class="presentStep"> {{ this.presentStep[this.swiperIndex] }} </div>
             <div class="nextButton" @click="this.swiperNavigation(1)" :style="'color: ' + this.fontColor">
-                <div v-if="this.swiperIndex === 4">완료</div>
+                <div v-if="this.swiperIndex === 3">완료</div>
                 <div v-else>다음</div>
             </div>
         </div>
@@ -34,12 +34,6 @@
                         @activate-next-button="this.activateNextButton"
                         @set-artwork-entity="this.setArtworkEntity" :artworkData="this.newArtwork"
                         :originalImageFiles="[]"></ImageSelection>
-                </swiper-slide>
-                <swiper-slide>
-                    <VideoInsert ref="videoInsert"
-                        @activate-next-button="this.activateNextButton"
-                        @set-artwork-entity="this.setArtworkEntity"
-                    ></VideoInsert>
                 </swiper-slide>
                 <swiper-slide>
                     <BasicInformation ref="basicInformation" 
@@ -67,7 +61,6 @@
 <script>
     import TitleInput from '@/components/ArtworkRegisterPage/TitleInput.vue';
     import ImageSelection from '@/widgets/ImageSelection.vue';
-    import VideoInsert from '@/widgets/VideoInsert.vue'
     import BasicInformation from '@/components/ArtworkRegisterPage/BasicInformation.vue';
     import Description from '@/components/ArtworkRegisterPage/Description.vue';
     
@@ -100,11 +93,10 @@
             BasicInformation,
             Description,
             Background,
-            VideoInsert
         },
         data() {
             return {
-                presentStep: ['작품명 입력', '이미지 선택', '영상 첨부', '상세정보 입력', '작품 설명 입력'],
+                presentStep: ['작품명 입력', '이미지/영상 선택', '상세정보 입력', '작품 설명 입력'],
                 swiperIndex: 0,
                 numberOfSlides: 0,
                 navigationButtons: [],
@@ -304,12 +296,9 @@
                         await this.$refs.imageSelection.formValidCheck()
                         break
                     case 2:
-                        this.$refs.videoInsert.formValidCheck()
-                        break
-                    case 3:
                         this.$refs.basicInformation.formValidCheck()
                         break
-                    case 4:
+                    case 3:
                         this.$refs.description.descriptionValidCheck()
                         break
                 }
