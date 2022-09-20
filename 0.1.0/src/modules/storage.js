@@ -311,6 +311,13 @@ export async function getExhibitionThumbnailImage (target_id) {
     return process.env.VUE_APP_STORAGE_URL + '/exhibition/' + target_id + '/thumbnail/thumbnail.jpg'
 }
 
+// Get signed url for exhibition's represenative video
+// - target_id : exhibition's page_id
+// return rtmp url of the video, or empty string if the respond is not given successfully
+export async function getExhibitionRepresentVideo (target_id) {
+    return process.env.VUE_APP_STORAGE_URL + '/exhibition/' + target_id + '/video/0.mp4'
+}
+
 // Upload artwork's all images
 // - target_id : artwork's id
 // return the result of upload
@@ -400,8 +407,12 @@ export async function putArtworkThumbnailImage (target_id, file) {
 // Upload artwork's (representative) video
 // - target_id : artwork's id
 // return the result of upload
-export async function putArtworkVideo (target_id, file) {
+export async function putArtworkVideo (artwork, index, target_id, file) {
     if (!file) {
+        return false
+    }
+    const result = await artwork.putIsVideo(index)
+    if (!result) {
         return false
     }
     return await sendStorageUpload('artwork', target_id, ['video/0.mp4'], [file])
@@ -412,6 +423,20 @@ export async function putArtworkVideo (target_id, file) {
 // return the result of upload
 export async function deleteArtworkThumbnailImage (target_id) {
     return await sendStorageDelete('artwork', target_id, ['thumbnail/thumbnail.jpg'])
+}
+
+// Delete artwork's (representative) video
+// - target_id : artwork's id
+// return the result of delete
+export async function deleteArtworkVideo (artwork, target_id) {
+    if (!file) {
+        return false
+    }
+    const result = await artwork.putIsVideo(null)
+    if (!result) {
+        return false
+    }
+    return await sendStorageDelete('artwork', target_id, ['video/0.mp4'])
 }
 
 // Create artwork's directory
@@ -514,11 +539,39 @@ export async function putExhibitionThumbnailImage (target_id, file) {
     return await sendStorageUpload('exhibition', target_id, ['thumbnail/thumbnail.jpg'], [file])
 }
 
+// Upload exhibition's (representative) video
+// - target_id : exhibition's id
+// return the result of upload
+export async function putExhibitionVideo (exhibition, index, target_id, file) {
+    if (!file) {
+        return false
+    }
+    const result = await exhibition.putIsVideo(index)
+    if (!result) {
+        return false
+    }
+    return await sendStorageUpload('exhibition', target_id, ['video/0.mp4'], [file])
+}
+
 // Delete exhibition's thumbnail (representative) image
 // - target_id : exhibition's id
 // return the result of upload
 export async function deleteExhibitionThumbnailImage (target_id) {
     return await sendStorageDelete('exhibition', target_id, ['thumbnail/thumbnail.jpg'])
+}
+
+// Delete exhibition's (representative) video
+// - target_id : exhibition's id
+// return the result of delete
+export async function deleteExhibitionVideo (exhibition, target_id) {
+    if (!file) {
+        return false
+    }
+    const result = await exhibition.putIsVideo(null)
+    if (!result) {
+        return false
+    }
+    return await sendStorageDelete('exhibition', target_id, ['video/0.mp4'])
 }
 
 // Create exhibition's directory
