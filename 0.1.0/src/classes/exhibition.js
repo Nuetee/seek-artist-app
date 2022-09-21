@@ -27,6 +27,7 @@ export class Exhibition {
     is_video
 
     owner
+    category
     artwork_list = []
     category_list = []
 
@@ -58,8 +59,13 @@ export class Exhibition {
         if (status < 400) {
             const page_data = data[0][0]
             this.information = page_data.information
+            this.category = page_data.category
             this.is_video = page_data.is_video
             this.owner = await new User(page_data.owner_id).init()
+
+            const isArray = function (obj) {
+                return Object.prototype.toString.call(obj) === '[object Array]';
+            }
 
             if (page_data.category && isArray(page_data.category)) {
                 for (let i = 0 ; i < page_data.category.length; i++) {
@@ -68,7 +74,7 @@ export class Exhibition {
                     this.category_list.push(null)
                 }
             }
-            else {
+           else {
                 for (let obj in page_data.category) {
                     const page_array = page_data.category[obj]
                     for (let i = 0; i < page_array.length; i++) {
