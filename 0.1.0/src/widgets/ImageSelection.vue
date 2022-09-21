@@ -96,6 +96,7 @@
                 selectedFiles: [],
                 selectedImageFiles: [],
                 selectedVideo: null,
+                videoIndex: null,
                 textColor: 'black',
                 swiperOptions: {
                     slidesPerView: 'auto',
@@ -110,6 +111,17 @@
             selectedFiles: {
                 deep: true,
                 async handler() {
+                    if (this.selectedVideo !== null) {
+                        let i = 0
+                        while (true) {
+                            if (this.selectedFiles[i].type.includes('video')) {
+                                break
+                            }
+
+                            i++
+                        }
+                        this.videoIndex = i
+                    }
                     await this.formValidCheck()
                 }
             },
@@ -118,8 +130,7 @@
             }
         },
         created() {
-            this.textColor = this.originalTextColor
-            this.selectedFiles = this.originalImageFiles
+            this.initialization()
         },
         mounted() {
             this.imageSelection = document.getElementById('imageSelection')
@@ -130,6 +141,32 @@
             })
         },
         methods: {
+            initialization() {
+                this.selectedImageFiles = []
+                this.selectedVideo = null
+                this.textColor = this.originalTextColor
+                this.selectedFiles = this.originalImageFiles.slice()
+
+                let i = 0
+                while(i < this.selectedFiles.length) {
+                    if (this.selectedFiles[i].type === 'image') {
+                        this.selectedImageFiles.push(this.selectedFiles[i])
+                    }
+                    else if(this.selectedFiles[i].type === 'video') {
+                        if (this.selectedVideo !== null) {
+                            console.log('Error: 비디오가 한개 이상 로드됨.')
+                        }
+                        else {
+                            this.selectedVideo = this.selectedFiles[i]
+                        }
+                    }
+                    else {
+                        console.log('Error: 알수없는 타입의 파일이 로드됨.')
+                    }
+
+                    i++
+                }
+            },
             async formValidCheck() {
                 await this.$nextTick()
                 if (this.selectedImageFiles.length > 0) {
@@ -141,6 +178,7 @@
                     else {
                         this.$emit('set-artwork-entity', 'images', this.selectedImageFiles)
                         this.$emit('set-artwork-entity', 'video', this.selectedVideo)
+                        this.$emit('set-artwork-entity', 'video_index', this.videoIndex)
                     }
 
                     this.imageSelection.style.setProperty('padding', 0)
