@@ -104,7 +104,7 @@ export class Exhibition {
         }
     }
 
-    getLinkList = async function (offset, limit) {
+    getLinkList = async function () {
         const { status, data } = await sendRequest('get', '/exhibition/link', {
             target_id : this.page_id
         })
@@ -146,6 +146,10 @@ export class Exhibition {
         return this.nickname
     }
 
+    getCategoryJson () {
+        return this.category
+    }
+
     isVideo () {
         return this.is_video
     }
@@ -158,10 +162,10 @@ export class Exhibition {
         return this.artwork_list
     }
 
-    postExhibitionLink = async function (json_string) {
+    postLink = async function (json_object) {
         const { status, data } = await sendRequest('post', '/exhibition/link', {
             target_id : this.id,
-            link : json_string
+            link : json_object
         })
         if (status < 500) {
             return data
@@ -171,9 +175,9 @@ export class Exhibition {
         }
     }
 
-    deleteExhibitionLink = async function (id) {
+    deleteLink = async function (link_id) {
         const { status, data } = await sendRequest('delete', '/exhibition/link', {
-            target_id : this.id
+            target_id : link_id
         })
         if (status < 500) {
             return data
