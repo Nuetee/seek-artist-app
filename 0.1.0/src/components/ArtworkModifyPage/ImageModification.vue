@@ -13,7 +13,7 @@
                 <div>완료</div>
             </div>
         </div>
-        <ImageSelection v-if="flag" :originalTextColor="this.originalArtwork.getColor()" :originalImageFiles="this.original_images" :artworkData="this.title"
+        <ImageSelection ref="imageSelection" v-if="this.flag" :originalTextColor="this.originalArtwork.getColor()" :originalImageFiles="this.original_files" :artworkData="this.title"
             @activate-next-button="this.activateSubmit" @set-artwork-entity="this.setImageFiles">
         </ImageSelection>
     </div>
@@ -39,7 +39,7 @@
                 title: null,
                 text_color: null,
                 original_length: null,
-                original_images: [],
+                original_files: [],
                 mapping_array: [],
                 original_image_src: [],
                 new_image_files: [],
@@ -59,29 +59,37 @@
             for (let i = 0; i < this.original_length; i++) {
                 let imageFile = new Object()
                 imageFile.src = this.original_image_src[i]
+                imageFile.type = 'image'
                 imageFile.style = await cropImage(this.original_image_src[i], 3 / 5)
 
-                this.original_images.push(imageFile)
+                this.original_files.push(imageFile)
+            }
+
+            let video_index = this.originalArtwork.isVideo()
+            
+            if (video_index !== null || video_index !== undefined) {
+                let videoFile =  new Object()
+                videoFile.src = await this.originalArtwork.getVideo()
+                videoFile.type = 'video'
+    
+                this.original_files.splice(video_index, 0, videoFile)
             }
 
             this.flag = true
         },
-        beforeMount() {},
-        mounted() {},
-        beforeUpdate() {},
-        updated() {},
-        beforeUnmount() {},
-        unmounted() {},
+
         methods: {
             activateSubmit (activate) {
                 this.activateNextButton = activate
             },
             back () {
                 this.artwork = this.originalArtwork
+                
+                this.$refs.imageSelection.initialization()
                 this.closeWindow()
             },
             closeWindow () {
-                this.$emit('close-text-modification', 'image')
+                this.$emit('close-image-modification', 'image')
             },
             setImageFiles (entity, value) {
                 if (entity === 'images') {

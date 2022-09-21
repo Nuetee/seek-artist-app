@@ -128,7 +128,7 @@
     <TextModification ref="textModification" v-if="this.artwork !== null" v-show="!this.isFrontPage && this.textEdit"
         :originalArtwork="this.artwork" @close-text-modification="this.closeEditPage"></TextModification>
     <ImageModification ref="imageModification" v-if="this.artwork !== null" v-show="!this.isFrontPage && this.imageEdit"
-        :originalArtwork="this.artwork" @close-text-modification="this.closeEditPage"></ImageModification>
+        :originalArtwork="this.artwork" @close-image-modification="this.closeEditPage"></ImageModification>
     <div v-if="this.loading" id="loading">
         <va-progress-circle indeterminate />
     </div>

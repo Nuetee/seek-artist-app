@@ -105,6 +105,7 @@
                     title: null,
                     images: null,
                     video: null,
+                    video_index: null,
                     material: null,
                     threeDimensional: null,
                     size: {
@@ -224,7 +225,7 @@
                         this.newArtwork.material,
                         this.newArtwork.description,
                         this.newArtwork.textColor,
-                        (this.newArtwork.video !== null)
+                        this.newArtwork.video_index
                     )
                     if (!new_page_id) {
                         this.$router.replace('/')
@@ -253,7 +254,8 @@
                             const thumbnail_result = await putArtworkThumbnailImage(new_page_id, thumbnail)
                             if (thumbnail_result) {
                                 if (this.newArtwork.video !== null) {
-                                    const video_result = await putArtworkVideo(new_page_id, this.newArtwork.video)
+                                    let new_artwork = await new Artwork(new_page_id).init()
+                                    const video_result = await putArtworkVideo(new_artwork, this.newArtwork.video_index, new_page_id, this.newArtwork.video)
                                     if (video_result) {
                                         this.$router.replace('/')
                                         return
@@ -332,6 +334,9 @@
                         break
                     case 'video':
                         this.newArtwork.video = value
+                        break
+                    case 'video_index':
+                        this.newArtwork.video_index = value
                         break
                     case 'material':
                         this.newArtwork.material = value

@@ -217,7 +217,7 @@ export class Artwork {
     }
 
     putIsVideo = async function (is_video) {
-        const result = await this.putExhibitionData('is_video', is_video)
+        const result = await this.putArtworkData('is_video', is_video)
         return result
     }
 
