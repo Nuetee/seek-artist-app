@@ -242,7 +242,7 @@
             await artwork.initializePage()
 
             // If the current user is not owner of artwork, go back to home
-            if (getAuth().getID() === artwork.getArtist().getID()) {
+            if (getAuth().getID() !== artwork.getArtist().getID()) {
                 alert('접근 권한이 없습니다.')
                 this.$router.replace('/')
                 return
