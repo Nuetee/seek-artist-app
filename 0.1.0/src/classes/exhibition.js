@@ -165,7 +165,7 @@ export class Exhibition {
     postLink = async function (json_object) {
         const { status, data } = await sendRequest('post', '/exhibition/link', {
             target_id : this.id,
-            link : json_object
+            data : json_object
         })
         if (status < 500) {
             return data

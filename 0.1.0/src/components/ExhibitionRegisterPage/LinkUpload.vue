@@ -6,12 +6,13 @@
             </div>
             <div class="body">
                 <div class="linkContainer" v-for="(link_object, i) in this.link_list">
-                    <input type="text" 
-                        v-model="link_list.title"
+                    <input type="text"
+                        maxlength="200"
+                        v-model="link_object.title"
                         placeholder="링크의 소제목을 써주세요!"
                     />
                     <input type="text"
-                        v-model="link_list.link"
+                        v-model="link_object.link"
                         placeholder="www.seek_shopping.com"
                     />
                 </div>
@@ -32,6 +33,7 @@
             <div class="body">
                 <input type="text"
                     v-model="this.video.title"
+                    maxlength="200"
                     placeholder="영상의 소제목을 써주세요!"
                     @keydown="this.preventTab($event)"
                     />
@@ -129,14 +131,17 @@
                     return  data.link !== null
                 })
 
-                // let 
-                // let i = 0
-                // while (valid_link_list.length < i) {
-
-                // }
+                let json_link_object = {}
+                let i = 0
+                while (i < valid_link_list.length) {
+                    let property = valid_link_list[i].title
+                    json_link_object[property.toString()] = valid_link_list[i].link
+                    
+                    i++
+                }
                 
                 this.$emit('activate-next-button', true)
-                this.$emit('set-artwork-entity', 'link_list', valid_link_list)
+                this.$emit('set-artwork-entity', 'link_list', json_link_object)
                 this.$emit('set-artwork-entity', 'video', this.video)
             },
             deleteVideo () {
