@@ -122,6 +122,22 @@ export class Exhibition {
         }
     }
 
+    getCollaboratorList = async function () {
+        const { status, data } = await sendRequest('get', '/exhibition/collaborator', {
+            target_id : this.page_id
+        })
+        if (status < 500) {
+            return data[0].map(function (x) { 
+                return {
+                    id: x.id,
+                }
+            })
+        }
+        else {
+            return []
+        }
+    }
+
     getID () {
         return this.id
     }
@@ -178,6 +194,32 @@ export class Exhibition {
     deleteLink = async function (link_id) {
         const { status, data } = await sendRequest('delete', '/exhibition/link', {
             target_id : link_id
+        })
+        if (status < 500) {
+            return data
+        }
+        else {
+            return false
+        }
+    }
+
+    postCollaborator = async function (artist) {
+        const { status, data } = await sendRequest('post', '/exhibition/link', {
+            target_id : this.id,
+            data : artist.getID()
+        })
+        if (status < 500) {
+            return data
+        }
+        else {
+            return false
+        }
+    }
+
+    deleteCollaborator = async function (artist) {
+        const { status, data } = await sendRequest('delete', '/exhibition/link', {
+            target_id : this.page_id,
+            page_id : artist.getPageID()
         })
         if (status < 500) {
             return data
