@@ -70,7 +70,8 @@
         putExhibitionDirectory,
         putExhibitionImages,
         putExhibitionThumbnailImage,
-        deleteExhibitionDirectory
+        deleteExhibitionDirectory,
+        putExhibitionVideo
     } from '@/modules/storage';
 
     import SwiperCore, { Pagination, Navigation } from 'swiper';
@@ -132,7 +133,6 @@
         methods: {
             getSlidesNumber (swiper) {
                 this.numberOfSlides = swiper.slides.length
-                console.log(this.numberOfSlides)
             },
             back () {
                 this.$router.replace('/')
@@ -186,7 +186,7 @@
                 else {
                     this.loading = true
                     this.registerPopupFlag = false
-                    
+                    console.log('0')
                     // exhibition 등록 code
                     const current_artist = getAuth()
                     const new_page_id = await current_artist.postExhibition(
@@ -197,7 +197,13 @@
                         this.$router.replace('/')
                         return
                     }
-
+                    console.log('1')
+                    const new_exhibition = await new Exhibition(new_page_id).init()
+                    
+                    if (Object.keys(this.newExhibition.linkList).length !== 0) {
+                        await new_exhibition.postLink(this.newExhibition.linkList)
+                    }
+                    console.log('2')
                     const resized_files = []
                     const files = this.newExhibition.images
                     for (let i = 0 ; i < files.length ; i++) {
@@ -212,17 +218,28 @@
                         x: 400,
                         y: 400
                     })
+                    console.log('3')
                     const directory_result = await putExhibitionDirectory(new_page_id)
                     if (directory_result) {
                         const image_result = await putExhibitionImages(new_page_id, resized_files)
                         if (image_result) {
-                                const thumbnail_result = await putExhibitionThumbnailImage(new_page_id, thumbnail)
-                                if (thumbnail_result) {
+                            const thumbnail_result = await putExhibitionThumbnailImage(new_page_id, thumbnail)
+                            if (thumbnail_result) {
+                                console.log('4')
+                                let video_result = true
+                                if (this.newExhibition.video !== null) {
+                                    video_result = await putExhibitionVideo(new_exhibition, this.newExhibition.video.title, new_page_id, this.newExhibition.video.file)
+                                }
+                                console.log('5')
+                                if(video_result) {
+                                    console.log('6')
                                     this.$router.replace('/')
                                     return
                                 }
                             }
+                        }
                     }
+                    console.log('7')
                     await this.cancelRegister(new_page_id)
                     this.loading = false
 
@@ -290,10 +307,10 @@
                     case 'description':
                         this.newExhibition.description = value
                     case 'link_list': {
-                        this.newExhibition.goodsLink = value
+                        this.newExhibition.linkList = value
                     }
                     case 'video': {
-                        this.newExhibition.videoLink = value
+                        this.newExhibition.video = value
                     }
                 }
             }
