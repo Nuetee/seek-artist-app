@@ -1,6 +1,6 @@
 <template>
     <div id="exhibitionRegisterPage">
-        <Background :backgroundDisplayFlag="!this.loading"></Background>
+        <Background :background_display="!this.loading"></Background>
         <div v-if="this.loading" id="loading">
             <va-progress-circle indeterminate />
         </div>
@@ -102,8 +102,8 @@
                     title: null,
                     images: null,
                     description: null,
-                    goodsLink: null,
-                    videoLink: null,
+                    linkList: null,
+                    video: null,
                 },
                 swiperOptions: {
                     slidesPerView: 1,
@@ -167,27 +167,23 @@
             * 4. 정보가 모두 담긴 경우 (result === true) 등록 절차 진행
             */
             async completeRegister () {
-                console.log('-1')
                 if (this.navigationButtons[1].disabled)
                     return
                 
                 let result = true
                 for (let i in this.newExhibition) {
-                    if (i === 'goodsLink' || i === 'videoLink') 
+                    if (i === 'linkList' || i === 'video') 
                         continue
                     result = result && this.newExhibition[i]
                 }
-                console.log('0')
 
                 /* result === false면 exhibition에 누락된 정보 있음. 처음부터 등록 */
                 if (!result) {
                     // 처음으로 돌아가는 code.
                     this.$router.replace(this.$router.currentRoute)
-                    console.log('1')
                 }
                 /* result === true면 exhibition 등록 */
                 else {
-                    console.log('2')
                     this.loading = true
                     this.registerPopupFlag = false
                     
@@ -270,7 +266,6 @@
             * 2. parameter isActive에 따라 "다음" 버튼 폰트 색상 변경.
             */
             activateNextButton (isActive) {
-                console.log(isActive)
                 this.navigationButtons[1].disabled = !isActive
                 
                 if (isActive) {
@@ -294,10 +289,10 @@
                         break
                     case 'description':
                         this.newExhibition.description = value
-                    case 'goods_link': {
+                    case 'link_list': {
                         this.newExhibition.goodsLink = value
                     }
-                    case 'video_link': {
+                    case 'video': {
                         this.newExhibition.videoLink = value
                     }
                 }

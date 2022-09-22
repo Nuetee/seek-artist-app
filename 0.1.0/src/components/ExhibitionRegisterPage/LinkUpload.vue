@@ -1,16 +1,21 @@
 <template>
     <div id="linkUpload">
-        <div class="goodsLinkContainer">
+        <div class="linkListContainer">
             <div class="title">
-                굿즈 링크
+                링크 업로드
             </div>
             <div class="body">
-                <input v-for="(goods_link, i) in this.goods_link_array" 
-                    type="text"
-                    v-model="this.goods_link_array[i]"
-                    placeholder="www.seek_shopping.com"
+                <div class="linkContainer" v-for="(link_object, i) in this.link_list">
+                    <input type="text" 
+                        v-model="link_list.title"
+                        placeholder="링크의 소제목을 써주세요!"
                     />
-                <div class="link_addition" @click="() => { this.goods_link_array.push('') }">
+                    <input type="text"
+                        v-model="link_list.link"
+                        placeholder="www.seek_shopping.com"
+                    />
+                </div>
+                <div class="link_addition" @click="() => { this.link_list.push({title: null, link: null}) }">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="12" cy="12" r="10" fill="#D9D9D9"/>
                     <path d="M12 6V18" stroke="#959595" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -20,24 +25,38 @@
                 </div>
             </div>
         </div>
-        <div class="videoLinkContainer">
+        <div class="videoContainer">
             <div class="title">
-                영상 링크
+                영상 업로드 <span>영상 최대 1개 선택 가능(150MB이하)</span>
             </div>
             <div class="body">
-                <input v-for="(video_link, i) in this.video_link_array" 
-                    type="text"
-                    v-model="this.video_link_array[i]"
-                    placeholder="www.seek_shopping.com"
-                    @keydown="(i === this.video_link_array.length - 1) ? this.preventTab($event) : null"
+                <input type="text"
+                    v-model="this.video.title"
+                    placeholder="영상의 소제목을 써주세요!"
+                    @keydown="this.preventTab($event)"
                     />
-                <div class="link_addition" @click="() => { this.video_link_array.push('') }">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="12" r="10" fill="#D9D9D9"/>
-                    <path d="M12 6V18" stroke="#959595" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M6 12H18" stroke="#959595" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    링크 추가
+                <div class="video">
+                    <div class="videoPlayer" v-if="this.video.file">
+                        <svg @click="this.deleteVideo()" width="18"   
+                            height="18" viewBox="0 0 18 18" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z"
+                                stroke="black" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M5.79999 9H12.2" stroke="black" stroke-width="1.3" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        </svg>
+                         <video :src="this.video.src" controls></video>
+                    </div>
+                    <div class="videoSelection" v-else>
+                        <label for="videoUpload">
+                            <svg class="plusIcon" width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M26 2V50" stroke="#959595" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2 26H50" stroke="#959595" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </label>
+                    </div>
+                    <input type="file" id="videoUpload" accept="video/mp4"/>
                 </div>
             </div>
         </div>
@@ -49,18 +68,27 @@
         components: {},
         data() {
             return {
-                goods_link_array: [''],
-                video_link_array: [''],
+                link_list: [
+                    {
+                        title: null,
+                        link: null
+                    }
+                ],
+                video: {
+                    title: null,
+                    file: null,
+                    src: null
+                }
             };
         },
         watch: {
-            goods_link_array: {
+            link_list: {
                 deep: true,
                 handler() {
                     this.formValidCheck()
                 }
             },
-            video_link_array: {
+            video: {
                 deep: true,
                 handler() {
                     this.formValidCheck()
@@ -70,7 +98,21 @@
         beforeCreate() {},
         created() {},
         beforeMount() {},
-        mounted() {},
+        mounted() {
+            const video_upload = document.getElementById('videoUpload')
+            const _this = this
+
+            video_upload.addEventListener('change', function () {
+                if (video_upload.files[0].size > 157286400){
+                    alert("영상 크기는 150MB 이하까지 가능합니다.")
+                    return
+                }
+                _this.video.src = URL.createObjectURL(video_upload.files[0])
+                _this.video.file = video_upload.files[0]
+
+                video_upload.value = ''
+            })
+        },
         beforeUpdate() {},
         updated() {},
         beforeUnmount() {},
@@ -79,18 +121,31 @@
             /**
              * - Optional이므로 항상 activate-next-button(true)
              * - 아무 값도 들어있지 않은 배열값(링크)은 제외해야 하므로 arr.filter를 통해 valid한 값만을 거른다.
+             * link 주소가 반드시 들어가야 한다.
+             * 
              */
             formValidCheck () {
-                let valid_goods_array = this.goods_link_array.filter((data) => {
-                    return  data !== ''
-                })
-                let valid_video_array = this.video_link_array.filter((data) => {
-                    return  data !== ''
+                let valid_link_list = this.link_list.filter((data) => {
+                    return  data.link !== null
                 })
 
+                // let 
+                // let i = 0
+                // while (valid_link_list.length < i) {
+
+                // }
+                
                 this.$emit('activate-next-button', true)
-                this.$emit('set-artwork-entity', 'goods_link', valid_goods_array)
-                this.$emit('set-artwork-entity', 'video_link', valid_video_array)
+                this.$emit('set-artwork-entity', 'link_list', valid_link_list)
+                this.$emit('set-artwork-entity', 'video', this.video)
+            },
+            deleteVideo () {
+                this.video.title = null
+                this.video.file = null
+                this.video.src = null
+
+                const video_upload = document.getElementById('videoUpload')
+                video_upload.value = ''
             },
             preventTab (event) {
                 if (event.keyCode === 9) {
