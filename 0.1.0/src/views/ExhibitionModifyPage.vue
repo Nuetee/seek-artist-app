@@ -166,15 +166,31 @@
         },
         async created() {
             // 유저 썸네일을 빠르게 로드하기 위해 Update history 코드와 분리
+            // Check login and load user thumbnail
             if(isAuth()) {
                 // Fetch profile thumbnail and set
                 this.user = getAuth()
                 this.userThumbnail = this.user.getThumbnail()
             }
+            else {
+                this.$router.replace('/login')
+                return
+            }
             
             this.vw = parseFloat(document.documentElement.style.getPropertyValue('--vw').replace("px", ""))
 
-            this.exhibition = await new Exhibition(this.id).init()
+            // Load exhibition
+            let exhibition = await new Exhibition(this.id).init()
+            await exhibition.initializePage()
+
+            // If the current user is not owner of exhibition or one of collaborators, go back to home
+            if (getAuth().getID() === exhibition.getOwner().getID()) {
+                alert('접근 권한이 없습니다.')
+                this.$router.replace('/')
+                return
+            }
+
+            this.exhibition = exhibition
             await this.exhibition.initializePage()
             let images = await this.exhibition.getImages()
             this.poster_image_style = await cropImage(images[0], 1)
