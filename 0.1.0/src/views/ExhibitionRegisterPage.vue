@@ -186,7 +186,6 @@
                 else {
                     this.loading = true
                     this.registerPopupFlag = false
-                    console.log('0')
                     // exhibition 등록 code
                     const current_artist = getAuth()
                     const new_page_id = await current_artist.postExhibition(
@@ -197,7 +196,7 @@
                         this.$router.replace('/')
                         return
                     }
-
+                    
                     const new_exhibition = await new Exhibition(new_page_id).init()
                     
                     if (Object.keys(this.newExhibition.linkList).length !== 0) {
@@ -229,6 +228,7 @@
                                 if (this.newExhibition.video !== null) {
                                     video_result = await putExhibitionVideo(new_exhibition, this.newExhibition.video.title, new_page_id, this.newExhibition.video.file)
                                 }
+
                                 if (video_result) {
                                     this.$router.replace('/')
                                     return
@@ -236,7 +236,9 @@
                             }
                         }
                     }
+
                     await this.cancelRegister(new_exhibition)
+
                     this.loading = false
 
                     this.$router.replace('/')
@@ -295,17 +297,25 @@
                 switch (entity) {
                     case 'title':
                         this.newExhibition.title = value
+                        //console.log(value)
                         break
                     case 'images':
                         this.newExhibition.images = value
+                        //console.log(value)
                         break
                     case 'description':
                         this.newExhibition.description = value
+                        //console.log(value)
+                        break
                     case 'link_list': {
                         this.newExhibition.linkList = value
+                        //console.log(value)
+                        break
                     }
                     case 'video': {
                         this.newExhibition.video = value
+                        //console.log(value)
+                        break
                     }
                 }
             }

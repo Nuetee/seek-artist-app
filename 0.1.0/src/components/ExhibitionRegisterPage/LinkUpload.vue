@@ -141,8 +141,8 @@
                 }
                 
                 this.$emit('activate-next-button', true)
-                this.$emit('set-artwork-entity', 'link_list', json_link_object)
-                this.$emit('set-artwork-entity', 'video', this.video)
+                this.$emit('set-exhibition-entity', 'link_list', json_link_object)
+                this.$emit('set-exhibition-entity', 'video', this.video)
             },
             deleteVideo () {
                 this.video.title = null
