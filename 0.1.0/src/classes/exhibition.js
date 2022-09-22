@@ -27,6 +27,7 @@ export class Exhibition {
     is_video
 
     owner
+    category
     artwork_list = []
     category_list = []
 
@@ -58,8 +59,13 @@ export class Exhibition {
         if (status < 400) {
             const page_data = data[0][0]
             this.information = page_data.information
+            this.category = page_data.category
             this.is_video = page_data.is_video
             this.owner = await new User(page_data.owner_id).init()
+
+            const isArray = function (obj) {
+                return Object.prototype.toString.call(obj) === '[object Array]';
+            }
 
             if (page_data.category && isArray(page_data.category)) {
                 for (let i = 0 ; i < page_data.category.length; i++) {
@@ -68,7 +74,7 @@ export class Exhibition {
                     this.category_list.push(null)
                 }
             }
-            else {
+           else {
                 for (let obj in page_data.category) {
                     const page_array = page_data.category[obj]
                     for (let i = 0; i < page_array.length; i++) {
@@ -98,7 +104,7 @@ export class Exhibition {
         }
     }
 
-    getLinkList = async function (offset, limit) {
+    getLinkList = async function () {
         const { status, data } = await sendRequest('get', '/exhibition/link', {
             target_id : this.page_id
         })
@@ -140,6 +146,10 @@ export class Exhibition {
         return this.nickname
     }
 
+    getCategoryJson () {
+        return this.category
+    }
+
     isVideo () {
         return this.is_video
     }
@@ -152,10 +162,10 @@ export class Exhibition {
         return this.artwork_list
     }
 
-    postExhibitionLink = async function (json_string) {
+    postLink = async function (json_object) {
         const { status, data } = await sendRequest('post', '/exhibition/link', {
             target_id : this.id,
-            link : json_string
+            link : json_object
         })
         if (status < 500) {
             return data
@@ -165,9 +175,9 @@ export class Exhibition {
         }
     }
 
-    deleteExhibitionLink = async function (id) {
+    deleteLink = async function (link_id) {
         const { status, data } = await sendRequest('delete', '/exhibition/link', {
-            target_id : this.id
+            target_id : link_id
         })
         if (status < 500) {
             return data
