@@ -547,6 +547,7 @@ export async function putExhibitionVideo (exhibition, index, target_id, file) {
         return false
     }
     const result = await exhibition.putIsVideo(index)
+
     if (!result) {
         return false
     }
