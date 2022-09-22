@@ -223,17 +223,35 @@
                     return
                 }
             }
-
             window.addEventListener('resize', this.setCommentBarPosition)
 
+            // Check login and load user thumbnail
+            if(isAuth()) {
+                // Fetch profile thumbnail and set
+                this.user = getAuth()
+                this.userThumbnail = this.user.getThumbnail()
+            }
+            else {
+                this.$router.replace('/login')
+                return
+            }
+            this.userThumbnailLoadFlag = true
+
+            // Load artwork
             let artwork = await new Artwork(this.id).init()
             await artwork.initializePage()
+
+            // If the current user is not owner of artwork, go back to home
+            if (getAuth().getID() === artwork.getArtist().getID()) {
+                alert('접근 권한이 없습니다.')
+                this.$router.replace('/')
+                return
+            }
             
             this.artwork = artwork
             
             this.buttonColor = artwork.getColor()
             await this.getArtworkImages()
-            
 
             document.getElementsByClassName('frontPage')[0].addEventListener('click', (e)=> {
                 if (_this.$refs.informationDrawer.drawer_opened) {
@@ -247,14 +265,6 @@
                     _this.$refs.commentDrawer.closeDrawer()
                 }
             })
-
-            if(isAuth()) {
-                // Fetch profile thumbnail and set
-                this.user = getAuth()
-                this.userThumbnail = this.user.getThumbnail()
-            }
-
-            this.userThumbnailLoadFlag = true
 
             if (artwork.getColor() === 'black') {
                 document.getElementById('artworkModifyPage').style.setProperty('--color', 'black')
