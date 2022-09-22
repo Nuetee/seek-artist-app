@@ -196,11 +196,14 @@
                         this.$router.replace('/')
                         return
                     }
+                    
                     const new_exhibition = await new Exhibition(new_page_id).init()
                     
                     if (Object.keys(this.newExhibition.linkList).length !== 0) {
+                        console.log(this.newExhibition.linkList)
                         await new_exhibition.postLink(this.newExhibition.linkList)
                     }
+
                     const resized_files = []
                     const files = this.newExhibition.images
                     for (let i = 0 ; i < files.length ; i++) {
@@ -225,14 +228,17 @@
                                 if (this.newExhibition.video !== null) {
                                     video_result = await putExhibitionVideo(new_exhibition, this.newExhibition.video.title, new_page_id, this.newExhibition.video.file)
                                 }
-                                if(video_result) {
+
+                                if (video_result) {
                                     this.$router.replace('/')
                                     return
                                 }
                             }
                         }
                     }
-                    await this.cancelRegister(new_page_id)
+
+                    await this.cancelRegister(new_exhibition)
+
                     this.loading = false
 
                     this.$router.replace('/')
@@ -240,10 +246,9 @@
                 }
             },
             // - exhibition 등록을 취소하는 함수.
-            async cancelRegister(new_page_id) {
-                const pre_exhibition = await new Exhibition(new_page_id).init()
+            async cancelRegister(pre_exhibition) {
                 await pre_exhibition.deletePreExhibition()
-                await deleteExhibitionDirectory(new_page_id)
+                await deleteExhibitionDirectory(pre_exhibition.getPageID())
             },
             /*
             * 등록 페이지가 변경되면 호출되는 함수.

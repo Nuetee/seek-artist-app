@@ -232,6 +232,8 @@
                         return
                     }
 
+                    const new_artwork = await new Artwork(new_page_id).init()
+
                     const resized_files = []
                     const files = this.newArtwork.images
                     for (let i = 0 ; i < files.length ; i++) {
@@ -254,7 +256,6 @@
                             const thumbnail_result = await putArtworkThumbnailImage(new_page_id, thumbnail)
                             if (thumbnail_result) {
                                 if (this.newArtwork.video !== null) {
-                                    let new_artwork = await new Artwork(new_page_id).init()
                                     const video_result = await putArtworkVideo(new_artwork, this.newArtwork.video_index, new_page_id, this.newArtwork.video)
                                     if (video_result) {
                                         this.$router.replace('/')
@@ -268,7 +269,7 @@
                             }
                         }
                     }
-                    await this.cancelRegister(new_page_id)
+                    await this.cancelRegister(new_artwork)
                     this.loading = false
 
                     this.$router.replace('/')
@@ -276,10 +277,9 @@
                 }
             },
             // - artwork 등록을 취소하는 함수.
-            async cancelRegister(new_page_id) {
-                const pre_artwork = await new Artwork(new_page_id).init()
+            async cancelRegister(pre_artwork) {
                 await pre_artwork.deletePreArtwork()
-                await deleteArtworkDirectory(new_page_id)
+                await deleteArtworkDirectory(pre_artwork.getPageID())
             },
             /*
             * 등록 페이지가 변경되면 호출되는 함수.

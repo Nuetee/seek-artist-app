@@ -184,7 +184,7 @@
             await exhibition.initializePage()
 
             // If the current user is not owner of exhibition or one of collaborators, go back to home
-            if (getAuth().getID() === exhibition.getOwner().getID()) {
+            if (getAuth().getID() !== exhibition.getOwner().getID()) {
                 alert('접근 권한이 없습니다.')
                 this.$router.replace('/')
                 return
