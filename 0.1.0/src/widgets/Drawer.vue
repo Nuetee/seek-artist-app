@@ -13,7 +13,10 @@
         name: 'Drawer',
         components: {},
         props: {
-            class: String
+            class: {
+                type: String,
+                default: ''
+            }
         },
         data() {
             return {

@@ -1,13 +1,19 @@
 <template>
     <div class="exhibitionEditButton">
-        <div class="previewMode">Edit</div>
-        <div class="editMode" style="display:none">Done</div>
+        <div class="previewMode" v-if="!this.is_edit">Edit</div>
+        <div class="editMode" v-else>Done</div>
     </div>
 </template>
 <script>
     export default {
         name: 'ExhibitionEditButton',
         components: {},
+        props: {
+            is_edit: {
+                type: Boolean,
+                default: false
+            }
+        },
         data() {
             return {
                 sampleData: ''
