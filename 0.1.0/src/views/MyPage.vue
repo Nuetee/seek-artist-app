@@ -125,6 +125,10 @@
                 }
             }
 
+            const ex = await new Exhibition('1').init()
+            await ex.initializePage()
+            console.log(await ex.getCollaboratorList())
+
             //Update session
             if (isAuth()) {
                 this.user = getAuth()
