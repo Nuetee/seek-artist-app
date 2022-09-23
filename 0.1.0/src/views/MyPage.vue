@@ -65,7 +65,6 @@
     import SideBar from '@/widgets/SideBar.vue';
     import UploadButton from '@/components/MyPage/UploadButton.vue';
     import Background from '../widgets/Background.vue';
-    import { Exhibition } from '@/classes/exhibition';
 
     import { Swiper, SwiperSlide } from 'swiper/vue';
     import SwiperCore, { Navigation } from 'swiper';
@@ -124,10 +123,6 @@
                     return
                 }
             }
-
-            const ex = await new Exhibition('1').init()
-            await ex.initializePage()
-            console.log(await ex.getCollaboratorList())
 
             //Update session
             if (isAuth()) {
