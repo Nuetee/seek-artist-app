@@ -61,6 +61,11 @@ const routes = [
     name: 'AuthPage',
     component: () => import(/* webpackChunkName: "about" */ '../views/AuthPage.vue')
   },
+  {
+    path: '/invitation',
+    name: 'InvitationPage',
+    component: () => import(/* webpackChunkName: "about" */ '../views/InvitationPage.vue')
+  },
 ]
 
 const router = createRouter({

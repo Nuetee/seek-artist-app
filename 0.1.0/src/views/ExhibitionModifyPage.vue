@@ -8,7 +8,7 @@
                 </button>
             </template>
             <template v-slot:right>
-                <RoundProfile :profile="this.userThumbnail" @click="this.openSideBar($event)" :color="'black'"></RoundProfile>
+                <RoundProfile :profile="this.user_thumbnail" @click="this.openSideBar($event)" :color="'black'"></RoundProfile>
             </template>
         </MainHeader>
         <div id="viewPort">
@@ -41,6 +41,20 @@
                         <img id="posterImage" @load="() => {this.bodyShowFlag = true}" :src="this.poster_image"
                             :style="this.poster_image_style">
                     </div>
+                    <div class="collaboratorContainer" v-if="this.is_edit">
+                        <div class="containerName">참여 멤버</div>
+                        <div class="collaboratorList">
+                            <RoundProfile v-for="(artist, i) in collaborator_list" :profile="artist.thumbnail"></RoundProfile>
+                        </div>
+                        <div class="inviteButton" @click="() => { this.$refs.invitationDrawer.showDrawer(); }">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="#D9D9D9"/>
+                            <path d="M12 6V18" stroke="#959595" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M6 12H18" stroke="#959595" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            추가
+                        </div>
+                    </div>
                     <div class="exhibitionInformation">
                         <TitleHeader ref="informationTitle" 
                             :document_element_id="'viewPort'" 
@@ -71,7 +85,28 @@
         </div>
         <SideBar ref="sideBar"></SideBar>
         <div style="display:none;width:0;height:0;position:fixed;bottom:0;left:0;z-index:0;">{{this.posterImageElement}}</div>
-        <ExhibitionEditButton></ExhibitionEditButton>
+        <Drawer ref="invitationDrawer">
+            <template v-slot:default>
+                <div class="drawerBody">
+                    <div class="collaboratorContainer">
+                        <div class="title">
+                            참여 멤버
+                        </div>
+                        <div class="collaboratorList">
+                            <div class="collaborator" v-for="(artist, i) in collaborator_list">
+                                <RoundProfile :profile="artist.thumbnail"></RoundProfile>
+                                <div class="artistName">{{ artist.name }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="invitation">
+                        <div class="title">링크 공유로 초대</div>
+                        <div class="invitationButton" @click="this.share($event)">링크 복사</div>
+                    </div>
+                </div>
+            </template>
+        </Drawer>
+        <ExhibitionEditButton v-show="this.bodyShowFlag" :is_edit="this.is_edit" @click="this.switchEditMode()"></ExhibitionEditButton>
     </div>
 </template>
 <script>
@@ -88,17 +123,20 @@
         isAuth, 
         getAuth 
     } from '@/modules/auth';
+    import { User } from '@/classes/user';
+    import Drawer from '@/widgets/Drawer.vue';
 
     export default {
-        name: 'MainPage',
+        name: 'ExhibitionModifyPage',
         components: {
-            MainHeader,
-            TitleHeader,
-            ArtworkTrackList,
-            SideBar,
-            RoundProfile,
-            ExhibitionEditButton
-        },
+        MainHeader,
+        TitleHeader,
+        ArtworkTrackList,
+        SideBar,
+        RoundProfile,
+        ExhibitionEditButton,
+        Drawer,
+    },
         data() {
             return {
                 source: (this.$route.query.utm_source) 
@@ -124,9 +162,15 @@
                 // more_information_element: null,
                 
                 header_scale: 1,
-                userThumbnail: '',
+                user_thumbnail: '',
 
-                interval_return: null
+                interval_return: null,
+
+                // ModifyPage
+                is_edit: false,
+                collaborator_id_list: null,
+                collaborator_list: null,
+                invitation_window_flag: false
             };
         },
         computed: {
@@ -170,7 +214,7 @@
             if(isAuth()) {
                 // Fetch profile thumbnail and set
                 this.user = getAuth()
-                this.userThumbnail = this.user.getThumbnail()
+                this.user_thumbnail = this.user.getThumbnail()
             }
             else {
                 this.$router.replace('/login')
@@ -183,12 +227,23 @@
             let exhibition = await new Exhibition(this.id).init()
             await exhibition.initializePage()
 
-            // If the current user is not owner of exhibition or one of collaborators, go back to home
-            if (getAuth().getID() !== exhibition.getOwner().getID()) {
-                alert('접근 권한이 없습니다.')
+            this.collaborator_id_list = await exhibition.getCollaboratorList()
+            this.collaborator_id_list.push(exhibition.getOwner().getID())
+            
+            if (!this.collaborator_id_list.includes(this.user.getID())) {
+                alert('접근 권한이 없습니다!')
                 this.$router.replace('/')
                 return
             }
+            
+            this.collaborator_list = new Array()
+            this.collaborator_id_list.forEach(async (value, index) => {
+                let artist = await new User(value).init()
+                let element = new Object()
+                element.thumbnail = artist.getThumbnail()
+                element.name = artist.getNickname()
+                this.collaborator_list.push(element)
+            })
 
             this.exhibition = exhibition
             await this.exhibition.initializePage()
@@ -197,10 +252,8 @@
             this.poster_image = images[0]
             this.artwork_track_list = this.exhibition.getArtworkList()
             this.category_list = this.exhibition.getCategoryList()
-            
             this.poster_image_element = document.getElementById('posterImage')
             
-
             if (isAuth()) {
                 // Update history
                 if (this.source === 'qrcode') {
@@ -264,7 +317,7 @@
         },
         methods: {
             scrollBottom () {
-                window.scrollTo(0, document.getElementById('mainPage').clientHeight)
+                window.scrollTo(0, document.getElementById('exhibitionModifyPage').clientHeight)
             },
             // SideBar component의 openSideBar함수를 실행시켜 sideBar가 열리도록 하는 함수
             openSideBar (event) {
@@ -333,8 +386,32 @@
                     //아이폰, 안드로이드 외
                     return "other";
                 }
-            }
+            },
+            switchEditMode () {
+                this.is_edit = !this.is_edit
+            },
+            share (event) {
+                // 이벤트 전파 방지
+                if (event.stopPropagation) event.stopPropagation();
+                else event.cancelBubble = true; // IE 대응
 
+                let shareUrl = 'https://se-ek.com/invitation' + '?id=' + this.$route.query.id
+
+                let textarea = document.createElement("textarea")
+                document.body.appendChild(textarea)
+                textarea.value = shareUrl
+                textarea.select()
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
+                if (process.env.NODE_ENV === 'production') {
+                    this.$gtag.event('click', {
+                        event_category: 'artwork',
+                        event_label: 'share',
+                        value: this.artwork.getID()
+                    })
+                }
+                alert("페이지 주소를 클립보드에 복사했습니다.")
+            }
         }
     }
 </script>
