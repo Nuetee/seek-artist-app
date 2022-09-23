@@ -103,6 +103,20 @@ export class User {
         }
     }
 
+    getCollaborations = async function (offset, limit) {
+        const { status, data } = await sendRequest('post', '/artist/collaboration', {
+            target_id : this.id,
+            offset : offset,
+            limit : limit
+        }) 
+        if (status < 500) {
+            return data[0].map(x => x.page_id)
+        }
+        else {
+            return []
+        }
+    }
+
     postArtwork = async function (name, year, dimension, three_dimensional, material, information, color, is_video) {
         if (name && year && dimension
             && material && information && color) {
