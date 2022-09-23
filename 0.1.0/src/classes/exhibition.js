@@ -27,6 +27,7 @@ export class Exhibition {
     is_video
 
     owner
+    link
     category
     artwork_list = []
     category_list = []
@@ -60,6 +61,8 @@ export class Exhibition {
             const page_data = data[0][0]
             this.information = page_data.information
             this.category = page_data.category
+            this.link = page_data.link
+            
             this.is_video = page_data.is_video
             this.owner = await new User(page_data.owner_id).init()
 
@@ -104,22 +107,8 @@ export class Exhibition {
         }
     }
 
-    getLinkList = async function () {
-        const { status, data } = await sendRequest('get', '/exhibition/link', {
-            target_id : this.page_id
-        })
-        if (status < 500) {
-            return data[0].map(function (x) { 
-                return {
-                    id: x.id,
-                    title: x.title, 
-                    link: x.link
-                }
-            })
-        }
-        else {
-            return []
-        }
+    getLinkList () {
+        return this.link
     }
 
     getCollaboratorList = async function () {
@@ -127,11 +116,7 @@ export class Exhibition {
             target_id : this.page_id
         })
         if (status < 500) {
-            return data[0].map(function (x) { 
-                return {
-                    id: x.id,
-                }
-            })
+            return data[0].map(x => x.id)
         }
         else {
             return []
@@ -191,18 +176,6 @@ export class Exhibition {
         }
     }
 
-    deleteLink = async function (link_id) {
-        const { status, data } = await sendRequest('delete', '/exhibition/link', {
-            target_id : link_id
-        })
-        if (status < 500) {
-            return data
-        }
-        else {
-            return false
-        }
-    }
-
     postCollaborator = async function (artist) {
         const { status, data } = await sendRequest('post', '/exhibition/collaborator', {
             target_id : this.id,
@@ -250,11 +223,6 @@ export class Exhibition {
 
     putInformation = async function (information) {
         const result = await this.putExhibitionData('information', information)
-        return result
-    }
-
-    putCategory = async function (category) {
-        const result = await this.putExhibitionData('category', category)
         return result
     }
 
