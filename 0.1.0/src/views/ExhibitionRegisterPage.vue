@@ -200,7 +200,6 @@
                     const new_exhibition = await new Exhibition(new_page_id).init()
                     
                     if (Object.keys(this.newExhibition.linkList).length !== 0) {
-                        console.log(this.newExhibition.linkList)
                         await new_exhibition.postLink(this.newExhibition.linkList)
                     }
 
@@ -238,9 +237,8 @@
                     }
 
                     await this.cancelRegister(new_exhibition)
-
                     this.loading = false
-
+                    
                     this.$router.replace('/')
                     return
                 }
