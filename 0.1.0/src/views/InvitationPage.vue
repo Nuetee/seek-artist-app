@@ -1,0 +1,23 @@
+<template>
+    <div id="invitationPage"></div>
+</template>
+<script>
+    export default {
+        name: 'InvitationPage',
+        components: {},
+        data() {
+            return {
+                sampleData: ''
+            };
+        },
+        beforeCreate() {},
+        created() {},
+        beforeMount() {},
+        mounted() {},
+        beforeUpdate() {},
+        updated() {},
+        beforeUnmount() {},
+        unmounted() {},
+        methods: {}
+    }
+</script>
