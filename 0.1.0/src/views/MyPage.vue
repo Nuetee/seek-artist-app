@@ -65,6 +65,7 @@
     import SideBar from '@/widgets/SideBar.vue';
     import UploadButton from '@/components/MyPage/UploadButton.vue';
     import Background from '../widgets/Background.vue';
+    import { Exhibition } from '@/classes/exhibition';
 
     import { Swiper, SwiperSlide } from 'swiper/vue';
     import SwiperCore, { Navigation } from 'swiper';
@@ -127,6 +128,8 @@
             //Update session
             if (isAuth()) {
                 this.user = getAuth()
+                console.log(await this.user.getCollaborations(0, 100))
+
                 await this.rebuild(0, 12)
                 this.profile = this.user.getProfile()
             }

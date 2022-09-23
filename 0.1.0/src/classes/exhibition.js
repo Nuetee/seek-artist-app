@@ -204,7 +204,7 @@ export class Exhibition {
     }
 
     postCollaborator = async function (artist) {
-        const { status, data } = await sendRequest('post', '/exhibition/link', {
+        const { status, data } = await sendRequest('post', '/exhibition/collaborator', {
             target_id : this.id,
             data : artist.getID()
         })
@@ -217,7 +217,7 @@ export class Exhibition {
     }
 
     deleteCollaborator = async function (artist) {
-        const { status, data } = await sendRequest('delete', '/exhibition/link', {
+        const { status, data } = await sendRequest('delete', '/exhibition/collaborator', {
             target_id : this.page_id,
             page_id : artist.getPageID()
         })
