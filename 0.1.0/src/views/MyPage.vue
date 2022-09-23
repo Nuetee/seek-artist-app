@@ -128,8 +128,6 @@
             //Update session
             if (isAuth()) {
                 this.user = getAuth()
-                console.log(await this.user.getCollaborations(0, 100))
-
                 await this.rebuild(0, 12)
                 this.profile = this.user.getProfile()
             }
