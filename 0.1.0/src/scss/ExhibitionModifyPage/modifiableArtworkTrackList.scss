@@ -1,0 +1,77 @@
+.modifiableArtworkTrackList {
+    position: relative;
+    margin-top: calc(var(--vw, 1vw) * 5);
+
+    .artworkTrackListContainer {
+        .category {
+            width: 100%;
+            height: auto;
+            text-align: left;
+            font-weight: 700;
+            font-size: 22px;
+            line-height: 115%;
+            letter-spacing: -0.04em;
+            color: #000000;
+            margin-top: calc(var(--vw, 1vw) * 3);
+        }
+
+        .track {
+            width: 100%;
+            height: calc(var(--vw, 1vw) * 25);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #AEAEAE;
+
+            .handle, .deleteButton {
+                flex: 0 0 calc(var(--vw, 1vw) * 10)
+            }
+
+            .artwork {
+                flex: 1 0 auto;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+        
+                .artworkThumbnail {
+                    width: calc(var(--vw, 1vw) * 20);
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+        
+                    img {
+                        width: calc(var(--vw, 1vw) * 17);
+                        height: calc(var(--vw, 1vw) * 17);
+                        border-radius: calc(var(--vw, 1vw) * 2);
+                    }
+                }
+        
+                .artworkInformation {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    gap: calc(var(--vw, 1vw) * 2);
+                    text-align: left;
+                    color: #000000;
+        
+                    .artworkName {
+                        font-weight: 600;
+                        font-size: 18px;
+                        line-height: 115%;
+                        letter-spacing: -0.04em;
+                    }
+        
+                    .artist {
+                        font-weight: 500;
+                        font-size: 13px;
+                        line-height: 115%;
+                        letter-spacing: -0.06em;
+                    }
+                }
+            }
+        }
+        
+    }
+}
