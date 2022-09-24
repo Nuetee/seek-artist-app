@@ -73,12 +73,18 @@
                             :heightUnit="this.vw / 2"
                             :document_element_id="'viewPort'">
                         </TitleHeader>
-                        <ArtworkTrackList ref="artworkTrackList" 
+                        <!-- <ArtworkTrackList ref="artworkTrackList" 
                             :source="this.source"
                             :artwork_track_list="this.artwork_track_list"
                             :category_list="this.category_list" :proper_position_flag="this.proper_position_flag"
                             :document_element_id="'viewPort'">
-                        </ArtworkTrackList>
+                        </ArtworkTrackList> -->
+                        <ModifiableArtworkTrackList
+                            :source="this.source"
+                            :artwork_track_list="this.artwork_track_list"
+                            :category_list="this.category_list"
+                            :is_edit="this.is_edit"
+                        ></ModifiableArtworkTrackList>
                     </div>
                 </div>
             </transition-group>
@@ -112,7 +118,7 @@
 <script>
     import MainHeader from '@/components/ExhibitionModifyPage/MainHeader.vue';
     import TitleHeader from '@/components/ExhibitionModifyPage/TitleHeader.vue';
-    import ArtworkTrackList from '@/components/ExhibitionModifyPage/ArtworkTrackList.vue';
+    //import ArtworkTrackList from '@/components/ExhibitionModifyPage/ArtworkTrackList.vue';
     import SideBar from '@/widgets/SideBar.vue';
     import RoundProfile from '@/widgets/RoundProfile.vue';
     import ExhibitionEditButton from '@/components/ExhibitionModifyPage/ExhibitionEditButton.vue';
@@ -125,18 +131,20 @@
     } from '@/modules/auth';
     import { User } from '@/classes/user';
     import Drawer from '@/widgets/Drawer.vue';
+    import ModifiableArtworkTrackList from '@/components/ExhibitionModifyPage/ModifiableArtworkTrackList.vue';
 
     export default {
         name: 'ExhibitionModifyPage',
         components: {
-        MainHeader,
-        TitleHeader,
-        ArtworkTrackList,
-        SideBar,
-        RoundProfile,
-        ExhibitionEditButton,
-        Drawer,
-    },
+            MainHeader,
+            TitleHeader,
+            //ArtworkTrackList,
+            SideBar,
+            RoundProfile,
+            ExhibitionEditButton,
+            Drawer,
+            ModifiableArtworkTrackList
+        },
         data() {
             return {
                 source: (this.$route.query.utm_source) 
@@ -146,7 +154,7 @@
                 exhibition: null,
                 artwork_track_list: [],
                 category_list: [],
-                proper_position_flag: false,
+                // proper_position_flag: false,
 
                 poster_image: null,
                 poster_image_style: null,
@@ -158,8 +166,6 @@
                 poster_image_element: null,
                 information_element: null,
                 artworks_element: null,
-                artwork_tracks_container_element: null,
-                // more_information_element: null,
                 
                 header_scale: 1,
                 user_thumbnail: '',
@@ -185,12 +191,9 @@
                         this.poster_element = document.getElementsByClassName('poster')[0]
                         this.information_element = document.getElementsByClassName('exhibitionInformation')[0]
                         this.artworks_element = document.getElementsByClassName('exhibitionArtworks')[0]
-                        this.artwork_tracks_container_element = document.getElementsByClassName('artworkTracksContainer')[0]
-                        // this.more_information_element = document.getElementsByClassName('exhibitionMoreInformation')[0]
                         
                         this.$refs.informationTitle.setInitialPosition()
                         this.$refs.artworksTitle.setInitialPosition()
-                        // this.$refs.moreInformationTitle.setInitialPosition()
 
                         let elementList = [this.poster_element, this.information_element, this.artworks_element]
                         elementList.forEach(function(element) {
@@ -250,10 +253,32 @@
             let images = await this.exhibition.getImages()
             this.poster_image_style = await cropImage(images[0], 1)
             this.poster_image = images[0]
-            this.artwork_track_list = this.exhibition.getArtworkList()
-            this.category_list = this.exhibition.getCategoryList()
             this.poster_image_element = document.getElementById('posterImage')
             
+            let artwork_list = this.exhibition.getArtworkList()
+            let category_list = this.exhibition.getCategoryList()
+            if (category_list[0] === null) {
+                category_list[0] = 'no_cateogry'
+            }
+
+            this.artwork_track_list = new Array()
+            let category_index = 0
+            
+            category_list.forEach((value, index) => {
+                if (value !== null) {
+                    this.artwork_track_list.push(new Array())
+                    category_index = this.artwork_track_list.length - 1
+                }
+                
+                if (category_index >= 0) {
+                    this.artwork_track_list[category_index].push(artwork_list[index])
+                }
+            })
+
+            this.category_list = category_list.filter((data) => {
+                return data !== null
+            })
+
             if (isAuth()) {
                 // Update history
                 if (this.source === 'qrcode') {
@@ -342,7 +367,7 @@
                 }
             },
             fadeInEffect () {
-                let elementList = [this.poster_element, this.information_element, this.artworks_element, this.artwork_tracks_container_element]
+                let elementList = [this.poster_element, this.information_element, this.artworks_element]
 
                 const _this = this
                 elementList.forEach(function(element) {
