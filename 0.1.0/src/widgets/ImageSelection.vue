@@ -261,6 +261,10 @@
                 }
                 
                 return true
+            },
+            resetInput() {
+                this.imageUpload.value = ''
+                this.initialization()
             }
         }
     }

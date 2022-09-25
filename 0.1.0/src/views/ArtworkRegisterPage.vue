@@ -94,6 +94,14 @@
             Description,
             Background,
         },
+        props: {
+            // 작품등록페이지가 전시등록페이지로부터 호출되었는지를 표시하는 prop.
+            from_exhibition_modify_page: {
+                type: Boolean,
+                default: true
+            }
+        },
+        emits: ["artwork-add", "close-artwork-register"],
         data() {
             return {
                 presentStep: ['작품명 입력', '이미지/영상 선택', '상세정보 입력', '작품 설명 입력'],
@@ -118,6 +126,7 @@
                     description: null,
                     textColor: 'black'
                 },
+                swiper: null,
                 swiperOptions: {
                     slidesPerView: 1,
                     spaceBetween: 0,
@@ -144,10 +153,17 @@
         },
         methods: {
             getSlidesNumber (swiper) {
+                this.swiper = swiper
                 this.numberOfSlides = swiper.slides.length
             },
             back () {
-                this.$router.replace('/')
+                if (this.from_exhibition_modify_page) {
+                    this.$emit('close-artwork-register')
+                    this.resetPage()
+                }
+                else {
+                    this.$router.replace('/')
+                }
             },
             /*
             * - "다음" 또는 "<(이전)" 버튼을 누르면 활성화 되는 함수
@@ -158,6 +174,9 @@
             * 3. "<" 버튼을 누른 경우(buttonIndex == 0)이고 첫 등록 페이지인 경우 cancelRegister 함수를 호출하여 등록을 취소한다.
             */
             swiperNavigation (buttonIndex) {
+                if (this.numberOfSlides === 0) {
+                    this.getSlidesNumber(this.swiper)
+                }
                 if (buttonIndex === 1) {
                     if (this.swiperIndex === (this.numberOfSlides - 1)) {
                         this.registerPopupFlag = true
@@ -191,7 +210,7 @@
                         result = result && this.newArtwork[i].x && this.newArtwork[i].y
                         continue
                     }
-                    else if (i === 'video') {
+                    else if (i === 'video' || i === 'video_index') {
                         continue
                     }
                     result = result && this.newArtwork[i]
@@ -231,7 +250,7 @@
                         this.$router.replace('/')
                         return
                     }
-
+                    
                     const new_artwork = await new Artwork(new_page_id).init()
 
                     const resized_files = []
@@ -258,12 +277,29 @@
                                 if (this.newArtwork.video !== null) {
                                     const video_result = await putArtworkVideo(new_artwork, this.newArtwork.video_index, new_page_id, this.newArtwork.video)
                                     if (video_result) {
-                                        this.$router.replace('/')
+                                        if (!this.from_exhibition_modify_page) {
+                                            this.$router.replace('/')
+                                        }
+                                        else {
+                                            this.loading = false
+                                            this.$emit('close-artwork-register')
+                                            this.$emit('artwork-add', new_artwork)
+                                            this.resetPage()
+                                        }
+                                        
                                         return
                                     }
                                 }
                                 else {
-                                    this.$router.replace('/')
+                                    if (!this.from_exhibition_modify_page) {
+                                        this.$router.replace('/')
+                                    }
+                                    else {
+                                        this.loading = false
+                                        this.$emit('close-artwork-register')
+                                        this.$emit('artwork-add', new_artwork)
+                                        this.resetPage()
+                                    }
                                     return
                                 }
                             }
@@ -280,6 +316,31 @@
             async cancelRegister(pre_artwork) {
                 await pre_artwork.deletePreArtwork()
                 await deleteArtworkDirectory(pre_artwork.getPageID())
+            },
+            resetPage () {
+                this.swiper.slideTo(0, 0)
+                this.newArtwork = {
+                    title: null,
+                    images: null,
+                    video: null,
+                    video_index: null,
+                    material: null,
+                    threeDimensional: null,
+                    size: {
+                        x: null,
+                        y: null,
+                        z: null,
+                    },
+                    unit: null,
+                    year: null,
+                    description: null,
+                    textColor: 'black'
+                }
+
+                this.$refs.titleInput.resetInput()
+                this.$refs.imageSelection.resetInput()
+                this.$refs.basicInformation.resetInput()
+                this.$refs.description.resetInput()
             },
             /*
             * 등록 페이지가 변경되면 호출되는 함수.
