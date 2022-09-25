@@ -75,8 +75,11 @@
                             </div>
                         </div>
                         <div class="exhibitionInformation">
-                            <TitleHeader ref="informationTitle" :document_element_id="'viewPort'" :title="this.exhibition.getName()"
-                                :startHeight="(this.vw * 30)" :heightUnit="this.vw / 2">
+                            <TitleHeader ref="informationTitle" 
+                                :document_element_id="'viewPort'"
+                                :title="this.exhibition.getName()"
+                                :startHeight="(this.vw * 30)" 
+                                :heightUnit="this.vw / 2">
                             </TitleHeader>
                             <pre class="exhibitionIntroduction">
                                         {{ this.exhibition.getInformation() }}
@@ -93,6 +96,23 @@
                                 @start-process = this.startProcess
                                 @set-modified-category-list="this.setModifiedCategoryList"
                                 ></ModifiableArtworkTrackList>
+                        </div>
+                        <div class="exhibitionMoreInformation">
+                            <TitleHeader ref="moreInformationTitle" 
+                                :title="'전시 더보기'"
+                                :startHeight="(this.vw * 30)"
+                                :heightUnit="this.vw / 2"
+                                :document_element_id="'viewPort'">
+                            </TitleHeader>
+                            <div class="video" v-if="this.video_info.title !== null">
+                                <div class="videoTitle">{{ this.video_info.title }}</div>
+                                <video id="video" :src="this.video_info.src" controls></video>
+                            </div>
+                            <div class="linkList" v-if="this.link_list.length > 0">
+                                <a v-for="(link, i) in this.link_list" :href="link.src">
+                                    {{link.key}}
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </transition-group>
@@ -183,13 +203,10 @@
                     : '',
                 id: this.$route.query.id,
                 exhibition: null,
-                // artwork_track_list: [],
                 original_artwork_track_list: [],
                 modified_artwork_track_list: [],
                 original_category_list : [],
                 modified_category_list: [],
-                // category_list: [],
-                // proper_position_flag: false,
 
                 poster_image: null,
                 poster_image_style: null,
@@ -201,6 +218,12 @@
                 poster_image_element: null,
                 information_element: null,
                 artworks_element: null,
+
+                video_info: {
+                    src: null,
+                    title: null
+                },
+                link_list: [],
                 
                 header_scale: 1,
                 user_thumbnail: '',
@@ -227,11 +250,13 @@
                         this.poster_element = document.getElementsByClassName('poster')[0]
                         this.information_element = document.getElementsByClassName('exhibitionInformation')[0]
                         this.artworks_element = document.getElementsByClassName('exhibitionArtworks')[0]
+                        this.more_information_element = document.getElementsByClassName('exhibitionMoreInformation')[0]
                         
                         this.$refs.informationTitle.setInitialPosition()
                         this.$refs.artworksTitle.setInitialPosition()
+                        this.$refs.moreInformationTitle.setInitialPosition()
 
-                        let elementList = [this.poster_element, this.information_element, this.artworks_element]
+                        let elementList = [this.poster_element, this.information_element, this.artworks_element, this.more_information_element]
                         elementList.forEach(function(element) {
                             let children = Array.from(element.children)
                             children.forEach(function(child) {
@@ -285,11 +310,24 @@
             })
 
             this.exhibition = exhibition
-            await this.exhibition.initializePage()
+            //await this.exhibition.initializePage()
             let images = await this.exhibition.getImages()
             this.poster_image_style = await cropImage(images[0], 1)
             this.poster_image = images[0]
             this.poster_image_element = document.getElementById('posterImage')
+            if (this.exhibition.isVideo() !== null) {
+                this.video_info.title = this.exhibition.isVideo()
+                this.video_info.src = await this.exhibition.getVideo()
+            }
+            let link_list = this.exhibition.getLinkList()
+            if (link_list) {
+                Object.keys(link_list).forEach(key => {
+                    let link = new Object()
+                    link.key = key
+                    link.src = link_list[key]
+                    this.link_list.push(link)
+                })
+            }
             
             let artwork_list = this.exhibition.getArtworkList()
             let category_list = this.exhibition.getCategoryList()
@@ -414,7 +452,12 @@
                 }
             },
             fadeInEffect () {
-                let elementList = [this.poster_element, this.information_element, this.artworks_element]
+                let elementList = [
+                    this.poster_element,
+                    this.information_element,
+                    this.artworks_element,
+                    this.more_information_element
+                ]
 
                 const _this = this
                 elementList.forEach(function(element) {
@@ -460,7 +503,13 @@
                 }
             },
             switchEditMode () {
+                if (this.is_edit == true) {
+                    this.updateExhibition()
+                }
                 this.is_edit = !this.is_edit
+            },
+            updateExhibition () {
+                // 작품, 카테고리 업로드
             },
             share (event) {
                 // 이벤트 전파 방지

@@ -98,7 +98,7 @@
             // 작품등록페이지가 전시등록페이지로부터 호출되었는지를 표시하는 prop.
             from_exhibition_modify_page: {
                 type: Boolean,
-                default: true
+                default: false
             }
         },
         emits: ["artwork-add", "close-artwork-register"],

@@ -249,12 +249,11 @@
             }
     
             .exhibitionArtworks {
-                padding-bottom: calc(var(--vw, 1vw) * 30);
+                padding-bottom: calc(var(--vw, 1vw) * 8);
             }
     
             .exhibitionMoreInformation {
                 padding-bottom: calc(var(--vh, 1vh) * 40);
-                visibility: hidden;
     
                 .video {
                     margin-top: calc(var(--vw, 1vw) * 5);
@@ -269,31 +268,22 @@
                         padding-bottom: calc(var(--vw, 1vw) * 3);
                     }
     
-                    .videoArea {
-                        position: relative;
+                    video {
                         width: 100%;
-                        padding-bottom: 56.25%;
-                        height: 0;
-                        overflow: hidden;
-    
-                        iframe {
-                            position: absolute;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100%;
-                        }
+                        height: 100%;
                     }
                 }
     
-                .merchandise {
+                .linkList {
                     margin-top: calc(var(--vw, 1vw) * 10);
                     display: flex;
+                    flex-direction: column;
+                    gap: calc(var(--vw, 1vw) * 3);
                     align-items: center;
                     justify-content: center;
     
                     a {
-                        width: calc(var(--vw, 1vw) * 42);
+                        width: 100%;
                         height: calc(var(--vw, 1vw) * 14);
                         border-radius: calc(var(--vw, 1vw) * 7);
                         background-color: black;
