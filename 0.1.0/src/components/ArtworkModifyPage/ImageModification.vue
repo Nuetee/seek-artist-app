@@ -21,7 +21,7 @@
 <script>
     import ImageSelection from '@/widgets/ImageSelection.vue';
     import { cropImage } from '@/modules/image';
-    import { updateArtworkImages } from '@/modules/storage'
+    import { updateArtworkImages, deleteArtworkVideo, putArtworkVideo } from '@/modules/storage'
     import { resizeImage } from '@/modules/image';
 
     export default {
@@ -43,6 +43,8 @@
                 mapping_array: [],
                 original_image_src: [],
                 new_image_files: [],
+                new_video_index: null,
+                new_video_file: null,
                 flag: false
             };
         },
@@ -121,6 +123,12 @@
 
                     this.text_color = value
                 }
+                else if (entity === 'video_index') {
+                    this.new_video_index = value
+                }
+                else if (entity === 'video') {
+                    this.new_video_file = value
+                }
             },
             async submit () {
                 if(this.text_color !== null) {
@@ -145,6 +153,12 @@
                 this.new_image_files = resized_files
 
                 await updateArtworkImages(this.originalArtwork.getPageID(), this.original_length, this.mapping_array, this.new_image_files)
+
+                if (this.new_video_index !== null) {
+                    // 비디오 삭제
+                    await deleteArtworkVideo (this.artwork, this.artwork.getID())
+                    await putArtworkVideo(this.artwork, this.new_video_index, this.artwork.getID(), this.new_video_file)
+                }
             }
         }
     }
