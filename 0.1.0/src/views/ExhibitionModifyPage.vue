@@ -1,118 +1,145 @@
 <template>
     <div id="exhibitionModifyPage">
-        <MainHeader :background_color="'white'" v-show="this.bodyShowFlag">
-            <template v-slot:left>
-                <button>
-                    <img src="../assets/seek_logo.png">
-                    <div class="poppins">for artist</div>
-                </button>
-            </template>
-            <template v-slot:right>
-                <RoundProfile :profile="this.user_thumbnail" @click="this.openSideBar($event)" :color="'black'"></RoundProfile>
-            </template>
-        </MainHeader>
-        <div id="viewPort">
-            <div id="loading">
-                <div class="notArchive">
-                    <div class="eye">
-                        <svg class="eyelid" width="36" height="34" viewBox="0 0 36 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18.0002 0C13.1921 0 8.67214 1.76831 5.27225 4.97929C1.87235 8.19028 0 12.4591 0 17C0 21.5409 1.87235 25.8101 5.27225 29.0207C8.67179 32.2317 13.1921 34 18.0002 34C22.8083 34 27.3286 32.2317 30.7281 29.0207C32.76 27.1018 34.2897 24.7367 35.1516 22.181L35.2706 21.828H33.571L33.5047 22.0114C32.6954 24.2509 31.3758 26.2454 29.5826 27.9392C26.4888 30.8611 22.3753 32.4703 17.9998 32.4703C13.6243 32.4703 9.51119 30.8611 6.41737 27.9392C3.32356 25.0173 1.70103 21.3148 1.62253 17.2918H35.4767V17.2708H36V17C36 12.4591 34.1277 8.19028 30.7278 4.97929C27.3279 1.76831 22.8079 0 17.9998 0H18.0002ZM18.0002 1.52967C22.3757 1.52967 26.4888 3.13888 29.583 6.06079C31.0027 7.40158 32.1345 8.9458 32.9474 10.6508C33.7173 12.2651 34.1814 13.9833 34.3294 15.7618H1.67128C1.81894 13.9833 2.28344 12.2654 3.05331 10.6508C3.86619 8.9458 4.99806 7.40158 6.41773 6.06079C9.51155 3.13888 13.625 1.52967 18.0002 1.52967Z" fill="white"/>
-                        </svg>
-                        <svg class="pupil" width="17" height="8" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M8.5 8C13.1944 8 17 4.41829 17 0H0C0 4.41829 3.80556 8 8.5 8Z" fill="white"/>
+        <div class="mainPage" v-show="!this.artwork_register_process && !this.category_register_process">
+            <MainHeader :background_color="'white'" v-show="this.bodyShowFlag">
+                <template v-slot:left>
+                    <div v-if="!this.is_edit" class="seekLogo">
+                        <img src="../assets/seek_logo.png">
+                        <div class="poppins">for artist</div>
+                    </div>
+                    <div v-else @click="this.reset()" class="backButton">
+                        <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 13L1 7L7 1" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </div>
-                    <div class="eye">
-                        <svg class="eyelid" width="36" height="34" viewBox="0 0 36 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18.0002 0C13.1921 0 8.67214 1.76831 5.27225 4.97929C1.87235 8.19028 0 12.4591 0 17C0 21.5409 1.87235 25.8101 5.27225 29.0207C8.67179 32.2317 13.1921 34 18.0002 34C22.8083 34 27.3286 32.2317 30.7281 29.0207C32.76 27.1018 34.2897 24.7367 35.1516 22.181L35.2706 21.828H33.571L33.5047 22.0114C32.6954 24.2509 31.3758 26.2454 29.5826 27.9392C26.4888 30.8611 22.3753 32.4703 17.9998 32.4703C13.6243 32.4703 9.51119 30.8611 6.41737 27.9392C3.32356 25.0173 1.70103 21.3148 1.62253 17.2918H35.4767V17.2708H36V17C36 12.4591 34.1277 8.19028 30.7278 4.97929C27.3279 1.76831 22.8079 0 17.9998 0H18.0002ZM18.0002 1.52967C22.3757 1.52967 26.4888 3.13888 29.583 6.06079C31.0027 7.40158 32.1345 8.9458 32.9474 10.6508C33.7173 12.2651 34.1814 13.9833 34.3294 15.7618H1.67128C1.81894 13.9833 2.28344 12.2654 3.05331 10.6508C3.86619 8.9458 4.99806 7.40158 6.41773 6.06079C9.51155 3.13888 13.625 1.52967 18.0002 1.52967Z" fill="white"/>
-                        </svg>
-                        <svg class="pupil" width="17" height="8" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M8.5 8C13.1944 8 17 4.41829 17 0H0C0 4.41829 3.80556 8 8.5 8Z" fill="white"/>
-                        </svg>
-                    </div>
-                </div>
-                <div class="phrase poppins">
-                    입장 중<span>.</span><span>.</span><span>.</span>
-                </div>
-            </div>
-            <transition-group name="slide-fade" tag="div">
-                <div id="body" v-if="this.exhibition" v-show="this.bodyShowFlag">
-                    <div class="poster">
-                        <img id="posterImage" @load="() => {this.bodyShowFlag = true}" :src="this.poster_image"
-                            :style="this.poster_image_style">
-                    </div>
-                    <div class="collaboratorContainer" v-if="this.is_edit">
-                        <div class="containerName">참여 멤버</div>
-                        <div class="collaboratorList">
-                            <RoundProfile v-for="(artist, i) in collaborator_list" :profile="artist.thumbnail"></RoundProfile>
-                        </div>
-                        <div class="inviteButton" @click="() => { this.$refs.invitationDrawer.showDrawer(); }">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="12" cy="12" r="10" fill="#D9D9D9"/>
-                            <path d="M12 6V18" stroke="#959595" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M6 12H18" stroke="#959595" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </template>
+                <template v-slot:middle>
+                    <div v-if="this.is_edit">전시 편집</div>
+                </template>
+                <template v-slot:right>
+                    <RoundProfile :profile="this.user_thumbnail" @click="this.openSideBar($event)" :color="'black'"></RoundProfile>
+                </template>
+            </MainHeader>
+            <div id="viewPort">
+                <div id="loading">
+                    <div class="notArchive">
+                        <div class="eye">
+                            <svg class="eyelid" width="36" height="34" viewBox="0 0 36 34" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M18.0002 0C13.1921 0 8.67214 1.76831 5.27225 4.97929C1.87235 8.19028 0 12.4591 0 17C0 21.5409 1.87235 25.8101 5.27225 29.0207C8.67179 32.2317 13.1921 34 18.0002 34C22.8083 34 27.3286 32.2317 30.7281 29.0207C32.76 27.1018 34.2897 24.7367 35.1516 22.181L35.2706 21.828H33.571L33.5047 22.0114C32.6954 24.2509 31.3758 26.2454 29.5826 27.9392C26.4888 30.8611 22.3753 32.4703 17.9998 32.4703C13.6243 32.4703 9.51119 30.8611 6.41737 27.9392C3.32356 25.0173 1.70103 21.3148 1.62253 17.2918H35.4767V17.2708H36V17C36 12.4591 34.1277 8.19028 30.7278 4.97929C27.3279 1.76831 22.8079 0 17.9998 0H18.0002ZM18.0002 1.52967C22.3757 1.52967 26.4888 3.13888 29.583 6.06079C31.0027 7.40158 32.1345 8.9458 32.9474 10.6508C33.7173 12.2651 34.1814 13.9833 34.3294 15.7618H1.67128C1.81894 13.9833 2.28344 12.2654 3.05331 10.6508C3.86619 8.9458 4.99806 7.40158 6.41773 6.06079C9.51155 3.13888 13.625 1.52967 18.0002 1.52967Z"
+                                    fill="white" />
                             </svg>
-                            추가
+                            <svg class="pupil" width="17" height="8" viewBox="0 0 17 8" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8.5 8C13.1944 8 17 4.41829 17 0H0C0 4.41829 3.80556 8 8.5 8Z" fill="white" />
+                            </svg>
+                        </div>
+                        <div class="eye">
+                            <svg class="eyelid" width="36" height="34" viewBox="0 0 36 34" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M18.0002 0C13.1921 0 8.67214 1.76831 5.27225 4.97929C1.87235 8.19028 0 12.4591 0 17C0 21.5409 1.87235 25.8101 5.27225 29.0207C8.67179 32.2317 13.1921 34 18.0002 34C22.8083 34 27.3286 32.2317 30.7281 29.0207C32.76 27.1018 34.2897 24.7367 35.1516 22.181L35.2706 21.828H33.571L33.5047 22.0114C32.6954 24.2509 31.3758 26.2454 29.5826 27.9392C26.4888 30.8611 22.3753 32.4703 17.9998 32.4703C13.6243 32.4703 9.51119 30.8611 6.41737 27.9392C3.32356 25.0173 1.70103 21.3148 1.62253 17.2918H35.4767V17.2708H36V17C36 12.4591 34.1277 8.19028 30.7278 4.97929C27.3279 1.76831 22.8079 0 17.9998 0H18.0002ZM18.0002 1.52967C22.3757 1.52967 26.4888 3.13888 29.583 6.06079C31.0027 7.40158 32.1345 8.9458 32.9474 10.6508C33.7173 12.2651 34.1814 13.9833 34.3294 15.7618H1.67128C1.81894 13.9833 2.28344 12.2654 3.05331 10.6508C3.86619 8.9458 4.99806 7.40158 6.41773 6.06079C9.51155 3.13888 13.625 1.52967 18.0002 1.52967Z"
+                                    fill="white" />
+                            </svg>
+                            <svg class="pupil" width="17" height="8" viewBox="0 0 17 8" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8.5 8C13.1944 8 17 4.41829 17 0H0C0 4.41829 3.80556 8 8.5 8Z" fill="white" />
+                            </svg>
                         </div>
                     </div>
-                    <div class="exhibitionInformation">
-                        <TitleHeader ref="informationTitle" 
-                            :document_element_id="'viewPort'" 
-                            :title="this.exhibition.getName()" 
-                            :startHeight="(this.vw * 30)"
-                            :heightUnit="this.vw / 2">
-                        </TitleHeader>
-                        <pre class="exhibitionIntroduction">
-                            {{ this.exhibition.getInformation() }}
-                        </pre>
-                    </div>
-                    <div class="exhibitionArtworks">
-                        <TitleHeader ref="artworksTitle" 
-                            :title="'Artworks'" 
-                            :startHeight="(this.vw * 30)"
-                            :heightUnit="this.vw / 2"
-                            :document_element_id="'viewPort'">
-                        </TitleHeader>
-                        <!-- <ArtworkTrackList ref="artworkTrackList" 
-                            :source="this.source"
-                            :artwork_track_list="this.artwork_track_list"
-                            :category_list="this.category_list" :proper_position_flag="this.proper_position_flag"
-                            :document_element_id="'viewPort'">
-                        </ArtworkTrackList> -->
-                        <ModifiableArtworkTrackList
-                            :source="this.source"
-                            :artwork_track_list="this.artwork_track_list"
-                            :category_list="this.category_list"
-                            :is_edit="this.is_edit"
-                        ></ModifiableArtworkTrackList>
+                    <div class="phrase poppins">
+                        입장 중<span>.</span><span>.</span><span>.</span>
                     </div>
                 </div>
-            </transition-group>
-        </div>
-        <SideBar ref="sideBar"></SideBar>
-        <div style="display:none;width:0;height:0;position:fixed;bottom:0;left:0;z-index:0;">{{this.posterImageElement}}</div>
-        <Drawer ref="invitationDrawer">
-            <template v-slot:default>
-                <div class="drawerBody">
-                    <div class="collaboratorContainer">
-                        <div class="title">
-                            참여 멤버
+                <transition-group name="slide-fade" tag="div">
+                    <div id="body" v-if="this.exhibition" v-show="this.bodyShowFlag">
+                        <div class="poster">
+                            <img id="posterImage" @load="() => {this.bodyShowFlag = true}" :src="this.poster_image"
+                                :style="this.poster_image_style">
                         </div>
-                        <div class="collaboratorList">
-                            <div class="collaborator" v-for="(artist, i) in collaborator_list">
-                                <RoundProfile :profile="artist.thumbnail"></RoundProfile>
-                                <div class="artistName">{{ artist.name }}</div>
+                        <div class="collaboratorContainer" v-if="this.is_edit">
+                            <div class="containerName">참여 멤버</div>
+                            <div class="collaboratorList">
+                                <RoundProfile v-for="(artist, i) in collaborator_list" :profile="artist.thumbnail"></RoundProfile>
+                            </div>
+                            <div class="inviteButton" @click="() => { this.$refs.invitationDrawer.showDrawer(); }">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="12" r="10" fill="#D9D9D9" />
+                                    <path d="M12 6V18" stroke="#959595" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path d="M6 12H18" stroke="#959595" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                                추가
                             </div>
                         </div>
+                        <div class="exhibitionInformation">
+                            <TitleHeader ref="informationTitle" :document_element_id="'viewPort'" :title="this.exhibition.getName()"
+                                :startHeight="(this.vw * 30)" :heightUnit="this.vw / 2">
+                            </TitleHeader>
+                            <pre class="exhibitionIntroduction">
+                                        {{ this.exhibition.getInformation() }}
+                                    </pre>
+                        </div>
+                        <div class="exhibitionArtworks">
+                            <TitleHeader ref="artworksTitle" :title="'Artworks'" :startHeight="(this.vw * 30)"
+                                :heightUnit="this.vw / 2" :document_element_id="'viewPort'">
+                            </TitleHeader>
+                            <ModifiableArtworkTrackList
+                                ref="modifiableArtworkTrackList"
+                                :source="this.source" :artwork_track_list="this.modified_artwork_track_list"
+                                :category_list="this.modified_category_list" :is_edit="this.is_edit"
+                                @start-process = this.startProcess
+                                @set-modified-category-list="this.setModifiedCategoryList"
+                                ></ModifiableArtworkTrackList>
+                        </div>
                     </div>
-                    <div class="invitation">
-                        <div class="title">링크 공유로 초대</div>
-                        <div class="invitationButton" @click="this.share($event)">링크 복사</div>
+                </transition-group>
+            </div>
+            <SideBar ref="sideBar"></SideBar>
+            <div style="display:none;width:0;height:0;position:fixed;bottom:0;left:0;z-index:0;">{{this.posterImageElement}}</div>
+            <Drawer ref="invitationDrawer">
+                <template v-slot:default>
+                    <div class="drawerBody">
+                        <div class="collaboratorContainer">
+                            <div class="title">
+                                참여 멤버
+                            </div>
+                            <div class="collaboratorList">
+                                <div class="collaborator" v-for="(artist, i) in collaborator_list">
+                                    <RoundProfile :profile="artist.thumbnail"></RoundProfile>
+                                    <div class="artistName">{{ artist.name }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="invitation">
+                            <div class="title">링크 공유로 초대</div>
+                            <div class="invitationButton" @click="this.share($event)">링크 복사</div>
+                        </div>
                     </div>
-                </div>
-            </template>
-        </Drawer>
-        <ExhibitionEditButton v-show="this.bodyShowFlag" :is_edit="this.is_edit" @click="this.switchEditMode()"></ExhibitionEditButton>
+                </template>
+            </Drawer>
+            <ExhibitionEditButton v-show="this.bodyShowFlag" :is_edit="this.is_edit" @click="this.switchEditMode()">
+            </ExhibitionEditButton>
+        </div>
+        <div class="artworkRegisterPage" v-show="this.is_edit && this.artwork_register_process && !this.category_register_process">
+            <ArtworkRegisterPage
+                :from_exhibition_modify_page="true"
+                @artwork-add="async (artwork) => {
+                    await this.$refs.modifiableArtworkTrackList.addArtwork(artwork)
+                }"
+                @close-artwork-register="() => { this.artwork_register_process = false }"
+            ></ArtworkRegisterPage>
+        </div>
+        <div class="categoryRegisterPage" v-show="this.is_edit && !this.artwork_register_process && this.category_register_process">
+            <CategoryRegister
+                ref="categoryRegister"
+                :category_list = this.modified_category_list
+                @close-category-register="() => { this.category_register_process = false }"
+                @set-category-list="(category_list) => this.$refs.modifiableArtworkTrackList.setCategoryList(category_list)"
+            ></CategoryRegister>
+        </div>
     </div>
 </template>
 <script>
@@ -132,6 +159,8 @@
     import { User } from '@/classes/user';
     import Drawer from '@/widgets/Drawer.vue';
     import ModifiableArtworkTrackList from '@/components/ExhibitionModifyPage/ModifiableArtworkTrackList.vue';
+    import ArtworkRegisterPage from './ArtworkRegisterPage.vue';
+    import CategoryRegister from '@/components/ExhibitionModifyPage/CategoryRegister.vue';
 
     export default {
         name: 'ExhibitionModifyPage',
@@ -143,7 +172,9 @@
             RoundProfile,
             ExhibitionEditButton,
             Drawer,
-            ModifiableArtworkTrackList
+            ModifiableArtworkTrackList,
+            ArtworkRegisterPage,
+            CategoryRegister
         },
         data() {
             return {
@@ -152,8 +183,12 @@
                     : '',
                 id: this.$route.query.id,
                 exhibition: null,
-                artwork_track_list: [],
-                category_list: [],
+                // artwork_track_list: [],
+                original_artwork_track_list: [],
+                modified_artwork_track_list: [],
+                original_category_list : [],
+                modified_category_list: [],
+                // category_list: [],
                 // proper_position_flag: false,
 
                 poster_image: null,
@@ -176,7 +211,8 @@
                 is_edit: false,
                 collaborator_id_list: null,
                 collaborator_list: null,
-                invitation_window_flag: false
+                artwork_register_process: false,
+                category_register_process: false
             };
         },
         computed: {
@@ -258,26 +294,37 @@
             let artwork_list = this.exhibition.getArtworkList()
             let category_list = this.exhibition.getCategoryList()
             if (category_list[0] === null) {
-                category_list[0] = 'no_cateogry'
+                category_list[0] = ''
             }
 
-            this.artwork_track_list = new Array()
+            this.original_artwork_track_list = new Array()
             let category_index = 0
             
             category_list.forEach((value, index) => {
                 if (value !== null) {
-                    this.artwork_track_list.push(new Array())
-                    category_index = this.artwork_track_list.length - 1
+                    this.original_artwork_track_list.push(new Array())
+                    category_index = this.original_artwork_track_list.length - 1
                 }
                 
                 if (category_index >= 0) {
-                    this.artwork_track_list[category_index].push(artwork_list[index])
+                    this.original_artwork_track_list[category_index].push(artwork_list[index])
                 }
             })
 
-            this.category_list = category_list.filter((data) => {
+            this.original_category_list = category_list.filter((data) => {
                 return data !== null
             })
+            if (this.original_category_list.length === 0) {
+                this.original_category_list = ['']
+                this.original_artwork_track_list = [[]]
+            }
+            else if (this.original_category_list[0] !== '') {
+                this.original_category_list.splice(0, 0, '')
+                this.original_artwork_track_list.splice(0, 0, [])
+            }
+
+            this.modified_category_list = this.original_category_list.slice()
+            this.modified_artwork_track_list = this.original_artwork_track_list.map(v => v.slice())
 
             if (isAuth()) {
                 // Update history
@@ -436,6 +483,19 @@
                     })
                 }
                 alert("페이지 주소를 클립보드에 복사했습니다.")
+            },
+            startProcess(artwork_register_process, category_register_process) {
+                this.artwork_register_process = artwork_register_process
+                this.category_register_process = category_register_process
+            },
+            setModifiedCategoryList (new_category_list) {
+                this.modified_category_list = new_category_list
+                this.$refs.categoryRegister.reset()
+            },
+            reset () {
+                this.modified_category_list = this.original_category_list.slice()
+                this.modified_artwork_track_list = this.original_artwork_track_list.map(v => v.slice())
+                this.is_edit = false
             }
         }
     }
