@@ -324,7 +324,6 @@
                     let link = new Object()
                     link.key = key
                     link.src = link_list[key]
-                    console.log(link_list[key])
                     this.link_list.push(link)
                 })
             }
