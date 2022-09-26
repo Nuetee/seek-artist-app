@@ -56,7 +56,7 @@
                     <div id="body" v-if="this.exhibition" v-show="this.bodyShowFlag">
                         <div class="poster">
                             <img id="posterImage" @load="() => {this.bodyShowFlag = true}" :src="this.poster_image"
-                                :style="this.poster_image_style">
+                                style="width:100%">
                         </div>
                         <div class="collaboratorContainer" v-if="this.is_edit">
                             <div class="containerName">참여 멤버</div>
@@ -312,7 +312,6 @@
             this.exhibition = exhibition
             //await this.exhibition.initializePage()
             let images = await this.exhibition.getImages()
-            this.poster_image_style = await cropImage(images[0], 1)
             this.poster_image = images[0]
             this.poster_image_element = document.getElementById('posterImage')
             if (this.exhibition.isVideo() !== null) {
