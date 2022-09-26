@@ -131,7 +131,7 @@
                 handler() {
                     console.log(this.track_row_artwork_will_be_added)
                 }
-            }
+            },
         },
         data() {
             return {
@@ -199,7 +199,8 @@
                 }
             },
             setCategoryList (new_category_list) {
-                console.log(new_category_list)
+                // console.log(new_category_list)
+                // console.log(this.modified_artwork_track_list)
                 // new_category_list에 빈 카테고리 들이 존재하는 경우 모두 없애줌.
                 let delete_count = 0
                 new_category_list.forEach((new_value, new_index) => {
@@ -263,6 +264,17 @@
             },
             log () {
                 console.log(this.modified_artwork_track_list)
+            },
+            async reset () {
+                this.modified_artwork_track_list = this.artwork_track_list.map(v => v.slice())
+                this.modified_artwork_track_list.forEach(async (value) => {
+                    value.forEach(async (artwork, index) => {
+                        artwork.thumbnail = await artwork.getThumbnailImage()
+                        artwork.style = await cropImage(artwork.thumbnail, 1)
+                    })
+                })
+
+                this.modified_category_list = this.category_list.slice()
             }
         }
     }

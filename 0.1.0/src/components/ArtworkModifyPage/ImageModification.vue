@@ -14,7 +14,8 @@
             </div>
         </div>
         <ImageSelection ref="imageSelection" v-if="this.flag" :originalTextColor="this.originalArtwork.getColor()" :originalImageFiles="this.original_files" :artworkData="this.title"
-            @activate-next-button="this.activateSubmit" @set-artwork-entity="this.setImageFiles">
+            @activate-next-button="this.activateSubmit" @set-artwork-entity="this.setImageFiles"
+            >
         </ImageSelection>
     </div>
 </template>
@@ -41,8 +42,14 @@
                 original_length: null,
                 original_files: [],
                 mapping_array: [],
+
                 original_image_src: [],
+
+                //original_image_files: [],
                 new_image_files: [],
+
+                original_video_index: null,
+                original_video_file: null,
                 new_video_index: null,
                 new_video_file: null,
                 flag: false
@@ -67,14 +74,17 @@
                 this.original_files.push(imageFile)
             }
 
-            let video_index = this.originalArtwork.isVideo()
+            // this.original_image_files = this.original_files.map(v => Object.assign({}, v))
+
+            this.original_video_index = this.originalArtwork.isVideo()
             
-            if (video_index !== null || video_index !== undefined) {
+            if (this.original_video_index !== null && this.original_video_index !== undefined) {
                 let videoFile =  new Object()
                 videoFile.src = await this.originalArtwork.getVideo()
                 videoFile.type = 'video'
+                this.original_video_file = Object.assign({}, videoFile)
     
-                this.original_files.splice(video_index, 0, videoFile)
+                this.original_files.splice(this.original_video_index, 0, videoFile)
             }
 
             this.flag = true
@@ -137,27 +147,51 @@
 
                 let original_mapping_array = Array.from({ length: this.original_length }, (v, i) => i)
 
-                if (JSON.stringify(original_mapping_array) === JSON.stringify(this.mapping_array)) {
-                    return
+                if (JSON.stringify(original_mapping_array) !== JSON.stringify(this.mapping_array)) {
+                    const resized_files = []
+                    for (let i = 0; i < this.new_image_files.length; i++) {
+                        const file = this.new_image_files[i]
+                        const resized_file = await resizeImage(file, {
+                            x: 720,
+                            y: 1200
+                        })
+                        resized_files.push(resized_file)
+                    }
+                    this.new_image_files = resized_files
+                    
+                    await updateArtworkImages(this.originalArtwork.getPageID(), this.original_length, this.mapping_array, this.new_image_files) 
                 }
 
-                const resized_files = []
-                for (let i = 0; i < this.new_image_files.length; i++) {
-                    const file = this.new_image_files[i]
-                    const resized_file = await resizeImage(file, {
-                        x: 720,
-                        y: 1200
-                    })
-                    resized_files.push(resized_file)
+                // video Index가 바뀐경우
+                if (this.new_video_index !== this.original_video_index) {
+                    // new_video_index !== null <=> 비디오가 삭제되지 않은 경우
+                    if (this.new_video_index !== null) {
+                        // video_index 업데이트
+                        await this.artwork.putIsVideo(this.new_video_index)
+                       
+                        // video_file도 바뀌었으면 video_file도 업데이트
+                        if (this.new_video_file !== this.original_video_file) {
+                            /// 원래 비디오가 있던 경우 원래 비디오 삭제
+                            if (this.original_video_index !== null) {
+                                await deleteArtworkVideo(this.artwork, this.artwork.getPageID())
+                            }
+                            await putArtworkVideo(this.artwork, this.new_video_index, this.artwork.getPageID(), this.new_video_file)
+                        }
+                    }
+                    // new_video_index == null <=> 비디오가 삭제된 경우
+                    else {
+                        await deleteArtworkVideo(this.artwork, this.artwork.getPageID())
+                    }
                 }
-                this.new_image_files = resized_files
-
-                await updateArtworkImages(this.originalArtwork.getPageID(), this.original_length, this.mapping_array, this.new_image_files)
-
-                if (this.new_video_index !== null) {
-                    // 비디오 삭제
-                    await deleteArtworkVideo (this.artwork, this.artwork.getID())
-                    await putArtworkVideo(this.artwork, this.new_video_index, this.artwork.getID(), this.new_video_file)
+                // video Index가 같은 경우
+                else {
+                    // 비디오 파일만 바뀐 경우
+                    if (this.new_video_file !== this.original_video_file) {
+                        if (this.new_video_file !== null) {
+                            await deleteArtworkVideo(this.artwork, this.artwork.getPageID())
+                            await putArtworkVideo(this.artwork, this.new_video_index, this.artwork.getPageID(), this.new_video_file)
+                        }
+                    }
                 }
             }
         }

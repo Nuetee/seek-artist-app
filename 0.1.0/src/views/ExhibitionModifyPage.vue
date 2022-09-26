@@ -91,7 +91,7 @@
                             </TitleHeader>
                             <ModifiableArtworkTrackList
                                 ref="modifiableArtworkTrackList"
-                                :source="this.source" :artwork_track_list="this.modified_artwork_track_list"
+                                :source="this.source" :artwork_track_list="this.original_artwork_track_list"
                                 :category_list="this.modified_category_list" :is_edit="this.is_edit"
                                 @start-process = this.startProcess
                                 @set-modified-category-list="this.setModifiedCategoryList"
@@ -329,40 +329,8 @@
                 })
             }
             
-            let artwork_list = this.exhibition.getArtworkList()
-            let category_list = this.exhibition.getCategoryList()
-            if (category_list[0] === null) {
-                category_list[0] = ''
-            }
-
-            this.original_artwork_track_list = new Array()
-            let category_index = 0
-            
-            category_list.forEach((value, index) => {
-                if (value !== null) {
-                    this.original_artwork_track_list.push(new Array())
-                    category_index = this.original_artwork_track_list.length - 1
-                }
-                
-                if (category_index >= 0) {
-                    this.original_artwork_track_list[category_index].push(artwork_list[index])
-                }
-            })
-
-            this.original_category_list = category_list.filter((data) => {
-                return data !== null
-            })
-            if (this.original_category_list.length === 0) {
-                this.original_category_list = ['']
-                this.original_artwork_track_list = [[]]
-            }
-            else if (this.original_category_list[0] !== '') {
-                this.original_category_list.splice(0, 0, '')
-                this.original_artwork_track_list.splice(0, 0, [])
-            }
-
-            this.modified_category_list = this.original_category_list.slice()
-            this.modified_artwork_track_list = this.original_artwork_track_list.map(v => v.slice())
+            this.setCategoryAndTrackList()
+            // this.modified_artwork_track_list = this.original_artwork_track_list.map(v => v.slice())
 
             if (isAuth()) {
                 // Update history
@@ -426,6 +394,41 @@
             window.removeEventListener('scroll', this.scrollBottom)
         },
         methods: {
+            setCategoryAndTrackList () {
+                let artwork_list = this.exhibition.getArtworkList()
+                let category_list = this.exhibition.getCategoryList()
+                if (category_list[0] === null) {
+                    category_list[0] = ''
+                }
+
+                this.original_artwork_track_list = new Array()
+                let category_index = 0
+
+                category_list.forEach((value, index) => {
+                    if (value !== null) {
+                        this.original_artwork_track_list.push(new Array())
+                        category_index = this.original_artwork_track_list.length - 1
+                    }
+
+                    if (category_index >= 0) {
+                        this.original_artwork_track_list[category_index].push(artwork_list[index])
+                    }
+                })
+
+                this.original_category_list = category_list.filter((data) => {
+                    return data !== null
+                })
+                if (this.original_category_list.length === 0) {
+                    this.original_category_list = ['']
+                    this.original_artwork_track_list = [[]]
+                }
+                else if (this.original_category_list[0] !== '') {
+                    this.original_category_list.splice(0, 0, '')
+                    this.original_artwork_track_list.splice(0, 0, [])
+                }
+
+                this.modified_category_list = this.original_category_list.slice()
+            },
             scrollBottom () {
                 window.scrollTo(0, document.getElementById('exhibitionModifyPage').clientHeight)
             },
@@ -508,8 +511,43 @@
                 }
                 this.is_edit = !this.is_edit
             },
-            updateExhibition () {
-                // 작품, 카테고리 업로드
+            async updateExhibition () {
+                this.modified_artwork_track_list = this.$refs.modifiableArtworkTrackList.modified_artwork_track_list.map(v => v.slice())
+
+                console.log(this.modified_category_list)
+                console.log(this.modified_artwork_track_list)
+
+                let delete_index_list = []
+
+                this.modified_category_list.forEach((value, index) => {
+                    if (this.modified_artwork_track_list[index].length === 0) {
+                        delete_index_list.push(index)
+                    }
+                })
+
+                let delete_count = 0
+                delete_index_list.forEach((value, index) => {
+                    this.modified_category_list.splice(value - delete_count, 1)
+                    this.modified_artwork_track_list.splice(value - delete_count, 1)
+                    delete_count++
+                })
+
+                let json_category_list_object = {}
+                let i = 0
+                while (i < this.modified_category_list.length) {
+                    let property = this.modified_category_list[i]
+                    let id_array = new Array(0)
+                    this.modified_artwork_track_list[i].forEach((value, index) => {
+                        id_array.push(value.id.toString())
+                    })
+                    json_category_list_object[property.toString()] = id_array
+
+                    i++
+                }
+
+                await this.exhibition.putCategory(json_category_list_object)
+                // this.original_artwork_track_list = this.modified_artwork_track_list.map(v => v.slice())
+                this.setCategoryAndTrackList()
             },
             share (event) {
                 // 이벤트 전파 방지
@@ -541,9 +579,10 @@
                 this.modified_category_list = new_category_list
                 this.$refs.categoryRegister.reset()
             },
-            reset () {
+            async reset () {
                 this.modified_category_list = this.original_category_list.slice()
-                this.modified_artwork_track_list = this.original_artwork_track_list.map(v => v.slice())
+                //this.modified_artwork_track_list = this.original_artwork_track_list.map(v => v.slice())
+                await this.$refs.modifiableArtworkTrackList.reset()
                 this.is_edit = false
             }
         }
