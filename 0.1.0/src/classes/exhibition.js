@@ -231,6 +231,11 @@ export class Exhibition {
         return result
     }
 
+    putCategory = async function (category) {
+        const result = await this.putExhibitionData('category', category)
+        return result
+    }
+    
     deletePreExhibition = async function () {
         const { status, data } = await sendRequest('delete', '/exhibition', {
             registered : false,
