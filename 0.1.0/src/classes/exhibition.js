@@ -65,7 +65,10 @@ export class Exhibition {
             
             this.is_video = page_data.is_video
             this.owner = await new User(page_data.owner_id).init()
-
+            
+            this.artwork_list = new Array(0)
+            this.category_list = new Array(0)
+            
             const isArray = function (obj) {
                 return Object.prototype.toString.call(obj) === '[object Array]';
             }
