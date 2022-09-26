@@ -275,7 +275,6 @@
                 })
 
                 this.modified_category_list = this.category_list.slice()
-                console.log(this.modified_artwork_track_list)
             }
         }
     }

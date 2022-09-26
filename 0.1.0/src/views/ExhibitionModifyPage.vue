@@ -400,9 +400,11 @@
                 if (category_list[0] === null) {
                     category_list[0] = ''
                 }
-                // console.log(artwork_list)
-                // console.log(category_list)
-                this.original_artwork_track_list = new Array()
+                // console.log(this.exhibition.getArtworkList())
+                // console.log(this.exhibition.getCategoryList())
+                this.original_artwork_track_list = new Array(0)
+                this.original_category_list = new Array(0)
+                this.modified_category_list = new Array(0)
                 let category_index = 0
 
                 category_list.forEach((value, index) => {
@@ -432,6 +434,8 @@
                 }
 
                 this.modified_category_list = this.original_category_list.slice()
+                console.log(this.modified_category_list)
+                console.log(this.original_artwork_track_list)
             },
             scrollBottom () {
                 window.scrollTo(0, document.getElementById('exhibitionModifyPage').clientHeight)
@@ -562,13 +566,15 @@
 
                 this.$refs.categoryRegister.reset()
                 await this.$refs.modifiableArtworkTrackList.reset()
+                console.log(this.$refs.categoryRegister.modified_category_list)
+                console.log(this.$refs.modifiableArtworkTrackList.modified_artwork_track_list)
             },
             share (event) {
                 // 이벤트 전파 방지
                 if (event.stopPropagation) event.stopPropagation();
                 else event.cancelBubble = true; // IE 대응
 
-                let shareUrl = 'https://se-ek.com/invitation' + '?id=' + this.$route.query.id
+                let shareUrl = 'https://se-ek.netlify.app/invitation' + '?id=' + this.$route.query.id
 
                 let textarea = document.createElement("textarea")
                 document.body.appendChild(textarea)
