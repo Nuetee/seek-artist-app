@@ -226,12 +226,17 @@
                                 let video_result = true
                                 if (this.newExhibition.video !== null) {
                                     video_result = await putExhibitionVideo(new_exhibition, this.newExhibition.video.title, new_page_id, this.newExhibition.video.file)
-                                }
 
-                                if (!video_result) {
+                                    if (video_result) {
+                                        this.$router.replace('/')
+                                        return
+                                    }
+                                }
+                                else {
                                     this.$router.replace('/')
                                     return
                                 }
+                                
                             }
                         }
                     }
