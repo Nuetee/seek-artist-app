@@ -565,9 +565,6 @@ export async function deleteExhibitionThumbnailImage (target_id) {
 // - target_id : exhibition's id
 // return the result of delete
 export async function deleteExhibitionVideo (exhibition, target_id) {
-    if (!file) {
-        return false
-    }
     const result = await exhibition.putIsVideo(null)
     if (!result) {
         return false
