@@ -434,8 +434,6 @@
                 }
 
                 this.modified_category_list = this.original_category_list.slice()
-                console.log(this.modified_category_list)
-                console.log(this.original_artwork_track_list)
             },
             scrollBottom () {
                 window.scrollTo(0, document.getElementById('exhibitionModifyPage').clientHeight)
@@ -566,8 +564,6 @@
 
                 this.$refs.categoryRegister.reset()
                 await this.$refs.modifiableArtworkTrackList.reset()
-                console.log(this.$refs.categoryRegister.modified_category_list)
-                console.log(this.$refs.modifiableArtworkTrackList.modified_artwork_track_list)
             },
             share (event) {
                 // 이벤트 전파 방지
