@@ -397,10 +397,12 @@
             setCategoryAndTrackList () {
                 let artwork_list = this.exhibition.getArtworkList()
                 let category_list = this.exhibition.getCategoryList()
+                // 아무 카테고리에도 속하지 않은 아트워크들이 있는 경우
                 if (category_list[0] === null) {
                     category_list[0] = ''
                 }
-
+                // console.log(artwork_list)
+                // console.log(category_list)
                 this.original_artwork_track_list = new Array()
                 let category_index = 0
 
@@ -417,6 +419,9 @@
 
                 this.original_category_list = category_list.filter((data) => {
                     return data !== null
+                })
+                this.original_category_list.forEach((value, index, array) => {
+                    array[index] = value.replace('\t', '')
                 })
                 if (this.original_category_list.length === 0) {
                     this.original_category_list = ['']
@@ -505,17 +510,17 @@
                     return "other";
                 }
             },
-            switchEditMode () {
+            async switchEditMode () {
                 if (this.is_edit == true) {
-                    this.updateExhibition()
+                    await this.updateExhibition()
                 }
                 this.is_edit = !this.is_edit
             },
             async updateExhibition () {
                 this.modified_artwork_track_list = this.$refs.modifiableArtworkTrackList.modified_artwork_track_list.map(v => v.slice())
 
-                console.log(this.modified_category_list)
-                console.log(this.modified_artwork_track_list)
+                // console.log(this.modified_category_list)
+                // console.log(this.modified_artwork_track_list)
 
                 let delete_index_list = []
 
@@ -532,22 +537,32 @@
                     delete_count++
                 })
 
-                let json_category_list_object = {}
+                let json_category_list_object = new Object()
                 let i = 0
                 while (i < this.modified_category_list.length) {
-                    let property = this.modified_category_list[i]
+                    let category = this.modified_category_list[i]
+                    category = category.toString()
+                    if (!category.includes('\t'))
+                        category = category.toString() + '\t'
                     let id_array = new Array(0)
                     this.modified_artwork_track_list[i].forEach((value, index) => {
-                        id_array.push(value.id.toString())
+                        id_array.push(value.page_id.toString())
                     })
-                    json_category_list_object[property.toString()] = id_array
+                    json_category_list_object[category] = id_array
 
                     i++
                 }
 
+                if (this.modified_category_list.length === 0) {
+                    json_category_list_object = null
+                }
                 await this.exhibition.putCategory(json_category_list_object)
                 // this.original_artwork_track_list = this.modified_artwork_track_list.map(v => v.slice())
+                await this.exhibition.initializePage()
                 this.setCategoryAndTrackList()
+
+                this.$refs.categoryRegister.reset()
+                await this.$refs.modifiableArtworkTrackList.reset()
             },
             share (event) {
                 // 이벤트 전파 방지
