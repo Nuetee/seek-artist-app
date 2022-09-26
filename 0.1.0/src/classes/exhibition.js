@@ -76,6 +76,8 @@ export class Exhibition {
             if (page_data.category && isArray(page_data.category)) {
                 for (let i = 0 ; i < page_data.category.length; i++) {
                     const artwork = await new Artwork(page_data.category[i]).init()
+                    if (!artwork)
+                        continue
                     this.artwork_list.push(artwork)
                     this.category_list.push(null)
                 }
@@ -85,6 +87,8 @@ export class Exhibition {
                     const page_array = page_data.category[obj]
                     for (let i = 0; i < page_array.length; i++) {
                         const artwork = await new Artwork(page_array[i]).init()
+                        if (!artwork)
+                            continue
                         this.artwork_list.push(artwork)
                         this.category_list.push((i > 0) ? null : obj)
                     }
