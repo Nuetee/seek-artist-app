@@ -76,6 +76,10 @@
                 if (event.keyCode === 9) {
                     event.preventDefault()
                 }
+            },
+            resetInput() {
+                this.isFirst = true
+                this.description = ''
             }
         }
     }

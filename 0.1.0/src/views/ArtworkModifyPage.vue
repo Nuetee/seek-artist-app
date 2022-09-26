@@ -59,7 +59,11 @@
             </div>
             <swiper v-bind="this.swiperOptions">
                 <swiper-slide v-for="(imageInfo, i) in this.artworkImageInfo" :key="i">
-                    <img :src="imageInfo.src" :style="imageInfo.style">
+                    <img v-if="imageInfo.style !== 'video'" :src="imageInfo.src" :style="imageInfo.style">
+                    <div v-else class="video">
+                        <img :src="imageInfo.background_src" :style="imageInfo.background_style">
+                        <video :src="imageInfo.src" controls></video>
+                    </div>
                 </swiper-slide>
                 <div class="swiper-pagination"></div>
             </swiper>
@@ -240,6 +244,7 @@
             // Load artwork
             let artwork = await new Artwork(this.id).init()
             await artwork.initializePage()
+            console.log(artwork.getPageID())
 
             // If the current user is not owner of artwork, go back to home
             if (getAuth().getID() !== artwork.getArtist().getID()) {
@@ -291,7 +296,6 @@
         methods: {
             async getArtworkImages () {
                 let artworkImages = await this.artwork.getAllImages()
-
                 let container_ratio = window.innerWidth / window.innerHeight
 
                 if (window.innerWidth >= 480) {
@@ -306,6 +310,16 @@
                     imageInfo.style = style
 
                     this.artworkImageInfo.push(imageInfo)
+                }
+
+                let video_index = await this.artwork.isVideo()
+                if (video_index) {
+                    let video = new Object()
+                    video.src = await this.artwork.getVideo()
+                    video.background_src = await this.artwork.getThumbnailImage()
+                    video.background_style = await cropImage(video.background_src, container_ratio)
+                    video.style = 'video'
+                    this.artworkImageInfo.splice(video_index, 0, video)
                 }
             },
             // - backButton을 눌렀을 때 뒤로가기 이벤트를 실행시키는 함수.

@@ -3,374 +3,403 @@
     padding-left: 0 !important;
     padding-right: 0 !important;
 
-    ::v-deep(.mainHeader) {
-        overflow-x: visible;
-        
-        .left {
-            transform-origin: 0 50%;
-            
-            button {
-                height: calc(var(--vw, 1vw) * 8);
-                width: auto;
-                border: none;
-                background-color: transparent;
-                box-shadow: none;
-                outline: none;
+    .mainPage {
+        width: 100%;
+        height: 100%;
+        position: inherit;
 
-                >img {
-                    height: 100%;
-                    width: auto;
-                }
-
+        ::v-deep(.mainHeader) {
+            overflow-x: visible;
+    
+            .left {
+                flex: 0 0 calc(var(--vw, 1vw) * 11);
+                transform-origin: 0 50%;
+    
                 div {
-                    margin-left: calc(var(--vw, 1vw) * 2);
-                    display: inline;
-                    font-style: normal;
-                    font-weight: 300;
-                    font-size: 18px;
-                    color: black;
+                    height: calc(var(--vw, 1vw) * 8);
+                    width: 100%;
+                    display: flex;
+                    justify-content: flex-start;
+                    overflow: visible;
+    
+                    > img {
+                        height: 100%;
+                        width: auto;
+                    }
+    
+                    div {
+                        margin-left: calc(var(--vw, 1vw) * 2);
+                        display: inline;
+                        font-style: normal;
+                        font-weight: 300;
+                        font-size: 18px;
+                        color: black;
+                        overflow: visible;
+                        white-space: nowrap;
+                    }
+                }
+
+                .seekLogo {
+                    align-items: baseline;
+                }
+                .backButton {
+                    align-items: center;
                 }
             }
-        }
+            
+            .middle {
+                transform-origin: 50% 50%;
+            }
 
-        .right {
-            overflow: visible;
-            transform-origin: 100% 50%;
-        }
-    }
-
-    // 내부 요소의 height값이 명시적으로 지정되어야 scroll시 safari address bar shrink
-    #viewPort {
-        position: fixed;
-        z-index: 1;
-        top: 0;
-        left: 50%;
-        transform: translate(-50%, 0);
-        width: calc(var(--vw, 1vw) * 100);
-        height: calc(var(--vh, 1vh) * 100);
-        overflow: scroll;
-    }
-
-    #loading {
-        position: fixed;
-        top: 0;
-        left: 50%;
-        transform: translate(-50%, 0);
-        width: calc(var(--vw, 1vw) * 100);
-        height: calc(var(--vh, 1vh) * 100);
-        padding-bottom: calc(var(--vw, 1vw) * 30);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-
-        > div {
-            background-color: transparent;
-    
-            svg {
-                fill: black;
-    
-                path,
-                g {
-                    fill: black;
-                }
+            .right {
+                overflow: visible;
+                transform-origin: 100% 50%;
             }
         }
     
-        .notArchive {
-            transition-property: opacity, padding;
-            transition-duration: 0.2s;
-            opacity: 1;
-    
-            overflow: hidden;
-            position: relative;
-            width: calc(var(--vw, 1vw) * 55);
-            height: calc(var(--vw, 1vw) * 30);
+        // 내부 요소의 height값이 명시적으로 지정되어야 scroll시 safari address bar shrink
+        #viewPort {
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, 0);
+            width: calc(var(--vw, 1vw) * 100);
+            height: calc(var(--vh, 1vh) * 100);
+            overflow: scroll;
+        }
+
+        #viewPort::-webkit-scrollbar {
+            display: none;
+            height: 0;
+            background: transparent;
+            -webkit-appearance: none;
+        }
+        
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, 0);
+            width: calc(var(--vw, 1vw) * 100);
+            height: calc(var(--vh, 1vh) * 100);
+            padding-bottom: calc(var(--vw, 1vw) * 30);
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            padding-left: calc(var(--vw, 1vw) * 10);
-            padding-right: calc(var(--vw, 1vw) * 10);
+            justify-content: center;
     
-            .eye {
-                width: 50%;
-                height: 100%;
-                position: relative;
+            >div {
+                background-color: transparent;
     
                 svg {
-                    position: absolute;
-                }
+                    fill: black;
     
-                .eyelid {
-                    top: 49%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    width: 85%;
-                    height: auto;
-                }
-    
-                .pupil {
-                    top: 54%;
-                    left: 65%;
-                    transform: translate(-50%, -50%);
-                    width: 44%;
-                    height: auto;
-    
-                    animation-name: eyeroll;
-                    animation-duration: 4s;
-                    animation-timing-function: linear;
-                    animation-delay: 0s;
-                    animation-iteration-count: infinite;
-                    animation-direction: normal;
-                    animation-fill-mode: none;
+                    path,
+                    g {
+                        fill: black;
+                    }
                 }
             }
-        }
     
-        .phrase {
-            color: black;
-            opacity: 1;
-            font-style: normal;
-            font-size: 20px;
-            font-weight: 500;
-            line-height: 115%;
-            letter-spacing: -0.04em;
-        }
-    }
-
-    #body {
-        position: relative;
-        width: 100%;
-        margin-top: calc(var(--vw, 1vw) * 15);
-        overflow-x: visible;
-        height: auto;
-        background-color: white;
-
-        > div[class^="exhibition"] {
-            padding-left: var(--padding, 5vw);
-            padding-right: var(--padding, 5vw);
-        }
-
-        .poster {
-            left: 0;
-            width: 100%;
-        }
-        
-        .collaboratorContainer {
-            width: 100%;
-            height: calc(var(--vw, 1vw) * 13);
-            border-bottom: 1px solid #D9D9D9;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-
-            div {
+            .notArchive {
+                transition-property: opacity, padding;
+                transition-duration: 0.2s;
+                opacity: 1;
+    
+                overflow: hidden;
+                position: relative;
+                width: calc(var(--vw, 1vw) * 55);
+                height: calc(var(--vw, 1vw) * 30);
                 display: flex;
+                justify-content: space-between;
                 align-items: center;
+                padding-left: calc(var(--vw, 1vw) * 10);
+                padding-right: calc(var(--vw, 1vw) * 10);
+    
+                .eye {
+                    width: 50%;
+                    height: 100%;
+                    position: relative;
+    
+                    svg {
+                        position: absolute;
+                    }
+    
+                    .eyelid {
+                        top: 49%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        width: 85%;
+                        height: auto;
+                    }
+    
+                    .pupil {
+                        top: 54%;
+                        left: 65%;
+                        transform: translate(-50%, -50%);
+                        width: 44%;
+                        height: auto;
+    
+                        animation-name: eyeroll;
+                        animation-duration: 4s;
+                        animation-timing-function: linear;
+                        animation-delay: 0s;
+                        animation-iteration-count: infinite;
+                        animation-direction: normal;
+                        animation-fill-mode: none;
+                    }
+                }
             }
-
-            .containerName, .inviteButton {
-                flex: 0 0 22%;
-                justify-content: center;
+    
+            .phrase {
+                color: black;
+                opacity: 1;
+                font-style: normal;
+                font-size: 20px;
                 font-weight: 500;
                 line-height: 115%;
                 letter-spacing: -0.04em;
-                color: #959595;
             }
-
-            .containerName {
-                font-size: 14px;
+        }
+    
+        #body {
+            position: relative;
+            width: 100%;
+            margin-top: calc(var(--vw, 1vw) * 15);
+            overflow-x: visible;
+            height: auto;
+            background-color: white;
+    
+            >div[class^="exhibition"] {
+                padding-left: var(--padding, 5vw);
+                padding-right: var(--padding, 5vw);
             }
-
-            .inviteButton {
-                font-size: 16px;
-                gap: calc(var(--vw, 1vw) * 1);
+    
+            .poster {
+                left: 0;
+                width: 100%;
             }
-
-            .collaboratorList {
-                flex: 0 1 auto;
+    
+            .collaboratorContainer {
+                width: 100%;
+                height: calc(var(--vw, 1vw) * 13);
+                border-bottom: 1px solid #D9D9D9;
+                display: flex;
+                align-items: center;
                 justify-content: flex-start;
-                overflow-x: scroll;
-                gap: calc(var(--vw, 1vw) * 2.5);;
-                
-                ::v-deep(.roundProfile) {
-                    width: calc(var(--vw, 1vw) * 7.5);
-                    height: calc(var(--vw, 1vw) * 7.5);
+    
+                div {
+                    display: flex;
+                    align-items: center;
                 }
-            }
-        }
-
-        .exhibitionInformation {
-            padding-bottom: calc(var(--vw, 1vw) * 8);
-            padding-top: calc(var(--vw, 1vw) * 8);
-
-            ::v-deep(.underLine) {
-                margin-bottom: calc(var(--vw, 1vw) * 3);
-            }
-            
-            .exhibitionIntroduction {
-                text-align: left;
-                font-weight: 400;
-                font-size: 15px;
-                line-height: 150%;
-                letter-spacing: -0.06em;
-                white-space: pre-line;
-                font-family: "Noto Sans KR", sans-serif;
-        
-                color: #000000;
-            }
-        }
-
-        .exhibitionArtworks {
-            padding-bottom: calc(var(--vw, 1vw) * 30);
-        }
-
-        .exhibitionMoreInformation {
-            padding-bottom: calc(var(--vh, 1vh) * 40);
-            visibility: hidden;
-
-            .video {
-                margin-top: calc(var(--vw, 1vw) * 5);
-
-                .videoTitle {
-                    font-weight: 700;
-                    font-size: 22px;
+    
+                .containerName,
+                .inviteButton {
+                    flex: 0 0 22%;
+                    justify-content: center;
+                    font-weight: 500;
                     line-height: 115%;
                     letter-spacing: -0.04em;
-                    color: #000000;
-                    text-align: left;
-                    padding-bottom: calc(var(--vw, 1vw) * 3);
+                    color: #959595;
                 }
-
-                .videoArea {
-                    position: relative;
-                    width: 100%;
-                    padding-bottom: 56.25%;
-                    height: 0;
-                    overflow: hidden;
-
-                    iframe {
-                        position: absolute;
-                        top: 0;
-                        left: 0;
+    
+                .containerName {
+                    font-size: 14px;
+                }
+    
+                .inviteButton {
+                    font-size: 16px;
+                    gap: calc(var(--vw, 1vw) * 1);
+                }
+    
+                .collaboratorList {
+                    flex: 0 1 auto;
+                    justify-content: flex-start;
+                    overflow-x: scroll;
+                    gap: calc(var(--vw, 1vw) * 2.5);
+                    ;
+    
+                    ::v-deep(.roundProfile) {
+                        width: calc(var(--vw, 1vw) * 7.5);
+                        height: calc(var(--vw, 1vw) * 7.5);
+                    }
+                }
+            }
+    
+            .exhibitionInformation {
+                padding-bottom: calc(var(--vw, 1vw) * 8);
+                padding-top: calc(var(--vw, 1vw) * 8);
+    
+                ::v-deep(.underLine) {
+                    margin-bottom: calc(var(--vw, 1vw) * 3);
+                }
+    
+                .exhibitionIntroduction {
+                    text-align: left;
+                    font-weight: 400;
+                    font-size: 15px;
+                    line-height: 150%;
+                    letter-spacing: -0.06em;
+                    white-space: pre-line;
+                    font-family: "Noto Sans KR", sans-serif;
+    
+                    color: #000000;
+                }
+            }
+    
+            .exhibitionArtworks {
+                padding-bottom: calc(var(--vw, 1vw) * 8);
+            }
+    
+            .exhibitionMoreInformation {
+                padding-bottom: calc(var(--vh, 1vh) * 40);
+    
+                .video {
+                    margin-top: calc(var(--vw, 1vw) * 5);
+    
+                    .videoTitle {
+                        font-weight: 700;
+                        font-size: 22px;
+                        line-height: 115%;
+                        letter-spacing: -0.04em;
+                        color: #000000;
+                        text-align: left;
+                        padding-bottom: calc(var(--vw, 1vw) * 3);
+                    }
+    
+                    video {
                         width: 100%;
                         height: 100%;
                     }
                 }
-            }
-
-            .merchandise {
-                margin-top: calc(var(--vw, 1vw) * 10);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-
-                a {
-                    width: calc(var(--vw, 1vw) * 42);
-                    height: calc(var(--vw, 1vw) * 14);
-                    border-radius: calc(var(--vw, 1vw) * 7);
-                    background-color: black;
-                    font-weight: 400;
-                    font-size: 18px;
-                    line-height: 115%;
-                    letter-spacing: -0.06em;
-                    color: white;
+    
+                .linkList {
+                    margin-top: calc(var(--vw, 1vw) * 10);
                     display: flex;
+                    flex-direction: column;
+                    gap: calc(var(--vw, 1vw) * 3);
                     align-items: center;
                     justify-content: center;
-                }
-            }
-        }
-    }
-
-    ::v-deep(.drawer) {
-        height: calc(var(--vw, 1vw) * 80);
-        
-        .drawerBody {
-            height: calc(var(--vw, 1vw) * 60);
-            overflow: scroll;
-
-            div .title {
-                font-weight: 700;
-                font-size: 20px;
-                line-height: 115%;
-                letter-spacing: -0.04em;
-                color: #000000;
-                text-align: left;
-                padding-bottom: calc(var(--vw, 1vw) * 5);
-            }
-        
-            .collaboratorContainer {
-                padding-bottom: calc(var(--vw, 1vw) * 5);
-        
-                .collaboratorList {
-                    display: flex;
-                    align-items: center;
-                    justify-content: flex-start;
-                    gap: calc(var(--vw, 1vw) * 1);
-        
-                    .collaborator {
-                        flex: 0 0 calc(var(--vw, 1vw) * 15);
-                        overflow: hidden;
+    
+                    a {
+                        width: 100%;
+                        height: calc(var(--vw, 1vw) * 14);
+                        border-radius: calc(var(--vw, 1vw) * 7);
+                        background-color: black;
+                        font-weight: 400;
+                        font-size: 18px;
+                        line-height: 115%;
+                        letter-spacing: -0.06em;
+                        color: white;
                         display: flex;
-                        flex-direction: column;
                         align-items: center;
-                        justify-content: space-between;
-                        gap: calc(var(--vw, 1vw) * 2);
-        
-                        .roundProfile {
-                            width: calc(var(--vw, 1vw) * 10);
-                            height: calc(var(--vw, 1vw) * 10);
-                        }
-        
-                        .artistName {
-                            font-weight: 500;
-                            font-size: 12px;
-                            line-height: 17px;
-                            text-align: center;
-                            letter-spacing: -0.06em;
-                            color: #878787;
-                        }
+                        justify-content: center;
                     }
                 }
             }
-        
-            .invitation {
-                .invitationButton {
-                    height: calc(var(--vw, 1vw) * 8.6);
-                    border-radius: calc(var(--vw, 1vw) * 4.3);
-                    background-color: #E9E9E9;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: #626262;
+        }
+    
+        ::v-deep(.drawer) {
+            height: calc(var(--vw, 1vw) * 80);
+    
+            .drawerBody {
+                height: calc(var(--vw, 1vw) * 60);
+                overflow: scroll;
+    
+                div .title {
+                    font-weight: 700;
+                    font-size: 20px;
+                    line-height: 115%;
+                    letter-spacing: -0.04em;
+                    color: #000000;
+                    text-align: left;
+                    padding-bottom: calc(var(--vw, 1vw) * 5);
+                }
+    
+                .collaboratorContainer {
+                    padding-bottom: calc(var(--vw, 1vw) * 5);
+    
+                    .collaboratorList {
+                        display: flex;
+                        align-items: center;
+                        justify-content: flex-start;
+                        gap: calc(var(--vw, 1vw) * 1);
+    
+                        .collaborator {
+                            flex: 0 0 calc(var(--vw, 1vw) * 15);
+                            overflow: hidden;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: space-between;
+                            gap: calc(var(--vw, 1vw) * 2);
+    
+                            .roundProfile {
+                                width: calc(var(--vw, 1vw) * 10);
+                                height: calc(var(--vw, 1vw) * 10);
+                            }
+    
+                            .artistName {
+                                font-weight: 500;
+                                font-size: 12px;
+                                line-height: 17px;
+                                text-align: center;
+                                letter-spacing: -0.06em;
+                                color: #878787;
+                            }
+                        }
+                    }
+                }
+    
+                .invitation {
+                    .invitationButton {
+                        height: calc(var(--vw, 1vw) * 8.6);
+                        border-radius: calc(var(--vw, 1vw) * 4.3);
+                        background-color: #E9E9E9;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: #626262;
+                    }
                 }
             }
         }
-    }
     
-    ::v-deep(.before-enter) {
-        opacity: 0;
-        transform: translate(0, 20px);
+        ::v-deep(.before-enter) {
+            opacity: 0;
+            transform: translate(0, 20px);
+        }
+    
+        ::v-deep(.after-enter) {
+            opacity: 0;
+            transform: translate(0, 20px);
+            transition: opacity 0.5s ease, transform 1s ease;
+        }
+    
+        ::v-deep(.enter) {
+            opacity: 1;
+            transition: opacity 1.5s ease, transform 1s ease;
+        }
     }
 
-    ::v-deep(.after-enter) {
-        opacity: 0;
-        transform: translate(0, 20px);
-        transition: opacity 0.5s ease, transform 1s ease;
+    .artworkRegisterPage {
+        ::v-deep(#artworkRegisterPage) {
+            width: calc(var(--vw, 1vw) * 100);
+            height: calc(var(--vh, 1vh) * 100);
+            overflow-y: scroll;
+            padding-left: var(--padding, 5vw);
+            padding-right: var(--padding, 5vw);
+            box-shadow: 0 0 calc(var(--vw, 1vw) * 3) rgba(128, 128, 128, 0.1);
+        }
     }
 
-    ::v-deep(.enter) {
-        opacity: 1;
-        transition: opacity 1.5s ease, transform 1s ease;
+    .categoryRegisterPage {
+        width: calc(var(--vw, 1vw) * 100);
+        height: calc(var(--vh, 1vh) * 100);
+        padding-left: var(--padding, calc(var(--vw, 1vw) * 5));
+        padding-right: var(--padding, calc(var(--vw, 1vw) * 5));
     }
-}
-
-#viewPort::-webkit-scrollbar {
-    display: none;
-    height: 0;
-    background: transparent;
-    -webkit-appearance: none;
 }
 
 @keyframes fade_out {

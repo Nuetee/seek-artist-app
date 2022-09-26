@@ -95,6 +95,17 @@ export default {
             if (event.keyCode === 9) {
                 event.preventDefault()
             }
+        },
+        resetInput() {
+            this.material = ''
+            this.threeDimensional = '2D',
+            this.size = {
+                x: null,
+                y: null,
+                z: null,
+            }
+            this.unit = 'cm',
+            this.year = null
         }
     }
 }
