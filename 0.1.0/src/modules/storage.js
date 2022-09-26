@@ -429,9 +429,6 @@ export async function deleteArtworkThumbnailImage (target_id) {
 // - target_id : artwork's id
 // return the result of delete
 export async function deleteArtworkVideo (artwork, target_id) {
-    if (!file) {
-        return false
-    }
     const result = await artwork.putIsVideo(null)
     if (!result) {
         return false

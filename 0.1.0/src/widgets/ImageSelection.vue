@@ -122,6 +122,9 @@
                         }
                         this.videoIndex = i
                     }
+                    else {
+                        this.videoIndex = null
+                    }
                     await this.formValidCheck()
                 }
             },
@@ -158,6 +161,7 @@
                         }
                         else {
                             this.selectedVideo = this.selectedFiles[i]
+                            this.videoIndex = i
                         }
                     }
                     else {
@@ -166,6 +170,11 @@
 
                     i++
                 }
+                // console.log(this.selectedFiles)
+                // console.log(this.selectedImageFiles)
+                // console.log(this.selectedVideo)
+                // console.log(this.videoIndex)
+                // this.$emit('original-files', this.selectedImageFiles, this.selectedVideo, this.videoIndex)
             },
             async formValidCheck() {
                 await this.$nextTick()
@@ -235,6 +244,7 @@
                 }
                 else if (this.selectedFiles[i].type.includes('video')) {
                     this.selectedVideo = null
+                    this.videoIndex = null
                 }
 
                 this.selectedFiles.splice(i, 1)

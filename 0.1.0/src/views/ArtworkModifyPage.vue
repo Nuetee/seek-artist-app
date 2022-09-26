@@ -244,7 +244,6 @@
             // Load artwork
             let artwork = await new Artwork(this.id).init()
             await artwork.initializePage()
-            console.log(artwork.getPageID())
 
             // If the current user is not owner of artwork, go back to home
             if (getAuth().getID() !== artwork.getArtist().getID()) {
