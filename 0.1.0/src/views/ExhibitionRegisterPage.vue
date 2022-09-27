@@ -224,9 +224,10 @@
                             const thumbnail_result = await putExhibitionThumbnailImage(new_page_id, thumbnail)
                             if (thumbnail_result) {
                                 let video_result = true
-                                if (this.newExhibition.video !== null) {
+                                if (this.newExhibition.video.file !== null) {
                                     video_result = await putExhibitionVideo(new_exhibition, this.newExhibition.video.title, new_page_id, this.newExhibition.video.file)
 
+                                    console.log(video_result)
                                     if (video_result) {
                                         this.$router.replace('/')
                                         return
