@@ -114,6 +114,7 @@
                     images: null,
                     video: null,
                     video_index: null,
+                    video_thumbnail: null,
                     material: null,
                     threeDimensional: null,
                     size: {
@@ -202,20 +203,22 @@
                     return
                 
                 let result = true
+                let is_media = false
                 for (let i in this.newArtwork) {
-                    if (i === 'threeDimensional') {
+                    if (i === 'threeDimensional' || i === 'video_index' || i === 'video_thumbnail') {
                         continue
                     }
                     else if (i === 'size') {
                         result = result && this.newArtwork[i].x && this.newArtwork[i].y
                         continue
                     }
-                    else if (i === 'video' || i === 'video_index') {
+                    else if (i === 'video' || i === 'images') {
+                        is_media = is_media || this.newArtwork[i]
                         continue
                     }
                     result = result && this.newArtwork[i]
                 }
-                result = result && ((this.newArtwork.threeDimensional !== null) || this.newArtwork.size.z)
+                result = result && ((this.newArtwork.threeDimensional !== null) || this.newArtwork.size.z) && is_media
 
                 /* result === false면 artwork에 누락된 정보 있음. 처음부터 등록 */
                 if (!result) {
@@ -253,62 +256,73 @@
                     
                     const new_artwork = await new Artwork(new_page_id).init()
 
-                    const resized_files = []
-                    const files = this.newArtwork.images
-                    for (let i = 0 ; i < files.length ; i++) {
-                        const file = files[i]
-                        const resized_file = await resizeImage(file, {
-                            x: 720,
-                            y: 1200
-                        })
-                        resized_files.push(resized_file)
-                    }
-                    const thumbnail = await resizeImage(resized_files[0], {
-                        x: 400,
-                        y: 400
-                    })
-
                     const directory_result = await putArtworkDirectory(new_page_id)
                     if (directory_result) {
-                        const image_result = await putArtworkImages(new_page_id, resized_files)
-                        if (image_result) {
-                            const thumbnail_result = await putArtworkThumbnailImage(new_page_id, thumbnail)
-                            if (thumbnail_result) {
-                                if (this.newArtwork.video !== null) {
-                                    const video_result = await putArtworkVideo(new_artwork, this.newArtwork.video_index, new_page_id, this.newArtwork.video)
-                                    if (video_result) {
-                                        if (!this.from_exhibition_modify_page) {
-                                            this.$router.replace('/')
-                                        }
-                                        else {
-                                            this.loading = false
-                                            this.$emit('close-artwork-register')
-                                            this.$emit('artwork-add', new_artwork)
-                                            this.resetPage()
-                                        }
-                                        
-                                        return
-                                    }
-                                }
-                                else {
-                                    if (!this.from_exhibition_modify_page) {
-                                        this.$router.replace('/')
-                                    }
-                                    else {
-                                        this.loading = false
-                                        this.$emit('close-artwork-register')
-                                        this.$emit('artwork-add', new_artwork)
-                                        this.resetPage()
-                                    }
-                                    return
-                                }
+                        let image_result = true
+                        let video_result = true
+                        if (this.newArtwork.images !== null) {
+                            const resized_files = []
+                            const files = this.newArtwork.images
+                            for (let i = 0; i < files.length; i++) {
+                                const file = files[i]
+                                const resized_file = await resizeImage(file, {
+                                    x: 720,
+                                    y: 1200
+                                })
+                                resized_files.push(resized_file)
+                            }
+                            const thumbnail = await resizeImage(resized_files[0], {
+                                x: 400,
+                                y: 400
+                            })
+                            image_result = await putArtworkImages(new_page_id, resized_files)
+                            if (image_result) {
+                                const thumbnail_result = await putArtworkThumbnailImage(new_page_id, thumbnail)
+                                image_result = image_result && thumbnail_result
                             }
                         }
-                    }
-                    await this.cancelRegister(new_artwork)
-                    this.loading = false
 
-                    this.$router.replace('/')
+                        if (this.newArtwork.video !== null) {
+                            console.log(this.newArtwork.video_index)
+                            video_result = await putArtworkVideo(new_artwork, this.newArtwork.video_index, new_page_id, this.newArtwork.video)
+
+                            if (this.newArtwork.images === null) {
+                                const video_thumbnail = await resizeImage(this.newArtwork.video_thumbnail, {
+                                    x: 400,
+                                    y: 400
+                                })
+                                const thumbnail_result = await putArtworkThumbnailImage(new_page_id, video_thumbnail)
+                                video_result = video_result && thumbnail_result
+                            }
+                        }
+                        const media_result = image_result || video_result
+                        if (media_result) {
+                            if (!this.from_exhibition_modify_page) {
+                                this.$router.replace('/')
+                            }
+                            else {
+                                this.loading = false
+                                this.$emit('close-artwork-register')
+                                this.$emit('artwork-add', new_artwork)
+                                this.resetPage()
+                            }
+
+                            return
+                        }
+                    }
+                    if (!this.from_exhibition_modify_page) {
+                        await this.cancelRegister(new_artwork)
+                        this.loading = false
+                        this.$router.replace('/')
+                    }
+                    else {
+                        await this.cancelRegister(new_artwork)
+                        this.loading = false
+                        this.$emit('close-artwork-register')
+                        this.$emit('artwork-add', new_artwork)
+                        this.resetPage()
+                    }
+
                     return
                 }
             },
@@ -324,6 +338,7 @@
                     images: null,
                     video: null,
                     video_index: null,
+                    video_thumbnail: null,
                     material: null,
                     threeDimensional: null,
                     size: {
@@ -398,6 +413,9 @@
                         break
                     case 'video_index':
                         this.newArtwork.video_index = value
+                        break
+                    case 'video_thumbnail':
+                        this.newArtwork.video_thumbnail = value
                         break
                     case 'material':
                         this.newArtwork.material = value
