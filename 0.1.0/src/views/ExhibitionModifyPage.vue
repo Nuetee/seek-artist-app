@@ -119,7 +119,8 @@
             </div>
             <SideBar ref="sideBar"></SideBar>
             <div style="display:none;width:0;height:0;position:fixed;bottom:0;left:0;z-index:0;">{{this.posterImageElement}}</div>
-            <Drawer ref="invitationDrawer">
+            <Background :background_display="this.background_display" @click="()=>{ this.$refs.invitationDrawer.closeDrawer() }"></Background>
+            <Drawer ref="invitationDrawer" @is-drawer-open="(drawer_opened) => { this.background_display = !drawer_opened }">
                 <template v-slot:default>
                     <div class="drawerBody">
                         <div class="collaboratorContainer">
@@ -161,6 +162,7 @@
             ></CategoryRegister>
         </div>
     </div>
+    
 </template>
 <script>
     import MainHeader from '@/components/ExhibitionModifyPage/MainHeader.vue';
@@ -181,6 +183,7 @@
     import ModifiableArtworkTrackList from '@/components/ExhibitionModifyPage/ModifiableArtworkTrackList.vue';
     import ArtworkRegisterPage from './ArtworkRegisterPage.vue';
     import CategoryRegister from '@/components/ExhibitionModifyPage/CategoryRegister.vue';
+    import Background from '@/widgets/Background.vue';
 
     export default {
         name: 'ExhibitionModifyPage',
@@ -194,7 +197,8 @@
             Drawer,
             ModifiableArtworkTrackList,
             ArtworkRegisterPage,
-            CategoryRegister
+            CategoryRegister,
+            Background
         },
         data() {
             return {
@@ -235,7 +239,8 @@
                 collaborator_id_list: null,
                 collaborator_list: null,
                 artwork_register_process: false,
-                category_register_process: false
+                category_register_process: false,
+                background_display: true
             };
         },
         computed: {
@@ -292,7 +297,7 @@
             await exhibition.initializePage()
 
             this.collaborator_id_list = await exhibition.getCollaboratorList()
-            this.collaborator_id_list.push(exhibition.getOwner().getID())
+            this.collaborator_id_list.splice(0, 0, exhibition.getOwner().getID())
             
             if (!this.collaborator_id_list.includes(this.user.getID())) {
                 alert('접근 권한이 없습니다!')
@@ -304,7 +309,11 @@
             this.collaborator_id_list.forEach(async (value, index) => {
                 let artist = await new User(value).init()
                 let element = new Object()
-                element.thumbnail = artist.getThumbnail()
+                if (artist.getID() === this.user.getID())
+                    element.thumbnail = artist.getThumbnail()
+                else {
+                    element.thumbnail = ''
+                }
                 element.name = artist.getNickname()
                 this.collaborator_list.push(element)
             })
