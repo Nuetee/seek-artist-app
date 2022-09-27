@@ -6,6 +6,7 @@
             </div>
         </div>
         <slot></slot>
+        <div style="display:none;width:0;height:0">{{computed_drawer_opened}}</div>
     </div>
 </template>
 <script>
@@ -27,6 +28,12 @@
                 touch_end: 0,
                 drawer_opened: false
             };
+        },
+        computed: {
+            computed_drawer_opened () {
+                this.$emit('is-drawer-open', this.drawer_opened)
+                return this.drawer_opened
+            }
         },
         mounted() {
             let drawer_class = 'drawer' + ' ' + this.class
@@ -69,9 +76,10 @@
 
                 this.drawer.style.setProperty('bottom', `${this.drawer_height - 10}px`)
 
-                setTimeout(() => {
-                    _this.drawer_opened = true
-                }, 500)
+                // setTimeout(() => {
+                //     _this.drawer_opened = true
+                // }, 500)
+                _this.drawer_opened = true
             },
             closeDrawer() {
                 if (this.drawer_opened === false) {

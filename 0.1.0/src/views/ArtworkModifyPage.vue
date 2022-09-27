@@ -312,7 +312,7 @@
                 }
 
                 let video_index = await this.artwork.isVideo()
-                console.log(video_index)
+                
                 if (video_index !== null) {
                     let video = new Object()
                     video.src = await this.artwork.getVideo()
@@ -327,7 +327,6 @@
                         video.background_style = ''
                     }
                     this.artworkImageInfo.splice(video_index, 0, video)
-                    console.log(this.artworkImageInfo)
                 }
             },
             // - backButton을 눌렀을 때 뒤로가기 이벤트를 실행시키는 함수.
