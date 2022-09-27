@@ -22,9 +22,10 @@
         created() {},
         beforeMount() {},
         mounted() {
+            let ratio = this.$refs.posterImage.height/this.$refs.posterImage.width
             this.$refs.posterImage.style = 'width: 100%; height: auto'
-
-            document.getElementById('imageSelection').children[1].style.setProperty('height' , `${this.$refs.posterImage.height}px`)
+            
+            document.getElementById('imageSelection').children[1].style.setProperty('height' , `${document.getElementById('imageSelection').children[1].offsetWidth * ratio}px`)
         },
         beforeUpdate() {},
         updated() {},
