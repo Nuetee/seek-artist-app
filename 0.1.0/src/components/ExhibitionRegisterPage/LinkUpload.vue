@@ -130,12 +130,22 @@
                 let valid_link_list = this.link_list.filter((data) => {
                     return  data.link !== null
                 })
+                valid_link_list.forEach((value, index) => {
+                    
+                })
 
                 let json_link_object = {}
                 let i = 0
                 while (i < valid_link_list.length) {
                     let property = valid_link_list[i].title
-                    json_link_object[property.toString()] = valid_link_list[i].link
+                    if (property === null)
+                        property = ''
+                    
+                    //  http?없이 www로 시작한다면.
+                    let rplcdPttrn2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+                    let rplcdTxt = valid_link_list[i].link.replace(rplcdPttrn2, 'https://' + valid_link_list[i].link);
+
+                    json_link_object[property.toString()] = rplcdTxt
                     
                     i++
                 }

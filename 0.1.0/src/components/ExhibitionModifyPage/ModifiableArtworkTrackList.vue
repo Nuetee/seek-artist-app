@@ -5,7 +5,6 @@
                 <div class="category">{{ category }}</div>
                 <draggable 
                     v-model="this.modified_artwork_track_list[i]" 
-                    @change="this.log"
                     :group="{ name: 'track', pull: true}"
                     handle=".handle"
                 >
@@ -127,11 +126,6 @@
                     })
                 }
             },
-            'track_row_artwork_will_be_added': {
-                handler() {
-                    console.log(this.track_row_artwork_will_be_added)
-                }
-            },
         },
         data() {
             return {
@@ -149,11 +143,6 @@
         beforeUnmount() {},
         unmounted() {},
         methods: {
-            log () {
-                console.log(this.artwork_track_list)
-                //console.log(this.modified_category_list)
-                console.log(this.modified_artwork_track_list)
-            },
             /**
              * modified_artwork_track_list 에서 특정 element(artwork 객체)를 삭제하는 함수
              * @param {Number} row // modified_artwork_track_list[row][column]
@@ -261,9 +250,6 @@
                 this.modified_artwork_track_list = new_track_list.map(v => v.slice())
 
                 this.$emit('set-modified-category-list', this.modified_category_list)
-            },
-            log () {
-                console.log(this.modified_artwork_track_list)
             },
             async reset () {
                 this.modified_artwork_track_list = this.artwork_track_list.map(v => v.slice())
