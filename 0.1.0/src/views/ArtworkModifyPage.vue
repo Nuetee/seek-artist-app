@@ -312,13 +312,22 @@
                 }
 
                 let video_index = await this.artwork.isVideo()
-                if (video_index) {
+                console.log(video_index)
+                if (video_index !== null) {
                     let video = new Object()
                     video.src = await this.artwork.getVideo()
-                    video.background_src = await this.artwork.getThumbnailImage()
-                    video.background_style = await cropImage(video.background_src, container_ratio)
                     video.style = 'video'
+
+                    if (artworkImages.length !== 0) {
+                        video.background_src = await this.artwork.getThumbnailImage()
+                        video.background_style = await cropImage(video.background_src, container_ratio)
+                    }
+                    else {
+                        video.background_src = ''
+                        video.background_style = ''
+                    }
                     this.artworkImageInfo.splice(video_index, 0, video)
+                    console.log(this.artworkImageInfo)
                 }
             },
             // - backButton을 눌렀을 때 뒤로가기 이벤트를 실행시키는 함수.

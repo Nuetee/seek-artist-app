@@ -25,7 +25,10 @@
                         stroke-linejoin="round" />
                 </svg>
                 <Preview v-if="!this.isExhibition && file.type.includes('image')" :textColor="this.textColor" :title="this.artworkData.title" :image="file"></Preview>
-                <video v-else-if="!this.isExhibition && file.type.includes('video')" id="video" :src="file.src" controls></video>
+                <div class="video" v-else-if="!this.isExhibition && file.type.includes('video')">
+                    <img class="videoBackground" src="" @load="this.setVideoBackgroundStyle($event)"/>
+                    <video id="video" :src="file.src" controls @canplaythrough="this.setVideoThumbnail($event)"></video>
+                </div>
                 <ExhibitionPreview v-else :image="file"></ExhibitionPreview>
             </swiper-slide>
             <swiper-slide v-if="!this.isExhibition || !this.selectedFiles.length">
@@ -97,6 +100,7 @@
                 selectedImageFiles: [],
                 selectedVideo: null,
                 videoIndex: null,
+                videoThumbnail: null,
                 textColor: 'black',
                 swiperOptions: {
                     slidesPerView: 'auto',
@@ -105,6 +109,8 @@
                     centerInsufficientSlides: true,
                     allowTouchMove: true,
                 },
+                
+                setVideoThumbnailFlag: null
             };
         },
         watch: {
@@ -130,6 +136,12 @@
             },
             textColor: function (newVal) {
                 this.$emit('set-artwork-entity', 'textColor', newVal)
+            },
+            videoThumbnail: {
+                async handler () {
+                    console.log('videothumbnail')
+                    await this.formValidCheck()
+                }
             }
         },
         created() {
@@ -147,6 +159,8 @@
             initialization() {
                 this.selectedImageFiles = []
                 this.selectedVideo = null
+                this.videoIndex = null,
+                this.videoThumbnail = null,
                 this.textColor = this.originalTextColor
                 this.selectedFiles = this.originalImageFiles.slice()
 
@@ -170,25 +184,29 @@
 
                     i++
                 }
-                // console.log(this.selectedFiles)
-                // console.log(this.selectedImageFiles)
-                // console.log(this.selectedVideo)
-                // console.log(this.videoIndex)
-                // this.$emit('original-files', this.selectedImageFiles, this.selectedVideo, this.videoIndex)
             },
             async formValidCheck() {
                 await this.$nextTick()
-                if (this.selectedImageFiles.length > 0) {
-                    this.$emit('activate-next-button', true)
-                    
+                if (this.selectedFiles.length > 0) {
                     if (this.isExhibition) {
                         this.$emit('set-exhibition-entity', 'images', this.selectedImageFiles)
                     }
                     else {
-                        this.$emit('set-artwork-entity', 'images', this.selectedImageFiles)
-                        this.$emit('set-artwork-entity', 'video', this.selectedVideo)
-                        this.$emit('set-artwork-entity', 'video_index', this.videoIndex)
+                        if (this.selectedImageFiles.length > 0) {
+                            this.$emit('set-artwork-entity', 'images', this.selectedImageFiles)
+                        }
+                        if (this.selectedVideo !== null) {
+                            this.$emit('set-artwork-entity', 'video', this.selectedVideo)
+                            this.$emit('set-artwork-entity', 'video_index', this.videoIndex)
+                            this.$emit('set-artwork-entity', 'video_thumbnail', this.videoThumbnail)
+                            if (this.videoThumbnail === null) {
+                                this.$emit('activate-next-button', false)
+                                return
+                            }
+                        }
                     }
+
+                    this.$emit('activate-next-button', true)
 
                     this.imageSelection.style.setProperty('padding', 0)
                 }
@@ -245,6 +263,8 @@
                 else if (this.selectedFiles[i].type.includes('video')) {
                     this.selectedVideo = null
                     this.videoIndex = null
+                    clearInterval(this.setVideoThumbnailFlag)
+                    this.videoThumbnail = null
                 }
 
                 this.selectedFiles.splice(i, 1)
@@ -271,6 +291,65 @@
                 }
                 
                 return true
+            },
+            /**
+             * video element에서 canplay event가 발생하면 video로부터 thumbnail을 얻는다.
+             * @param {Object} event // video에서 발생한 canplay event
+             * canvas element를 생성하고 0.1초에 한번씩 canvas에 video_element를 그린다. 3번 연속으로 같은 이미지를 그리면 해당 이미지를 thumbnail로 설정한다.
+             * 처음에 그린 그림은 무조건 빈 이미지이다.
+             */
+            setVideoThumbnail (event) {
+                let video_element = event.target || e.srcElement
+                let canvas = document.createElement('canvas')
+                canvas.width = video_element.videoWidth
+                canvas.height = video.videoHeight
+
+                let ctx = canvas.getContext('2d')
+                let img_src = null
+                let draw_count = 0
+                const _this = this
+                this.setVideoThumbnailFlag = setInterval(async function () {
+                    ctx.drawImage(video_element, 0, 0, canvas.width, canvas.height)
+
+                    if (img_src === canvas.toDataURL('image/jpeg')) {
+                        // 세번 연속 canvas가 그린 video 이미지가 같은 경우
+                        if (draw_count == 2) {
+                            // interval 반복을 멈춘다.
+                            clearInterval(_this.setVideoThumbnailFlag)
+                            let img_element = document.getElementsByClassName('videoBackground')[0]
+                            img_element.src = img_src
+                            
+                            // videoThumbnail을 image file형식으로 가져온다.
+                            _this.videoThumbnail = dataURItoBlob(img_src);
+
+                            function dataURItoBlob(dataURI) {
+                                // convert base64/URLEncoded data component to raw binary data held in a string
+                                var byteString;
+                                if (dataURI.split(',')[0].indexOf('base64') >= 0)
+                                    byteString = atob(dataURI.split(',')[1]);
+                                else
+                                    byteString = unescape(dataURI.split(',')[1]);
+                                // separate out the mime component
+                                var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+                                // write the bytes of the string to a typed array
+                                var ia = new Uint8Array(byteString.length);
+                                for (var i = 0; i < byteString.length; i++) {
+                                    ia[i] = byteString.charCodeAt(i);
+                                }
+                                return new Blob([ia], { type: mimeString });
+                            }
+                        }
+
+                        draw_count++
+                    }
+                    else {
+                        draw_count = 0
+                    }
+                    img_src = canvas.toDataURL('image/jpeg')
+                }, 100)
+            },
+            async setVideoBackgroundStyle(event) {
+                event.target.style = await cropImage(event.target.src, 3/5)
             },
             resetInput() {
                 this.imageUpload.value = ''
