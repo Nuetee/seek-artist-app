@@ -454,6 +454,9 @@
                 }
                 
                 let header_scale = (document.getElementById('viewPort').scrollTop / this.vw > 10) ? (0.7) : (1 - (document.getElementById('viewPort').scrollTop / (this.vw * 10)) * 0.3)
+                if (document.getElementById('viewPort').scrollTop <= 0) {
+                    header_scale = 1
+                }
                 this.main_header_element.style.setProperty('transform', `translate(-50%, 0) scaleY(${header_scale})`)
 
                 for (let i = 0; i < this.main_header_element.children.length; i++) {
