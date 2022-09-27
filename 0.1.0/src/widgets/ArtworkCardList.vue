@@ -19,14 +19,14 @@
         <div class="column1">
             <transition-group name="slide-fade" tag="div">
                 <div v-for="(exhibitionId, i) in this.exhibitionIdList" :key="i">
-                    <ArtworkCard v-if="i % 2 == 0" :exhibitionId="exhibitionId" :order="i.toString()"></ArtworkCard>
+                    <ArtworkCard v-if="i % 2 == 0" :exhibitionId="exhibitionId.page_id" :order="i.toString()"></ArtworkCard>
                 </div>
             </transition-group>
         </div>
         <div class="column2">
             <transition-group name="slide-fade" tag="div">
                 <div v-for="(exhibitionId, i) in this.exhibitionIdList" :key="i">
-                    <ArtworkCard v-if="i % 2 == 1" :exhibitionId="exhibitionId" :order="i.toString()"></ArtworkCard>
+                    <ArtworkCard v-if="i % 2 == 1" :exhibitionId="exhibitionId.page_id" :order="i.toString()"></ArtworkCard>
                 </div>
             </transition-group>
         </div>
