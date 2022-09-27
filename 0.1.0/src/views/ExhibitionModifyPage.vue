@@ -173,7 +173,6 @@
     import ExhibitionEditButton from '@/components/ExhibitionModifyPage/ExhibitionEditButton.vue';
 
     import { Exhibition } from '@/classes/exhibition';
-    import { cropImage } from '@/modules/image';
     import { 
         isAuth, 
         getAuth 
