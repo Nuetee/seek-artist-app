@@ -109,7 +109,7 @@
                                 <video id="video" :src="this.video_info.src" controls></video>
                             </div>
                             <div class="linkList" v-if="this.link_list.length > 0">
-                                <a v-for="(link, i) in this.link_list" :href="'https://' + link.src" target="blank">
+                                <a v-for="(link, i) in this.link_list" :href="link.src" target="blank">
                                     {{link.key}}
                                 </a>
                             </div>
