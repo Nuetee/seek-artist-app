@@ -89,6 +89,25 @@ export class User {
         }
     }
 
+    getTotalExhibitions = async function (offset, limit) {
+        const { status, data } = await sendRequest('post', '/artist/exhibition/total', {
+            target_id : this.id,
+            offset : offset,
+            limit : limit
+        }) 
+        if (status < 500) {
+            return data[0].map(function (x) {
+                return {
+                    page_id: x.page_id,
+                    is_owner: x.is_owner 
+                }
+            })
+        }
+        else {
+            return []
+        }
+    }
+
     getOwnExhibitions = async function (offset, limit) {
         const { status, data } = await sendRequest('post', '/artist/exhibition', {
             target_id : this.id,

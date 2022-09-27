@@ -192,7 +192,7 @@
             },
             async rebuild(offset, length) {
                 const newArtworkIdList = await this.user.getOwnArtworks(offset, length)
-                const newExhibitionIdList = await this.user.getOwnExhibitions(offset, length)
+                const newExhibitionIdList = await this.user.getTotalExhibitions(offset, length)
                 this.artworkIdList = this.artworkIdList.concat(newArtworkIdList)
                 this.exhibitionIdList = this.exhibitionIdList.concat(newExhibitionIdList)
                 if (newArtworkIdList.length < 12 && newExhibitionIdList.length < 12) {
@@ -200,6 +200,7 @@
                 }
             },
             async load() {
+                console.log('load')
                 if (this.updateInProgress) {
                     return false
                 }
