@@ -55,8 +55,22 @@
                 <transition-group name="slide-fade" tag="div">
                     <div id="body" v-if="this.exhibition" v-show="this.bodyShowFlag">
                         <div class="poster">
-                            <img id="posterImage" @load="() => {this.bodyShowFlag = true}" :src="this.poster_image"
-                                style="width:100%">
+                            <img id="posterImage" 
+                                @load="() => {this.bodyShowFlag = true}" 
+                                :src="this.modified_poster_image"
+                            />
+                            <div
+                                class="posterEdit"
+                                v-if="this.is_edit && this.user.getID() === this.exhibition.getOwner().getID()"
+                            >
+                                <label 
+                                    class="posterEditButton poppins"
+                                    for="posterImageSelection"
+                                >
+                                    Edit
+                                </label>
+                                <input type="file" id="posterImageSelection" ref="posterImageSelection" accept="image/*">
+                            </div>
                         </div>
                         <div class="collaboratorContainer" v-if="this.is_edit">
                             <div class="containerName">참여 멤버</div>
@@ -183,6 +197,11 @@
     import ArtworkRegisterPage from './ArtworkRegisterPage.vue';
     import CategoryRegister from '@/components/ExhibitionModifyPage/CategoryRegister.vue';
     import Background from '@/widgets/Background.vue';
+    import { resizeImage } from '@/modules/image';
+    import {
+        putExhibitionImages,
+        putExhibitionThumbnailImage,
+    } from '@/modules/storage';
 
     export default {
         name: 'ExhibitionModifyPage',
@@ -211,8 +230,8 @@
                 original_category_list : [],
                 modified_category_list: [],
 
-                poster_image: null,
-                poster_image_style: null,
+                original_poster_image: null,
+                modified_poster_image: null,
                 bodyShowFlag: false,
                 vw: null,
 
@@ -239,7 +258,8 @@
                 collaborator_list: null,
                 artwork_register_process: false,
                 category_register_process: false,
-                background_display: true
+                background_display: true,
+                new_poster_files: null
             };
         },
         computed: {
@@ -264,7 +284,9 @@
                         elementList.forEach(function(element) {
                             let children = Array.from(element.children)
                             children.forEach(function(child) {
-                                child.classList.add('before-enter')
+                                if(!child.classList.contains('posterEdit')) {
+                                    child.classList.add('before-enter')
+                                }
                             })
                         })
                         this.fadeInEffect()
@@ -320,7 +342,8 @@
             this.exhibition = exhibition
             //await this.exhibition.initializePage()
             let images = await this.exhibition.getImages()
-            this.poster_image = images[0]
+            this.original_poster_image = images[0]
+            this.modified_poster_image = images[0]
             this.poster_image_element = document.getElementById('posterImage')
             if (this.exhibition.isVideo() !== null) {
                 this.video_info.title = this.exhibition.isVideo()
@@ -491,18 +514,19 @@
                             in_viewport =  !(rect.right < 0 || rect.left > window.innerWidth || (window.innerHeight - (rect.height - rect.bottom)) >  (window.innerHeight - 30 * __this.vw))
                         }
                         
-                        if (in_viewport) {
-                            child.classList.add('enter')
-                            child.classList.remove('before-enter')     
-                        }
-                        else {
-                            child.classList.add('after-enter')
-                            child.classList.remove('enter')   
-                        }
-                        if(child.id == 'posterImage') 
-                        {
-                            child.classList.add('enter')
-                            child.classList.remove('before-enter')     
+                        if (!child.classList.contains('posterEdit')) {
+                            if (in_viewport) {
+                                child.classList.add('enter')
+                                child.classList.remove('before-enter')
+                            }
+                            else {
+                                child.classList.add('after-enter')
+                                child.classList.remove('enter')
+                            }
+                            if (child.id == 'posterImage') {
+                                child.classList.add('enter')
+                                child.classList.remove('before-enter')
+                            }
                         }
                     })
                 })
@@ -522,17 +546,32 @@
                     return "other";
                 }
             },
+            /**
+             * 수정 모드/보기 모드를 전환해 주는 함수, Edit/Done button이 클릭되면 호출된다.
+             * 1. is_edit === true 인 경우(Done button을 누른경우)
+             *  1.1 this.updateExhibition() 함수를 호출하여 변경사항을 저장한다.
+             *  1.2. 전시의 소유자가 '나' 일 경우 posterImageSelection input에 대해 eventListener를 제거한다.
+             * 
+             * 2. is_edit의 값을 바꿔 모드를 전환한다.
+             * 3. 수정모드로 전환되었고 전시의 소유자가 '나' 일 경우 posterImageSelection input에 대해 eventListener를 등록한다.
+             */
             async switchEditMode () {
-                if (this.is_edit == true) {
+                if (this.is_edit === true) {
                     await this.updateExhibition()
+                    if (this.user.getID() === this.exhibition.getOwner().getID()) {
+                        this.$refs.posterImageSelection.removeEventListener('change', this.setPosterImage)
+                    }
                 }
+
                 this.is_edit = !this.is_edit
+
+                if (this.is_edit === true && this.user.getID() === this.exhibition.getOwner().getID()) {
+                    await this.$nextTick()
+                    this.$refs.posterImageSelection.addEventListener('change', this.setPosterImage)
+                }
             },
             async updateExhibition () {
                 this.modified_artwork_track_list = this.$refs.modifiableArtworkTrackList.modified_artwork_track_list.map(v => v.slice())
-
-                // console.log(this.modified_category_list)
-                // console.log(this.modified_artwork_track_list)
 
                 let delete_index_list = []
 
@@ -569,12 +608,47 @@
                     json_category_list_object = null
                 }
                 await this.exhibition.putCategory(json_category_list_object)
-                // this.original_artwork_track_list = this.modified_artwork_track_list.map(v => v.slice())
+
+                if (this.new_poster_files !== null) {
+                    const poster_image = await resizeImage(this.$refs.posterImageSelection.files[0], {
+                        x: 720,
+                        y: 1200
+                    })
+                    let poster_images = []
+                    poster_images.push(poster_image)
+
+                    const thumbnail = await resizeImage(this.$refs.posterImageSelection.files[0], {
+                        x: 400,
+                        y: 400
+                    })
+                    const image_result = await putExhibitionImages(this.exhibition.getPageID(), poster_images)
+
+                    if (image_result) {
+                        const thumbnail_result = await putExhibitionThumbnailImage(this.exhibition.getPageID(), thumbnail)
+
+                        if (!thumbnail_result) {
+                            console.log('썸네일 등록 실패')
+                        }
+                    }
+                    else {
+                        console.log('이미지 등록 실패')
+                    }
+
+                }
+                
                 await this.exhibition.initializePage()
                 this.setCategoryAndTrackList()
 
                 this.$refs.categoryRegister.reset()
                 await this.$refs.modifiableArtworkTrackList.reset()
+            },
+            /**
+             * 가져온 이미지 파일을 포스터 이미지로 설정하는 함수
+             */
+            setPosterImage () {
+                this.new_poster_files = new Array()
+                this.new_poster_files = this.$refs.posterImageSelection.files
+                this.modified_poster_image = URL.createObjectURL(this.$refs.posterImageSelection.files[0])
             },
             share (event) {
                 // 이벤트 전파 방지
@@ -608,7 +682,8 @@
             },
             async reset () {
                 this.modified_category_list = this.original_category_list.slice()
-                //this.modified_artwork_track_list = this.original_artwork_track_list.map(v => v.slice())
+                this.modified_poster_image = this.original_poster_image
+
                 await this.$refs.modifiableArtworkTrackList.reset()
                 this.is_edit = false
             }

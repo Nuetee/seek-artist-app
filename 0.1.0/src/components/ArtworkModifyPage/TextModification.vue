@@ -81,6 +81,13 @@
                         :placeholder="this.old_description"></textarea>
                 </div>
             </div>
+            <hr class="solid">
+            <div class="exhibition">
+                <div class="label">전시설정</div>
+                <div class="setExhibitionButton">전시에 추가하기</div>
+                <!-- <div class="exhibitionName"></div>
+                <div class="exhibitionSelection"></div> -->
+            </div>
         </div>
     </div>
 </template>
