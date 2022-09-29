@@ -230,18 +230,18 @@
     export default {
         name: 'ExhibitionModifyPage',
         components: {
-        MainHeader,
-        TitleHeader,
-        SideBar,
-        RoundProfile,
-        ExhibitionEditButton,
-        Drawer,
-        ModifiableArtworkTrackList,
-        ArtworkRegisterPage,
-        CategoryRegister,
-        Background,
-        LinkUpload
-    },
+            MainHeader,
+            TitleHeader,
+            SideBar,
+            RoundProfile,
+            ExhibitionEditButton,
+            Drawer,
+            ModifiableArtworkTrackList,
+            ArtworkRegisterPage,
+            CategoryRegister,
+            Background,
+            LinkUpload
+        },
         data() {
             return {
                 source: (this.$route.query.utm_source) 
@@ -655,7 +655,7 @@
                         category = category.toString() + '\t'
                     let id_array = new Array(0)
                     this.modified_artwork_track_list[i].forEach((value, index) => {
-                        id_array.push(value.page_id.toString())
+                        id_array.push(value.getID().toString())
                     })
                     json_category_list_object[category] = id_array
 
