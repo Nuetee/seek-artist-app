@@ -200,7 +200,6 @@
                 }
             },
             async load() {
-                console.log('load')
                 if (this.updateInProgress) {
                     return false
                 }
