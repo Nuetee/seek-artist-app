@@ -68,29 +68,27 @@ export class Exhibition {
             
             this.artwork_list = new Array(0)
             this.category_list = new Array(0)
-            
-            const isArray = function (obj) {
-                return Object.prototype.toString.call(obj) === '[object Array]';
-            }
 
-            if (page_data.category && isArray(page_data.category)) {
-                for (let i = 0 ; i < page_data.category.length; i++) {
-                    const artwork = await new Artwork(page_data.category[i]).init()
-                    if (!artwork)
-                        continue
+            const { status: category_status, data: category_data } = await sendRequest('get', '/exhibition/category', {
+                target_id : this.page_id
+            })
+            const category_list = category_data[0]
+
+            if (category_status < 400) {
+                let current_category
+                for (let i = 0 ; i < category_list.length; i++) {
+                    const new_page_id = category_list[i].page_id
+                    const new_category = category_list[i].category
+
+                    const artwork = await new Artwork(new_page_id).init()
                     this.artwork_list.push(artwork)
-                    this.category_list.push(null)
-                }
-            }
-           else {
-                for (let obj in page_data.category) {
-                    const page_array = page_data.category[obj]
-                    for (let i = 0; i < page_array.length; i++) {
-                        const artwork = await new Artwork(page_array[i]).init()
-                        if (!artwork)
-                            continue
-                        this.artwork_list.push(artwork)
-                        this.category_list.push((i > 0) ? null : obj)
+
+                    if (i > 0 && new_category === current_category) {
+                        this.category_list.push(null)
+                    }
+                    else {
+                        this.category_list.push(new_category)
+                        current_category = new_category
                     }
                 }
             }
@@ -239,8 +237,16 @@ export class Exhibition {
     }
 
     putCategory = async function (category) {
-        const result = await this.putExhibitionData('category', category)
-        return result
+        const { status, data } = await sendRequest('put', '/exhibition/category', {
+            target_id : this.id,
+            data : category
+        })
+        if (status < 500) {
+            return true
+        }
+        else {
+            return false
+        }
     }
     
     deletePreExhibition = async function () {
