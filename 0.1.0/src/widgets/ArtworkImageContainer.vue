@@ -49,7 +49,7 @@
         },
         methods: {
             loaded (event) {
-                console.log(event)
+                // console.log(event)
             },
             async setArtworkImageStyle (ratio) {
                 if (this.firstResize) {
