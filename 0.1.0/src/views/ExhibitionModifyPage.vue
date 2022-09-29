@@ -88,19 +88,35 @@
                                 추가
                             </div>
                         </div>
-                        <div class="exhibitionInformation">
+                        <div class="editExhibitionInformation" v-if="this.is_edit && this.user.getID() === this.exhibition.getOwner().getID()">
+                            <div class="editTitle">
+                                <div class="label">전시명</div>
+                                <div class="background">
+                                    <input class="titleInput" type="text" placeholder="전시제목" v-model="this.modified_name" />
+                                </div>
+                            </div>
+                            <div class="editInformation">
+                                <div class="label">전시 설명</div>
+                                <div class="background">
+                                    <textarea class="introductionInput" :placeholder="this.exhibition.getInformation()"
+                                        v-model="this.modified_information"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="exhibitionInformation" v-else>
                             <TitleHeader ref="informationTitle" 
                                 :document_element_id="'viewPort'"
-                                :title="this.exhibition.getName()"
+                                :title="this.exhibition.getName() ? this.exhibition.getName() : '제목없음'"
                                 :startHeight="(this.vw * 30)" 
                                 :heightUnit="this.vw / 2">
                             </TitleHeader>
                             <pre class="exhibitionIntroduction">
-                                        {{ this.exhibition.getInformation() }}
-                                    </pre>
+                                {{ this.exhibition.getInformation() ? this.exhibition.getInformation() : '' }}
+                            </pre>
                         </div>
                         <div class="exhibitionArtworks">
-                            <TitleHeader ref="artworksTitle" :title="'Artworks'" :startHeight="(this.vw * 30)"
+                            <div class="label" v-if="this.is_edit && this.user.getID() === this.exhibition.getOwner().getID()">작품목록</div>
+                            <TitleHeader v-else ref="artworksTitle" :title="'Artworks'" :startHeight="(this.vw * 30)"
                                 :heightUnit="this.vw / 2" :document_element_id="'viewPort'">
                             </TitleHeader>
                             <ModifiableArtworkTrackList
@@ -111,7 +127,15 @@
                                 @set-modified-category-list="this.setModifiedCategoryList"
                                 ></ModifiableArtworkTrackList>
                         </div>
-                        <div class="exhibitionMoreInformation">
+                        <div class="editexhibitionMoreInformation" v-if="this.is_edit && this.user.getID() === this.exhibition.getOwner().getID()">
+                            <!-- video는 얕은 복사되므로 emit을 통해 받아오지 않아도 됨. -->
+                            <LinkUpload
+                                :prop_link_list="this.link_list"
+                                :prop_video="this.modified_video"
+                                @set-exhibition-entity="(entity, value) => { if (entity ==='link_list') { this.link_object = value } }"
+                            ></LinkUpload>
+                        </div>
+                        <div class="exhibitionMoreInformation" v-else>
                             <TitleHeader ref="moreInformationTitle" 
                                 :title="'전시 더보기'"
                                 :startHeight="(this.vw * 30)"
@@ -123,8 +147,8 @@
                                 <video id="video" :src="this.video_info.src" controls></video>
                             </div>
                             <div class="linkList" v-if="this.link_list.length > 0">
-                                <a v-for="(link, i) in this.link_list" :href="link.src" target="blank">
-                                    {{link.key}}
+                                <a v-for="(link, i) in this.link_list" :href="link.link" target="blank">
+                                    {{link.title}}
                                 </a>
                             </div>
                         </div>
@@ -181,11 +205,9 @@
 <script>
     import MainHeader from '@/components/ExhibitionModifyPage/MainHeader.vue';
     import TitleHeader from '@/components/ExhibitionModifyPage/TitleHeader.vue';
-    //import ArtworkTrackList from '@/components/ExhibitionModifyPage/ArtworkTrackList.vue';
     import SideBar from '@/widgets/SideBar.vue';
     import RoundProfile from '@/widgets/RoundProfile.vue';
     import ExhibitionEditButton from '@/components/ExhibitionModifyPage/ExhibitionEditButton.vue';
-
     import { Exhibition } from '@/classes/exhibition';
     import { 
         isAuth, 
@@ -201,23 +223,25 @@
     import {
         putExhibitionImages,
         putExhibitionThumbnailImage,
+        putExhibitionVideo
     } from '@/modules/storage';
+    import LinkUpload from '@/components/ExhibitionRegisterPage/LinkUpload.vue';
 
     export default {
         name: 'ExhibitionModifyPage',
         components: {
-            MainHeader,
-            TitleHeader,
-            //ArtworkTrackList,
-            SideBar,
-            RoundProfile,
-            ExhibitionEditButton,
-            Drawer,
-            ModifiableArtworkTrackList,
-            ArtworkRegisterPage,
-            CategoryRegister,
-            Background
-        },
+        MainHeader,
+        TitleHeader,
+        SideBar,
+        RoundProfile,
+        ExhibitionEditButton,
+        Drawer,
+        ModifiableArtworkTrackList,
+        ArtworkRegisterPage,
+        CategoryRegister,
+        Background,
+        LinkUpload
+    },
         data() {
             return {
                 source: (this.$route.query.utm_source) 
@@ -259,7 +283,15 @@
                 artwork_register_process: false,
                 category_register_process: false,
                 background_display: true,
-                new_poster_files: null
+                new_poster_files: null,
+                modified_name: null,
+                modified_information: null,
+                modified_video: {
+                    title: null,
+                    file: null,
+                    src: null
+                },
+                link_object: null
             };
         },
         computed: {
@@ -284,15 +316,13 @@
                         elementList.forEach(function(element) {
                             let children = Array.from(element.children)
                             children.forEach(function(child) {
-                                if(!child.classList.contains('posterEdit')) {
-                                    child.classList.add('before-enter')
-                                }
+                                child.classList.add('before-enter')
                             })
                         })
-                        this.fadeInEffect()
+                        this.fadeInEffect(true)
 
-                        document.getElementById('viewPort').addEventListener('scroll', this.fadeInEffect)
-                        this.proper_position_flag = true
+                        const _this = this
+                        document.getElementById('viewPort').addEventListener('scroll', function () { _this.fadeInEffect(false) })
                     }
                 }
                 return this.poster_image_element
@@ -340,27 +370,19 @@
             })
 
             this.exhibition = exhibition
-            //await this.exhibition.initializePage()
             let images = await this.exhibition.getImages()
             this.original_poster_image = images[0]
             this.modified_poster_image = images[0]
             this.poster_image_element = document.getElementById('posterImage')
             if (this.exhibition.isVideo() !== null) {
                 this.video_info.title = this.exhibition.isVideo()
+                this.video_info.file = null
                 this.video_info.src = await this.exhibition.getVideo()
+                this.modified_video = this.cloneObject(this.video_info)
             }
-            let link_list = this.exhibition.getLinkList()
-            if (link_list) {
-                Object.keys(link_list).forEach(key => {
-                    let link = new Object()
-                    link.key = key
-                    link.src = link_list[key]
-                    this.link_list.push(link)
-                })
-            }
-            
+
+            this.setLinkList()
             this.setCategoryAndTrackList()
-            // this.modified_artwork_track_list = this.original_artwork_track_list.map(v => v.slice())
 
             if (isAuth()) {
                 // Update history
@@ -378,10 +400,10 @@
         mounted() {
             const _this = this
 
-            setTimeout(function() {
-                _this.scrollBottom()
-                window.addEventListener('scroll', _this.scrollBottom)
-            }, 0)
+            // setTimeout(function() {
+            //     _this.scrollBottom()
+            //     window.addEventListener('scroll', _this.scrollBottom)
+            // }, 0)
             document.getElementById('viewPort').addEventListener('scroll', this.setHeaderScale)
 
             this.main_header_element = document.getElementsByClassName('mainHeader')[0]
@@ -421,9 +443,36 @@
             }, 4000)
         },
         unmounted() {
-            window.removeEventListener('scroll', this.scrollBottom)
+            //window.removeEventListener('scroll', this.scrollBottom)
         },
         methods: {
+            /**
+             * Object를 깊은 복사하여 반환하는 함수
+             * @param {Object} obj 
+             */
+            cloneObject(obj) {
+                var clone = {};
+                for (var key in obj) {
+                    if (typeof obj[key] == "object" && obj[key] != null) {
+                        clone[key] = cloneObject(obj[key]);
+                    } else {
+                        clone[key] = obj[key];
+                    }
+                }
+
+                return clone;
+            },
+            setLinkList () {
+                let link_list = this.exhibition.getLinkList()
+                if (link_list) {
+                    Object.keys(link_list).forEach(key => {
+                        let link = new Object()
+                        link.title = key
+                        link.link = link_list[key]
+                        this.link_list.push(link)
+                    })
+                }
+            },
             setCategoryAndTrackList () {
                 let artwork_list = this.exhibition.getArtworkList()
                 let category_list = this.exhibition.getCategoryList()
@@ -431,8 +480,7 @@
                 if (category_list[0] === null) {
                     category_list[0] = ''
                 }
-                // console.log(this.exhibition.getArtworkList())
-                // console.log(this.exhibition.getCategoryList())
+
                 this.original_artwork_track_list = new Array(0)
                 this.original_category_list = new Array(0)
                 this.modified_category_list = new Array(0)
@@ -466,9 +514,9 @@
 
                 this.modified_category_list = this.original_category_list.slice()
             },
-            scrollBottom () {
-                window.scrollTo(0, document.getElementById('exhibitionModifyPage').clientHeight)
-            },
+            // scrollBottom () {
+            //     window.scrollTo(0, document.getElementById('exhibitionModifyPage').clientHeight)
+            // },
             // SideBar component의 openSideBar함수를 실행시켜 sideBar가 열리도록 하는 함수
             openSideBar (event) {
                 this.$refs.sideBar.openSideBar(event)
@@ -494,7 +542,10 @@
                     this.main_header_element.children[i].style.setProperty('transform', `scaleX(${header_scale})`)
                 }
             },
-            fadeInEffect () {
+            fadeInEffect (first_call) {
+                if (this.is_edit) {
+                    return
+                }
                 let elementList = [
                     this.poster_element,
                     this.information_element,
@@ -514,7 +565,17 @@
                             in_viewport =  !(rect.right < 0 || rect.left > window.innerWidth || (window.innerHeight - (rect.height - rect.bottom)) >  (window.innerHeight - 30 * __this.vw))
                         }
                         
-                        if (!child.classList.contains('posterEdit')) {
+                        if (first_call) {
+                            if (in_viewport) {
+                                child.classList.add('enter')
+                                child.classList.remove('before-enter')
+                            }
+                            if (child.id == 'posterImage') {
+                                child.classList.add('enter')
+                                child.classList.remove('before-enter')
+                            }
+                        }
+                        else {
                             if (in_viewport) {
                                 child.classList.add('enter')
                                 child.classList.remove('before-enter')
@@ -523,11 +584,8 @@
                                 child.classList.add('after-enter')
                                 child.classList.remove('enter')
                             }
-                            if (child.id == 'posterImage') {
-                                child.classList.add('enter')
-                                child.classList.remove('before-enter')
-                            }
                         }
+                        
                     })
                 })
 
@@ -635,6 +693,37 @@
                     }
 
                 }
+
+                if (this.modified_name !== this.exhibition.getName() && this.modified_name !== null) {
+                    const name_result = await this.exhibition.putName (this.modified_name)
+                    if (!name_result) {
+                        alert('제목 수정 실패')
+                    }
+                }
+
+                if(this.modified_information !== this.exhibition.getInformation() && this.modified_information !== null) {
+                    const info_result = await this.exhibition.putInformation(this.modified_information)
+                    if (!info_result) {
+                        alert('설명 수정 실패')
+                    }
+                }
+
+                if (this.link_object !== null && Object.keys(this.link_object).length !== 0) {
+                    const link_result = await this.exhibition.postLink(this.link_object)
+                    if (!link_result) {
+                        alert('링크 수정 실패')
+                    }
+                }
+
+                if (this.video_info.src !== this.modified_video.src) {
+                    let video_result = await this.exhibition.putIsVideo(this.modified_video.title)
+
+                    video_result = video_result && await putExhibitionVideo(this.exhibition, this.modified_video.title, this.exhibition.getPageID(), this.modified_video.file)
+
+                    if (!video_result) {
+                        alert('비디오 수정 실패')
+                    }
+                }
                 
                 await this.exhibition.initializePage()
                 this.setCategoryAndTrackList()
@@ -683,6 +772,10 @@
             async reset () {
                 this.modified_category_list = this.original_category_list.slice()
                 this.modified_poster_image = this.original_poster_image
+                this.modified_name = this.exhibition.getName()
+                this.modified_information = this.exhibition.getInformation()
+                this.modified_video = this.cloneObject(this.video_info)
+                this.setLinkList()
 
                 await this.$refs.modifiableArtworkTrackList.reset()
                 this.is_edit = false

@@ -38,7 +38,7 @@
                     @keydown="this.preventTab($event)"
                     />
                 <div class="video">
-                    <div class="videoPlayer" v-if="this.video.file">
+                    <div class="videoPlayer" v-if="this.video.src">
                         <svg @click="this.deleteVideo()" width="18"   
                             height="18" viewBox="0 0 18 18" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -68,6 +68,25 @@
     export default {
         name: 'LinkUpload',
         components: {},
+        props: {
+            prop_link_list: {
+                type: Array,
+                default: [
+                    {
+                        title: null,
+                        link: null
+                    }
+                ]
+            },
+            prop_video: {
+                type: Object,
+                default: {
+                    title: null,
+                    file: null,
+                    src: null
+                }
+            }
+        },
         data() {
             return {
                 link_list: [
@@ -84,6 +103,20 @@
             };
         },
         watch: {
+            prop_link_list: {
+                deep: true,
+                immediate:true,
+                handler() {
+                    this.link_list = this.prop_link_list
+                }
+            },
+            prop_video: {
+                deep: true,
+                immediate: true,
+                handler() {
+                    this.video = this.prop_video
+                }
+            },
             link_list: {
                 deep: true,
                 handler() {
@@ -129,9 +162,6 @@
             formValidCheck () {
                 let valid_link_list = this.link_list.filter((data) => {
                     return  data.link !== null
-                })
-                valid_link_list.forEach((value, index) => {
-                    
                 })
 
                 let json_link_object = {}
