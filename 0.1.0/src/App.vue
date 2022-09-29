@@ -34,7 +34,14 @@
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700&display=swap');
-:root {
+  * {
+    -ms-user-select: none;
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  :root {
     --vw: 1vw;
     --vh: 1vh;
     --padding: calc(var(--vw, 1vw) * 5);
