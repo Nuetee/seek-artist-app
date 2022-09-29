@@ -283,7 +283,6 @@
                         }
 
                         if (this.newArtwork.video !== null) {
-                            console.log(this.newArtwork.video_index)
                             video_result = await putArtworkVideo(new_artwork, this.newArtwork.video_index, new_page_id, this.newArtwork.video)
 
                             if (this.newArtwork.images === null) {
