@@ -476,6 +476,8 @@
             setCategoryAndTrackList () {
                 let artwork_list = this.exhibition.getArtworkList()
                 let category_list = this.exhibition.getCategoryList()
+                console.log(artwork_list)
+                console.log(category_list)
                 // 아무 카테고리에도 속하지 않은 아트워크들이 있는 경우
                 if (category_list[0] === null) {
                     category_list[0] = ''
@@ -578,11 +580,12 @@
                         else {
                             if (in_viewport) {
                                 child.classList.add('enter')
+                                child.classList.remove('after-enter')
                                 child.classList.remove('before-enter')
                             }
                             else {
-                                child.classList.add('after-enter')
                                 child.classList.remove('enter')
+                                child.classList.add('after-enter')
                             }
                         }
                         
@@ -638,14 +641,14 @@
                         delete_index_list.push(index)
                     }
                 })
-
+                
                 let delete_count = 0
                 delete_index_list.forEach((value, index) => {
                     this.modified_category_list.splice(value - delete_count, 1)
                     this.modified_artwork_track_list.splice(value - delete_count, 1)
                     delete_count++
                 })
-
+                
                 let json_category_list_object = new Object()
                 let i = 0
                 while (i < this.modified_category_list.length) {
@@ -661,7 +664,7 @@
 
                     i++
                 }
-
+                
                 if (this.modified_category_list.length === 0) {
                     json_category_list_object = null
                 }
