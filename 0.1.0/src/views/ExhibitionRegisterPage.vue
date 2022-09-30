@@ -227,7 +227,6 @@
                                 if (this.newExhibition.video.file !== null) {
                                     video_result = await putExhibitionVideo(new_exhibition, this.newExhibition.video.title, new_page_id, this.newExhibition.video.file)
 
-                                    console.log(video_result)
                                     if (video_result) {
                                         this.$router.replace('/')
                                         return

@@ -32,7 +32,6 @@
                 })
                 return
             }
-            console.log('0')
             let exhibition = await new Exhibition(this.id).init()
             await exhibition.initializePage()
 
@@ -40,7 +39,6 @@
             this.collaborator_id_list.push(exhibition.getOwner().getID())
 
             if (!this.collaborator_id_list.includes(this.user.getID())) {
-                console.log('1')
                 await exhibition.postCollaborator(this.user)
             }
             this.$router.replace({

@@ -141,13 +141,25 @@ export class Artwork {
     }
 
     getCommentList = async function (offset, limit) {
-        const { status, data } = await sendRequest('post', '/artwork/comment', {
-            target_id : this.id,
+        const { status, data } = await sendRequest('get', '/artwork/comment', {
+            target_id : this.page_id,
             offset : offset,
             limit : limit
         })
         if (status < 500) {
             return data[0].map(x => x.id)
+        }
+        else {
+            return []
+        }
+    }
+
+    getAttachedExhibitions = async function () {
+        const { status, data } = await sendRequest('get', '/artwork/exhibition', {
+            target_id : this.page_id,
+        })
+        if (status < 500) {
+            return data[0].map(x => x.page_id)
         }
         else {
             return []
