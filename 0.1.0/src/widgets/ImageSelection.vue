@@ -139,7 +139,6 @@
             },
             videoThumbnail: {
                 async handler () {
-                    console.log('videothumbnail')
                     await this.formValidCheck()
                 }
             }
