@@ -476,8 +476,7 @@
             setCategoryAndTrackList () {
                 let artwork_list = this.exhibition.getArtworkList()
                 let category_list = this.exhibition.getCategoryList()
-                console.log(artwork_list)
-                console.log(category_list)
+                
                 // 아무 카테고리에도 속하지 않은 아트워크들이 있는 경우
                 if (category_list[0] === null) {
                     category_list[0] = ''
