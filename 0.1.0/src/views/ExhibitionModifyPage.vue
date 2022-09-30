@@ -561,9 +561,9 @@
                     children.forEach(function(child) {
                         var rect = child.getBoundingClientRect()
                         var in_viewport =  !(rect.right < 0 || rect.left > window.innerWidth || rect.top > (window.innerHeight - 30 * __this.vw))
-                        if (__this.checkMobile() === 'ios') {
-                            in_viewport =  !(rect.right < 0 || rect.left > window.innerWidth || (window.innerHeight - (rect.height - rect.bottom)) >  (window.innerHeight - 30 * __this.vw))
-                        }
+                        // if (__this.checkMobile() === 'ios') {
+                        //     in_viewport =  !(rect.right < 0 || rect.left > window.innerWidth || (window.innerHeight - (rect.height - rect.bottom)) >  (window.innerHeight - 30 * __this.vw))
+                        // }
                         
                         if (first_call) {
                             if (in_viewport) {
