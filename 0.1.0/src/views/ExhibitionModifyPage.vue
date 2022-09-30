@@ -648,26 +648,23 @@
                     delete_count++
                 })
                 
-                let json_category_list_object = new Object()
+                let category_list = []
+                let artwork_id_list = []
                 let i = 0
                 while (i < this.modified_category_list.length) {
                     let category = this.modified_category_list[i]
                     category = category.toString()
                     if (!category.includes('\t'))
                         category = category.toString() + '\t'
-                    let id_array = new Array(0)
-                    this.modified_artwork_track_list[i].forEach((value, index) => {
-                        id_array.push(value.getID().toString())
-                    })
-                    json_category_list_object[category] = id_array
 
+                    this.modified_artwork_track_list[i].forEach((value, index) => {
+                        category_list.push(category)
+                        artwork_id_list.push(value.getID().toString())
+                    })
                     i++
                 }
                 
-                if (this.modified_category_list.length === 0) {
-                    json_category_list_object = null
-                }
-                await this.exhibition.putCategory(json_category_list_object)
+                await this.exhibition.putCategory(category_list, artwork_id_list)
 
                 if (this.new_poster_files !== null) {
                     const poster_image = await resizeImage(this.$refs.posterImageSelection.files[0], {

@@ -60,7 +60,6 @@ export class Exhibition {
         if (status < 400) {
             const page_data = data[0][0]
             this.information = page_data.information
-            this.category = page_data.category
             this.link = page_data.link
             
             this.is_video = page_data.is_video
@@ -152,10 +151,6 @@ export class Exhibition {
         return this.nickname
     }
 
-    getCategoryJson () {
-        return this.category
-    }
-
     isVideo () {
         return this.is_video
     }
@@ -236,10 +231,15 @@ export class Exhibition {
         return result
     }
 
-    putCategory = async function (category) {
+    putCategory = async function (category_array, artwork_array) {
+        if (category_array.length !== artwork_array.length) {
+            return false
+        }
+
         const { status, data } = await sendRequest('put', '/exhibition/category', {
             target_id : this.id,
-            data : category
+            category : category_array,
+            artwork: artwork_array
         })
         if (status < 500) {
             return true
