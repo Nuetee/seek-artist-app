@@ -62,22 +62,6 @@
                 </div>
             </div>
         </div>
-        <!-- <div class="addArtworkWithoutCategory" v-if="this.is_edit && this.modified_category_list.length == 0"
-            @click="this.addFirstArtworkWithoutCategory()">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g clip-path="url(#clip0_11_2208)">
-                    <circle cx="12" cy="12" r="10" fill="#D9D9D9" />
-                    <path d="M12 6V18" stroke="#959595" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M6 12H18" stroke="#959595" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                </g>
-                <defs>
-                    <clipPath id="clip0_11_2208">
-                        <rect width="24" height="24" fill="white" />
-                    </clipPath>
-                </defs>
-            </svg>
-            <p>아트워크 추가</p>
-        </div> -->
         <div class="addCategory" v-if="this.is_edit" @click="this.$emit('start-process', false, true)">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_11_2208)">
