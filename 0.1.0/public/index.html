@@ -16,26 +16,33 @@
         height: 30vh;
         transform: translate(-50%, -50%);
         text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 3vw;
+        align-items: center;
+        justify-content: center;
       }
-      #redirectToSafari > div:nth-child(1) {
+      /* #redirectToSafari > div:nth-child(1) {
         font-weight: bold;
-      }
-      #redirectToSafari > div:nth-child(2) {
+        flex: 0 0 70%;
+      } */
+      /* #redirectToSafari > div:nth-child(2) {
+        flex: 1 0 auto;
         width: 100%;
-        height: 50%;
         display: flex;
         align-items: center;
         justify-content: space-around;
-      }
-      #redirectToSafari > div:nth-child(2) button {
+      } */
+      /* #redirectToSafari > div:nth-child(2) button {
         flex: 0 0 40%;
         height: 100%;
         border: none;
         outline: 0;
         box-shadow: none;
+        border-radius: 2vw;
         background-color: #08088A;
         color: white;
-      }
+      } */
     </style>
   </head>
   <script src="https://sdk.amazonaws.com/js/aws-sdk-2.283.1.min.js"></script>
@@ -65,7 +72,6 @@
     }
     window.onload = function(){
       if(navigator.userAgent.match(/inapp|NAVER|KAKAOTALK|Snapchat|Line|WirtschaftsWoche|Thunderbird|Instagram|everytimeApp|WhatsApp|Electron|wadiz|AliApp|zumapp|iPhone(.*)Whale|Android(.*)Whale|kakaostory|band|twitter|DaumApps|DaumDevice\/mobile|FB_IAB|FB4A|FBAN|FBIOS|FBSS\/[^1]/i)){
-        document.body.innerHTML = '';
         if(navigator.userAgent.match(/iPhone|iPad/i)){
           //모바일대응뷰포트강제설정
           var mobile = document.createElement('meta');
@@ -75,8 +81,7 @@
           //노토산스폰트강제설정
           var fonts = document.createElement('link');
           fonts.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap';
-          document.getElementById('redirectToSafari').appendChild(fonts);
-          document.getElementById('redirectToSafari').style.display = 'block'
+          document.getElementById('redirectToSafari').innerHTML = "<div style='font-weight: bold;flex: 0 0 70%;'>인앱 브라우저 호환문제로 인해 Safari에서의 사용을 권장합니다.</div><div style='flex: 1 0 auto;width: 100%;display: flex;align-items: center; justify-content: space-around;'><button style='flex: 0 0 40%;height: 100%;border: none;outline: 0;box-shadow: none;border-radius: 2vw;background-color: #08088A;color: white;' onclick='inappbrowserout();'>Safari로 이용하기</button><button style='flex: 0 0 40%;height: 100%;border: none;outline: 0;box-shadow: none;border-radius: 2vw;background-color: #08088A;color: white;' onclick='closeWindow();'>인앱 브라우저로 계속하기</button></div>";
         }else{
           document.getElementById('redirectToSafari').remove()
           location.href='intent://'+location.href.replace(/https?:\/\//i,'')+'#Intent;scheme=http;package=com.android.chrome;end';
@@ -91,13 +96,7 @@
     <noscript>
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
-    <div id="redirectToSafari">
-      <div>인앱 브라우저 호환문제로 인해 Safari에서의 사용을 권장합니다.</div>
-      <div>
-        <button onclick="inappbrowserout();">Safari로 이용하기</button>
-        <button onclick="closeWindow();">인앱 브라우저로 계속하기</button>
-      </div>
-    </div>
+    <div id="redirectToSafari"></div>
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>
