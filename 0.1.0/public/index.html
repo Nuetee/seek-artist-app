@@ -9,12 +9,11 @@
     <title>seek for artist</title>
     <style>
       #redirectToSafari {
-        display: none;
         position: fixed;
         top: 50%;
         left: 50%;
-        width: 30%;
-        height: 20%;
+        width: 70vw;
+        height: 30vh;
         transform: translate(-50%, -50%);
         text-align: center;
       }
@@ -82,6 +81,9 @@
           document.getElementById('redirectToSafari').remove()
           location.href='intent://'+location.href.replace(/https?:\/\//i,'')+'#Intent;scheme=http;package=com.android.chrome;end';
         }
+      }
+      else {
+        document.getElementById('redirectToSafari').remove()
       }
     }
   </script>
