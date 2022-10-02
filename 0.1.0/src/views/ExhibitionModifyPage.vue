@@ -125,7 +125,7 @@
                                 :category_list="this.modified_category_list" :is_edit="this.is_edit"
                                 @start-process = this.startProcess
                                 @set-modified-category-list="this.setModifiedCategoryList"
-                                ></ModifiableArtworkTrackList>
+                            ></ModifiableArtworkTrackList>
                         </div>
                         <div class="editexhibitionMoreInformation" v-if="this.is_edit && this.user.getID() === this.exhibition.getOwner().getID()">
                             <!-- video는 얕은 복사되므로 emit을 통해 받아오지 않아도 됨. -->
@@ -183,13 +183,36 @@
             </ExhibitionEditButton>
         </div>
         <div class="artworkRegisterPage" v-show="this.is_edit && this.artwork_register_process && !this.category_register_process">
+            <div class="artworkRegisterOption" v-if="!this.new_artwork_register && !this.existing_artwork_register">
+                <div class="newArtworkRegisterButton" @click="() => { this.new_artwork_register = true; this.existing_artwork_register = false }">
+                    <svg width="51" height="51" viewBox="0 0 51 51" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M25.3447 2V48.6869" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M2 25.3435H48.69" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <p>새로 만들기</p>
+                </div>
+                <div class="exisitingArtworkRegisterButton" @click="() => { this.new_artwork_register = false; this.existing_artwork_register = true }">
+                    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M37.5 35L50 22.5L37.5 10" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M10 50V32.5C10 29.8478 11.0536 27.3043 12.9289 25.4289C14.8043 23.5536 17.3478 22.5 20 22.5H50"
+                            stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <p>이전 아트워크 불러오기</p>
+                </div>
+            </div>
             <ArtworkRegisterPage
+                v-else-if="this.new_artwork_register && !this.existing_artwork_register"
                 :from_exhibition_modify_page="true"
                 @artwork-add="async (artwork) => {
                     await this.$refs.modifiableArtworkTrackList.addArtwork(artwork)
                 }"
-                @close-artwork-register="() => { this.artwork_register_process = false }"
+                @close-artwork-register="() => {
+                    this.artwork_register_process = false
+                    this.new_artwork_register = false
+                    this.existing_artwork_register = false
+                }"
             ></ArtworkRegisterPage>
+            <ExistingArtworkRegister v-else></ExistingArtworkRegister>
         </div>
         <div class="categoryRegisterPage" v-show="this.is_edit && !this.artwork_register_process && this.category_register_process">
             <CategoryRegister
@@ -226,22 +249,24 @@
         putExhibitionVideo
     } from '@/modules/storage';
     import LinkUpload from '@/components/ExhibitionRegisterPage/LinkUpload.vue';
+    import ExistingArtworkRegister from '@/components/ExhibitionModifyPage/ExistingArtworkRegister.vue';
 
     export default {
         name: 'ExhibitionModifyPage',
         components: {
-            MainHeader,
-            TitleHeader,
-            SideBar,
-            RoundProfile,
-            ExhibitionEditButton,
-            Drawer,
-            ModifiableArtworkTrackList,
-            ArtworkRegisterPage,
-            CategoryRegister,
-            Background,
-            LinkUpload
-        },
+        MainHeader,
+        TitleHeader,
+        SideBar,
+        RoundProfile,
+        ExhibitionEditButton,
+        Drawer,
+        ModifiableArtworkTrackList,
+        ArtworkRegisterPage,
+        CategoryRegister,
+        Background,
+        LinkUpload,
+        ExistingArtworkRegister
+    },
         data() {
             return {
                 source: (this.$route.query.utm_source) 
@@ -281,6 +306,8 @@
                 collaborator_id_list: null,
                 collaborator_list: null,
                 artwork_register_process: false,
+                new_artwork_register: false,
+                existing_artwork_register: false,
                 category_register_process: false,
                 background_display: true,
                 new_poster_files: null,
