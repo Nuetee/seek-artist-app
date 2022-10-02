@@ -502,7 +502,13 @@
                     return data !== null
                 })
                 this.original_category_list.forEach((value, index, array) => {
-                    array[index] = value.replace('\t', '')
+                    let new_value = value
+                    console.log(value)
+                    while (new_value.includes('\t')) {
+                        new_value = new_value.replace('\t', '')
+                    }
+                    console.log(new_value)
+                    array[index] = new_value
                 })
                 if (this.original_category_list.length === 0) {
                     this.original_category_list = ['']
@@ -655,7 +661,7 @@
                     let category = this.modified_category_list[i]
                     category = category.toString()
                     if (!category.includes('\t'))
-                        category = category.toString() + '\t'
+                        category = '\t' + category.toString()
 
                     this.modified_artwork_track_list[i].forEach((value, index) => {
                         category_list.push(category)
