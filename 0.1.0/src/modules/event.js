@@ -30,10 +30,20 @@ async function sendEventRequest (method, type, target, target_id, user_id) {
 // - target_id : artwork's id
 // - is_unarchive : true if the request is for unarchive
 // return true if archive (or unarchive) has been done successfully, false if not
-export async function doArchive (target_id, user_id, is_unarchive = false) {
+export async function doArtworkArchive (target_id, user_id, is_unarchive = false) {
     return (is_unarchive) 
         ? await sendEventRequest('put', 'archive', 'artwork', target_id, user_id) 
         : await sendEventRequest('post', 'archive', 'artwork', target_id, user_id) 
+}
+
+// User archive (or unarchive) exhibition
+// - target_id : exhibition's id
+// - is_unarchive : true if the request is for unarchive
+// return true if archive (or unarchive) has been done successfully, false if not
+export async function doExhibitionArchive (target_id, user_id, is_unarchive = false) {
+    return (is_unarchive) 
+        ? await sendEventRequest('put', 'archive', 'exhibition', target_id, user_id) 
+        : await sendEventRequest('post', 'archive', 'exhibition', target_id, user_id) 
 }
 
 // User like (or unlike) comment 
@@ -46,11 +56,11 @@ export async function doLike (target_id, user_id, is_unlike = false) {
         : await sendEventRequest('post', 'like', 'comment', target_id, user_id) 
 }
 
-// User visit artwork 
-// - target_id : artwork's id
+// User visit exhibition
+// - target_id : exhibition's id
 // return true if logging has been done successfully, false if not
 export async function doHistory (target_id, user_id) {
-    return await sendEventRequest('post', 'history', 'artwork', target_id, user_id) 
+    return await sendEventRequest('post', 'history', 'exhibition', target_id, user_id) 
 }
 
 // User visit after registration
@@ -63,14 +73,21 @@ export async function doSession (user_id) {
 // - target_id : artwork's id
 // return true if logging has been done successfully, false if not
 export async function updateHistory (target_id, user_id) {
-    return await sendEventRequest('put', 'history', 'artwork', target_id, user_id) 
+    return await sendEventRequest('put', 'history', 'exhibition', target_id, user_id) 
 }
 
 // Check if user has archived the artwork
 // - target_id : artwork's id
 // return true if user has archived the artwork, false if not
-export async function isArchived (target_id, user_id) {
-    return await sendEventRequest('post', 'user/archive', 'artwork', target_id, user_id) 
+export async function isArtworkArchived (target_id, user_id) {
+    return await sendEventRequest('post', 'user/archive/', 'artwork', target_id, user_id) 
+}
+
+// Check if user has archived the exhibition
+// - target_id : exhibition's id
+// return true if user has archived the artwork, false if not
+export async function isExhibitionArchived (target_id, user_id) {
+    return await sendEventRequest('post', 'user/archive/', 'exhibition', target_id, user_id) 
 }
 
 // Check if user has liked the comment
@@ -84,5 +101,5 @@ export async function isLiked (target_id, user_id) {
 // - target_id : artwork's id
 // return true if user has seen the artwork, false if not
 export async function isHistory (target_id, user_id) {
-    return await sendEventRequest('post', 'user/history', 'artwork', target_id, user_id) 
+    return await sendEventRequest('post', 'user/history', 'exhibition', target_id, user_id) 
 }
