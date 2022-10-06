@@ -61,6 +61,7 @@ export class Exhibition {
             const page_data = data[0][0]
             this.information = page_data.information
             this.link = page_data.link
+            this.archive_count = page_data.archive_count
             
             this.is_video = page_data.is_video
             this.owner = await new User(page_data.owner_id).init()
@@ -149,6 +150,10 @@ export class Exhibition {
 
     getOwnerName () {
         return this.nickname
+    }
+
+    getArchiveCount () {
+        return this.archive_count
     }
 
     isVideo () {
@@ -274,5 +279,12 @@ export class Exhibition {
             return false
         }
     }
+
+    // - type : 'inc', 'dec'
+    setArchiveCount (type) {
+        (type === 'dec')
+            ? this.archive_count--
+            : this.archive_count++
+    } 
 
 }
