@@ -212,40 +212,46 @@
                         await new_exhibition.postLink(this.newExhibition.linkList)
                     }
 
-                    const resized_files = []
-                    const files = this.newExhibition.images
-                    for (let i = 0 ; i < files.length ; i++) {
-                        const file = files[i]
-                        const resized_file = await resizeImage(file, {
-                            x: 720,
-                            y: 1200
+                    let date_result = true
+                    date_result = await new_exhibition.putStartDate(this.newExhibition.start_date)
+                    date_result = date_result && await new_exhibition.putEndDate(this.newExhibition.end_date)
+                    
+                    if (date_result) {
+                        const resized_files = []
+                        const files = this.newExhibition.images
+                        for (let i = 0; i < files.length; i++) {
+                            const file = files[i]
+                            const resized_file = await resizeImage(file, {
+                                x: 720,
+                                y: 1200
+                            })
+                            resized_files.push(resized_file)
+                        }
+                        const thumbnail = await resizeImage(resized_files[0], {
+                            x: 400,
+                            y: 400
                         })
-                        resized_files.push(resized_file)
-                    }
-                    const thumbnail = await resizeImage(resized_files[0], {
-                        x: 400,
-                        y: 400
-                    })
-                    const directory_result = await putExhibitionDirectory(new_page_id)
-                    if (directory_result) {
-                        const image_result = await putExhibitionImages(new_page_id, resized_files)
-                        if (image_result) {
-                            const thumbnail_result = await putExhibitionThumbnailImage(new_page_id, thumbnail)
-                            if (thumbnail_result) {
-                                let video_result = true
-                                if (this.newExhibition.video.file !== null) {
-                                    video_result = await putExhibitionVideo(new_exhibition, this.newExhibition.video.title, new_page_id, this.newExhibition.video.file)
+                        const directory_result = await putExhibitionDirectory(new_page_id)
+                        if (directory_result) {
+                            const image_result = await putExhibitionImages(new_page_id, resized_files)
+                            if (image_result) {
+                                const thumbnail_result = await putExhibitionThumbnailImage(new_page_id, thumbnail)
+                                if (thumbnail_result) {
+                                    let video_result = true
+                                    if (this.newExhibition.video.file !== null) {
+                                        video_result = await putExhibitionVideo(new_exhibition, this.newExhibition.video.title, new_page_id, this.newExhibition.video.file)
 
-                                    if (video_result) {
+                                        if (video_result) {
+                                            this.$router.replace('/')
+                                            return
+                                        }
+                                    }
+                                    else {
                                         this.$router.replace('/')
                                         return
                                     }
+
                                 }
-                                else {
-                                    this.$router.replace('/')
-                                    return
-                                }
-                                
                             }
                         }
                     }
