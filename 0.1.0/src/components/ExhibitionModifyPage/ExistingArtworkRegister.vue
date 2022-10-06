@@ -38,6 +38,7 @@
         getAuth
     } from '@/modules/auth';
     import { Artwork } from '@/classes/artwork';
+    import { Exhibition } from '@/classes/exhibition';
     import { cropImage } from '@/modules/image';
     
     export default {
@@ -71,6 +72,13 @@
                 artwork = await new Artwork(value).init()
                 artwork.thumbnail = await artwork.getThumbnailImage()
                 artwork.style = await cropImage(artwork.thumbnail, 1)
+                // let is_exhibition = await artwork.getAttachedExhibitions()
+                // if (is_exhibition.length !== 0) {
+                //     is_exhibition.forEach(async (value, index) => {
+                //         let exhibition = await new Exhibition(value).init()
+                //         let start_date = 
+                //     })
+                // }
                 artwork.isExhibition = await artwork.getAttachedExhibitions()
                 this.own_artworks[index] = artwork
             })
