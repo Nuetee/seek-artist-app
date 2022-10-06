@@ -28,6 +28,11 @@
                         @set-exhibition-entity="this.setExhibitionEntity"></TitleInput>
                 </swiper-slide>
                 <swiper-slide>
+                    <ExhibitionDate ref="exhibitionDate"
+                        @activate-next-button="this.activateNextButton"
+                        @set-exhibition-entity="this.setExhibitionEntity"></ExhibitionDate>
+                </swiper-slide>
+                <swiper-slide>
                     <ImageSelection :isExhibition="true" ref="imageSelection" 
                         @activate-next-button="this.activateNextButton"
                         @set-exhibition-entity="this.setExhibitionEntity" :exhibitionData="this.newExhibition"></ImageSelection>
@@ -58,6 +63,7 @@
 </template>
 <script>
     import TitleInput from '@/components/ArtworkRegisterPage/TitleInput.vue';
+    import ExhibitionDate from '@/components/ExhibitionRegisterPage/ExhibitionDate.vue';
     import ImageSelection from '@/widgets/ImageSelection.vue';
     import Description from '@/components/ArtworkRegisterPage/Description.vue';
     import LinkUpload from '@/components/ExhibitionRegisterPage/LinkUpload.vue';
@@ -90,11 +96,12 @@
             ImageSelection,
             Description,
             Background,
-            LinkUpload
+            LinkUpload,
+            ExhibitionDate
         },
         data() {
             return {
-                presentStep: ['전시명 입력', '대표 이미지 선택', '전시 설명 입력', '링크 업로드'],
+                presentStep: ['전시명 입력', '전시 기간 설정', '대표 이미지 선택', '전시 설명 입력', '링크 업로드'],
                 swiperIndex: 0,
                 numberOfSlides: 0,
                 navigationButtons: [],
@@ -105,6 +112,8 @@
                     description: null,
                     linkList: null,
                     video: null,
+                    start_date: null,
+                    end_date: null
                 },
                 swiperOptions: {
                     slidesPerView: 1,
@@ -267,12 +276,15 @@
                         await this.$refs.titleInput.formValidCheck()
                         break
                     case 1:
-                        await this.$refs.imageSelection.formValidCheck()
+                        this.$refs.exhibitionDate.formValidCheck()
                         break
                     case 2:
-                        this.$refs.description.descriptionValidCheck()
+                        await this.$refs.imageSelection.formValidCheck()
                         break
                     case 3:
+                        this.$refs.description.descriptionValidCheck()
+                        break
+                    case 4:
                         await this.$refs.linkUpload.formValidCheck()
                         break 
                 }
@@ -301,6 +313,12 @@
                     case 'title':
                         this.newExhibition.title = value
                         //console.log(value)
+                        break
+                    case 'start_date':
+                        this.newExhibition.start_date = value
+                        break
+                    case 'end_date':
+                        this.newExhibition.end_date = value
                         break
                     case 'images':
                         this.newExhibition.images = value
