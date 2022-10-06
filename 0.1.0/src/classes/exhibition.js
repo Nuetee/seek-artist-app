@@ -24,6 +24,8 @@ export class Exhibition {
     name
     nickname
     information
+    start_date
+    end_date
     is_video
 
     owner
@@ -64,6 +66,8 @@ export class Exhibition {
             this.archive_count = page_data.archive_count
             
             this.is_video = page_data.is_video
+            this.start_date = page_data.start_date
+            this.end_date = page_data.end_date
             this.owner = await new User(page_data.owner_id).init()
             
             this.artwork_list = new Array(0)
@@ -156,6 +160,14 @@ export class Exhibition {
         return this.archive_count
     }
 
+    getStartDate () {
+        return this.start_date
+    }
+
+    getEndDate () {
+        return this.end_date
+    }
+
     isVideo () {
         return this.is_video
     }
@@ -233,6 +245,16 @@ export class Exhibition {
 
     putIsVideo = async function (is_video) {
         const result = await this.putExhibitionData('is_video', is_video)
+        return result
+    }
+
+    putStartDate = async function (start_date) {
+        const result = await this.putExhibitionData('date/start', start_date)
+        return result
+    }
+
+    putEndDate = async function (end_date) {
+        const result = await this.putExhibitionData('date/end', end_date)
         return result
     }
 
