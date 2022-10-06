@@ -1,27 +1,40 @@
-@font-face {
-    font-family: 'SF Pro Rounded';
-    src: url('../../fonts/FontsFree-Net-SF-Pro-Rounded-Regular.ttf');
-}
 .exhibitionEditButton {
-    position: fixed;
-    bottom: calc(var(--vw, 1vw) * 10);
-    left: 50%;
-    width: calc(var(--vw, 1vw) * 33);
-    height: calc(var(--vw, 1vw) * 14);
-    border-radius: calc(var(--vw, 1vw) * 7);
-    z-index: 1;
+    
+    .previewMode, .editMode {
+        position: fixed;
+        bottom: calc(var(--vw, 1vw) * 10);
+        left: 50%;
+        transform: translate(-50%, 0);
+        z-index: 1;
+    }
 
-    transform: translate(-50%, 0);
+    .editMode {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: calc(var(--vw, 1vw) * 8)
+    }
 
-    background-color: #CCFF00;
+    div[class$="Button"] {
+        width: calc(var(--vw, 1vw) * 33);
+        height: calc(var(--vw, 1vw) * 14);
+        border-radius: calc(var(--vw, 1vw) * 7);
+        border: 2px solid #CCFF00;
+        background-color: #CCFF00;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-    font-style: normal;
-    font-weight: 600;
-    font-size: 20px;
-    line-height: 115%;
-    color: black;
+        font-style: normal;
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 115%;
+        color: black;
+    }
+
+    .deleteButton {
+        background-color: white !important;
+        color: #959595 !important;
+    }
 }

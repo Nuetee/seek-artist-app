@@ -1,7 +1,18 @@
 <template>
-    <div class="exhibitionEditButton">
-        <div class="previewMode" v-if="!this.is_edit">Edit</div>
-        <div class="editMode" v-else>Done</div>
+    <div class="exhibitionEditButton poppins">
+        <div class="previewMode" v-if="!this.is_edit">
+            <div class="editButton" @click="this.switchMode()">
+                Edit
+            </div>
+        </div>
+        <div class="editMode" v-else>
+            <div class="deleteButton" @click="this.deleteExhibition()">
+                Delete
+            </div>
+            <div class="editDoneButton" @click="this.switchMode()">
+                Done
+            </div>
+        </div>
     </div>
 </template>
 <script>
@@ -27,7 +38,14 @@
         updated() {},
         beforeUnmount() {},
         unmounted() {},
-        methods: {}
+        methods: {
+            switchMode() {
+                this.$emit('switch-mode')
+            },
+            deleteExhibition () {
+                this.$emit('delete-exhibition')
+            }
+        }
     }
 </script>
 <style lang="scss" scoped src="../../scss/ExhibitionModifyPage/exhibitionEditButton.scss"></style>

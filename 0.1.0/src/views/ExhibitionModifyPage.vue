@@ -179,8 +179,15 @@
                     </div>
                 </template>
             </Drawer>
-            <ExhibitionEditButton v-show="this.bodyShowFlag" :is_edit="this.is_edit" @click="this.switchEditMode()">
+            <ExhibitionEditButton v-show="this.bodyShowFlag" :is_edit="this.is_edit" @switch-mode="this.switchEditMode()" @delete-exhibition="() => { this.delete_popup_falg = true }">
             </ExhibitionEditButton>
+            <div class="deletePopUp" v-if="this.delete_popup_falg">
+                <div class="guidance">이 전시를<br />삭제하시겠습니까?</div>
+                <div class="buttonContainer">
+                    <div class="deleteButton" @click="this.deleteExhibition()">삭제</div>
+                    <div class="cancelButton" @click="() => { this.delete_popup_falg = false }">취소</div>
+                </div>
+            </div>
         </div>
         <div class="artworkRegisterPage" v-show="this.is_edit && this.artwork_register_process && !this.category_register_process">
             <div class="artworkRegisterOption" v-if="!this.new_artwork_register && !this.existing_artwork_register">
@@ -235,7 +242,6 @@
             ></CategoryRegister>
         </div>
     </div>
-    
 </template>
 <script>
     import MainHeader from '@/components/ExhibitionModifyPage/MainHeader.vue';
@@ -258,7 +264,8 @@
     import {
         putExhibitionImages,
         putExhibitionThumbnailImage,
-        putExhibitionVideo
+        putExhibitionVideo,
+        deleteExhibitionDirectory
     } from '@/modules/storage';
     import LinkUpload from '@/components/ExhibitionRegisterPage/LinkUpload.vue';
     import ExistingArtworkRegister from '@/components/ExhibitionModifyPage/ExistingArtworkRegister.vue';
@@ -330,7 +337,8 @@
                     file: null,
                     src: null
                 },
-                link_object: null
+                link_object: null,
+                delete_popup_falg: false
             };
         },
         computed: {
@@ -813,6 +821,24 @@
 
                 await this.$refs.modifiableArtworkTrackList.reset()
                 this.is_edit = false
+            },
+            async deleteExhibition () {
+                if (!this.exhibition) {
+                    return
+                }
+                
+                await deleteExhibitionDirectory(this.exhibition.getPageID())
+
+                // For production
+                if (process.env.NODE_ENV === 'production') {
+                    await this.exhibition.deleteExhibition()
+                }
+                // For development
+                else {
+                    await this.exhibition.deletePreExhibition()
+                }
+
+                this.$router.replace('/')
             }
         }
     }
