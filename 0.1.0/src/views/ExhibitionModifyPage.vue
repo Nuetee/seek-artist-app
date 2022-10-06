@@ -212,7 +212,19 @@
                     this.existing_artwork_register = false
                 }"
             ></ArtworkRegisterPage>
-            <ExistingArtworkRegister v-else></ExistingArtworkRegister>
+            <ExistingArtworkRegister v-else
+                @close-artwork-register="() => {
+                    this.artwork_register_process = false
+                    this.new_artwork_register = false
+                    this.existing_artwork_register = false
+                }"
+                @add-artworks="async (artwork_list) => {
+                    const _this = this;
+                    artwork_list.forEach(async (artwork) => {
+                        await this.$refs.modifiableArtworkTrackList.addArtwork(artwork)
+                    })
+                }"
+            ></ExistingArtworkRegister>
         </div>
         <div class="categoryRegisterPage" v-show="this.is_edit && !this.artwork_register_process && this.category_register_process">
             <CategoryRegister
@@ -254,19 +266,19 @@
     export default {
         name: 'ExhibitionModifyPage',
         components: {
-        MainHeader,
-        TitleHeader,
-        SideBar,
-        RoundProfile,
-        ExhibitionEditButton,
-        Drawer,
-        ModifiableArtworkTrackList,
-        ArtworkRegisterPage,
-        CategoryRegister,
-        Background,
-        LinkUpload,
-        ExistingArtworkRegister
-    },
+            MainHeader,
+            TitleHeader,
+            SideBar,
+            RoundProfile,
+            ExhibitionEditButton,
+            Drawer,
+            ModifiableArtworkTrackList,
+            ArtworkRegisterPage,
+            CategoryRegister,
+            Background,
+            LinkUpload,
+            ExistingArtworkRegister
+        },
         data() {
             return {
                 source: (this.$route.query.utm_source) 
