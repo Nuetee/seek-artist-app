@@ -157,12 +157,14 @@ export class User {
         return null
     }
 
-    postExhibition = async function (name, information) {
+    postExhibition = async function (name, information, start_date, end_date) {
         if (name && information) {
             const { status, data } = await sendRequest('post', '/exhibition', {
                 owner_id : this.id,
                 name : name,
-                information : information
+                information : information,
+                start_date : start_date,
+                end_date : end_date
             })
             if (status < 500) {
                 return data.page_id
