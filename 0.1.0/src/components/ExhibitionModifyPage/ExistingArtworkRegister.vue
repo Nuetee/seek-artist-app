@@ -85,7 +85,6 @@
                             let exhibition = await new Exhibition(exhibition_list[index]).init()
                             // 작품이 현재 전시에 이미 전시돼있는 작품인 경우 break
                             if (exhibition.getPageID() === this.exhibition.getPageID()) {
-                                console.log('본 전시에 전시')
                                 break
                             }
 
@@ -101,11 +100,9 @@
 
                             if (start_date !== null && end_date !== null) {
                                 if (start_date <= this.exhibition.getStartDate() && end_date >= this.exhibition.getStartDate()) {
-                                    console.log('전시기간 겹침 1')
                                     break
                                 }
                                 else if (start_date >= this.exhibition.getStartDate() && start_date <= this.exhibition.getEndDate()) {
-                                    console.log('전시기간 겹침 2')
                                     break
                                 }
                             }
