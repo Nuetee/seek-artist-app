@@ -45,13 +45,15 @@
         name: 'ExistingArtworkRegister',
         components: { MainHeader },
         props: {
-            exhibition: Object
+            exhibition: Object,
+            exhibited_artwork_track_list: Array
         },
         data() {
             return {
                 user: null,
                 offset: 0,
-                limit: 20,
+                limit: 10,
+                loading: false,
                 own_artworks: null,
                 selected_artworks: []
             };
@@ -67,64 +69,8 @@
                 return
             }
 
-            let artwork_page_id_list = await this.user.getOwnArtworks(this.offset, this.limit)
-
-            this.own_artworks = new Array(artwork_page_id_list.length)
-            artwork_page_id_list.forEach(async (value, index) => {
-                let artwork = new Object()
-                artwork = await new Artwork(value).init()
-                artwork.thumbnail = await artwork.getThumbnailImage()
-                artwork.style = await cropImage(artwork.thumbnail, 1)
-                
-                let exhibition_list = await artwork.getAttachedExhibitions()
-                if (exhibition_list.length !== 0) {
-                    let index = 0
-                    // 현재 전시가 전시기간 설정이 안돼있는 경우
-                    if (this.exhibition.getStartDate() === null || this.exhibition.getEndDate() === null) {
-                        while (index < exhibition_list.length) {
-                            let exhibition = await new Exhibition(exhibition_list[index]).init()
-                            // 작품이 현재 전시에 이미 전시돼있는 작품인 경우 break
-                            if (exhibition.getPageID() === this.exhibition.getPageID()) {
-                                break
-                            }
-
-                            index++
-                        }
-                    }
-                    else {
-                        while (index < exhibition_list.length) {
-                            let exhibition = await new Exhibition(exhibition_list[index]).init()
-
-                            let start_date = exhibition.getStartDate()
-                            let end_date = exhibition.getEndDate()
-
-                            if (start_date !== null && end_date !== null) {
-                                if (start_date <= this.exhibition.getStartDate() && end_date >= this.exhibition.getStartDate()) {
-                                    break
-                                }
-                                else if (start_date >= this.exhibition.getStartDate() && start_date <= this.exhibition.getEndDate()) {
-                                    break
-                                }
-                            }
-                            index++
-                        }
-                    }
-
-                    if (index < exhibition_list.length) {
-                        artwork.exhibitionPossible = false
-                    }
-                    else {
-                        artwork.exhibitionPossible = true
-                    }
-                }
-                else {
-                    artwork.exhibitionPossible = true
-                }
-                
-                this.own_artworks[index] = artwork
-            })
-
-            this.offset += this.limit
+            this.own_artworks = new Array(0)
+            await this.load()
         },
         beforeMount() {},
         mounted() {
@@ -144,38 +90,111 @@
         beforeUnmount() {},
         unmounted() {},
         methods: {
-            cancle () {
+            async cancle () {
                 this.$emit('close-artwork-register')
-                this.resetPage()
+                await this.resetPage()
             },
-            resetPage () {
-                this.selected_artworks = new Array(0)
+            async resetPage () {
+                this.selected_artworks = []
                 let artworkContianer_list = document.getElementsByClassName('artworkContainer')
                 for (let i = 0; i < artworkContianer_list.length; i++) {
                     artworkContianer_list[i].style.backgroundColor = 'white'
                 }
+                this.offset = 0
+                this.limit = 10
+                this.loading = false
+                this.own_artworks = null
+                await this.load()
             },
             async load () {
-                if (this.own_artworks.length < this.offset) {
+                if (this.own_artworks.length < this.offset || this.loading) {
                     return
                 }
-
+                
+                this.loading = true
+                
                 let artwork_page_id_list = await this.user.getOwnArtworks(this.offset, this.limit)
-                let new_own_artworks = new Array()
+
                 artwork_page_id_list.forEach(async (value, index) => {
                     let artwork = new Object()
                     artwork = await new Artwork(value).init()
                     artwork.thumbnail = await artwork.getThumbnailImage()
                     artwork.style = await cropImage(artwork.thumbnail, 1)
-                    new_own_artworks.push(artwork)
+
+                    // 본 전시가 전시기간 설정이 돼있지 않은 경우
+                    if (this.exhibition.getStartDate() === null || this.exhibition.getEndDate() === null) {
+                        artwork.exhibitionPossible = this.isExhibitedArtwork(artwork)
+                    }
+                    else {
+                        let exhibition_list = await artwork.getAttachedExhibitions()
+                        if (exhibition_list.length !== 0) {
+                            let index = 0
+                            while (index < exhibition_list.length) {
+                                let exhibition = await new Exhibition(exhibition_list[index]).init()
+
+                                let start_date = exhibition.getStartDate()
+                                let end_date = exhibition.getEndDate()
+
+                                if (start_date !== null && end_date !== null) {
+                                    if (start_date <= this.exhibition.getStartDate() && end_date >= this.exhibition.getStartDate()) {
+                                        break
+                                    }
+                                    else if (start_date >= this.exhibition.getStartDate() && start_date <= this.exhibition.getEndDate()) {
+                                        break
+                                    }
+                                }
+                                index++
+                            }
+
+                            if (index < exhibition_list.length) {
+                                artwork.exhibitionPossible = false
+                            }
+                            else {
+                                artwork.exhibitionPossible = this.isExhibitedArtwork(artwork)
+                            }
+                        }
+                        else {
+                            artwork.exhibitionPossible = this.isExhibitedArtwork(artwork)
+                        }
+                    }
+                    
+
+                    this.own_artworks.push(artwork)
                 })
 
-                this.own_artworks = [
-                    ...this.own_artworks,
-                    ...new_own_artworks
-                ]
+                this.offset += this.limit
+                this.loading = false
+            },
+            isExhibitedArtwork(artwork) {
+                let j = 0
+                // 이미 본 전시에 추가된 아트워크이면 전시 불가.
+                while (j < this.exhibited_artwork_track_list.length) {
+                    let k = 0
+                    while (k < this.exhibited_artwork_track_list[j].length) {
+                        if (this.exhibited_artwork_track_list[j][k].getPageID() === artwork.getPageID()) {
+                            break
+                        }
+
+                        k++
+                    }
+                    
+                    if (k < this.exhibited_artwork_track_list[j].length) {
+                        break
+                    }
+
+                    j++
+                }
+                if (j < this.exhibited_artwork_track_list.length) {
+                    return false
+                }
+                else {
+                    return true
+                }
             },
             selectArtwork (artwork, index) {
+                if (artwork.exhibitionPossible === false) {
+                    return
+                }
                 let i = 0
                 while (i < this.selected_artworks.length) {
                     if (this.selected_artworks[i].getID() === artwork.getID()) {
@@ -184,20 +203,22 @@
                     i++
                 }
 
+                // 이미 선택한 아트워크인 경우
                 if (i !== this.selected_artworks.length) {
                     this.selected_artworks.splice(i, 1)
                     document.getElementsByClassName('artworkContainer')[index].style.backgroundColor = 'white'
                 }
+                // 새로 선택한 아트워크인 경우
                 else {
                     this.selected_artworks.push(artwork)
                     document.getElementsByClassName('artworkContainer')[index].style.backgroundColor = '#AEAEAE'
                 }
                 
             },
-            AddArtworks () {
+            async AddArtworks () {
                 this.$emit('add-artworks', this.selected_artworks)
                 this.$emit('close-artwork-register')
-                this.resetPage()
+                await this.resetPage()
             }
         }
     }
