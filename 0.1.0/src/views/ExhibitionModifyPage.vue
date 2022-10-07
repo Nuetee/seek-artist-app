@@ -220,6 +220,7 @@
                 }"
             ></ArtworkRegisterPage>
             <ExistingArtworkRegister v-else
+                :exhibition="this.exhibition"
                 @close-artwork-register="() => {
                     this.artwork_register_process = false
                     this.new_artwork_register = false
