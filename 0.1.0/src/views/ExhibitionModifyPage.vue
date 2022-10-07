@@ -125,6 +125,9 @@
                                 :category_list="this.modified_category_list" :is_edit="this.is_edit"
                                 @start-process = this.startProcess
                                 @set-modified-category-list="this.setModifiedCategoryList"
+                                @set-modified-artwork-track-list="(modified_artwork_track_list) => {
+                                    this.modified_artwork_track_list = modified_artwork_track_list.map(v => v.slice())
+                                }"
                             ></ModifiableArtworkTrackList>
                         </div>
                         <div class="editexhibitionMoreInformation" v-if="this.is_edit && this.user.getID() === this.exhibition.getOwner().getID()">
@@ -221,6 +224,7 @@
             ></ArtworkRegisterPage>
             <ExistingArtworkRegister v-else
                 :exhibition="this.exhibition"
+                :exhibited_artwork_track_list="this.modified_artwork_track_list"
                 @close-artwork-register="() => {
                     this.artwork_register_process = false
                     this.new_artwork_register = false
@@ -654,12 +658,17 @@
             },
             /**
              * 수정 모드/보기 모드를 전환해 주는 함수, Edit/Done button이 클릭되면 호출된다.
-             * 1. is_edit === true 인 경우(Done button을 누른경우)
+             * 1. is_edit === true 인 경우(Done button을 누른 경우)
              *  1.1 this.updateExhibition() 함수를 호출하여 변경사항을 저장한다.
              *  1.2. 전시의 소유자가 '나' 일 경우 posterImageSelection input에 대해 eventListener를 제거한다.
              * 
-             * 2. is_edit의 값을 바꿔 모드를 전환한다.
-             * 3. 수정모드로 전환되었고 전시의 소유자가 '나' 일 경우 posterImageSelection input에 대해 eventListener를 등록한다.
+             * 2. is_edit === false 인 경우 (Edit button을 누른 경우)
+             *  2.1 편집모드에서는 fade in effect가 동작하지 않는다.
+             *  2.2 이 때 편집모드/보기모드에서 공통으로 존재하는 element는 poster와 modifiableArtworkList.
+             *  2.3 poster는 처음부터 예외처리, modifiableArtworkList는 그렇지 않으므로 edit mode로 전환할 때 모든 fade in effect와 관련된 class를 삭제한다. 그렇지 않으면 전환후 보이지 않을 수 있다.
+             * 
+             * 3. is_edit의 값을 바꿔 모드를 전환한다.
+             * 4. 수정모드로 전환되었고 전시의 소유자가 '나' 일 경우 posterImageSelection input에 대해 eventListener를 등록한다.
              */
             async switchEditMode () {
                 if (this.is_edit === true) {
@@ -667,6 +676,11 @@
                     if (this.user.getID() === this.exhibition.getOwner().getID()) {
                         this.$refs.posterImageSelection.removeEventListener('change', this.setPosterImage)
                     }
+                }
+                else {
+                    document.getElementsByClassName('modifiableArtworkTrackList')[0].classList.remove('before-enter')
+                    document.getElementsByClassName('modifiableArtworkTrackList')[0].classList.remove('after-enter')
+                    document.getElementsByClassName('modifiableArtworkTrackList')[0].classList.remove('enter')
                 }
 
                 this.is_edit = !this.is_edit
