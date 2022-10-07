@@ -134,6 +134,7 @@
              */
             deleteArtwork (row, column) {
                 this.modified_artwork_track_list[row].splice(column, 1)
+                this.$emit('set-modified-artwork-track-list', this.modified_artwork_track_list)
             },
             startArtworkRegisterProcess (index) {
                 this.$emit('start-process', true, false)
@@ -170,6 +171,7 @@
                 else {
                     this.modified_artwork_track_list[this.track_row_artwork_will_be_added].push(artwork)
                 }
+                this.$emit('set-modified-artwork-track-list', this.modified_artwork_track_list)
             },
             setCategoryList (new_category_list) {
                 // console.log(new_category_list)
