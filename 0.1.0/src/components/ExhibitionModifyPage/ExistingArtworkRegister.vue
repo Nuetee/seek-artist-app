@@ -25,7 +25,7 @@
                         <div class="artworkName poppins">{{ artwork.getName() }}</div>
                         <div class=" artist">{{ artwork.getArtistName() }}</div>
                     </div>
-                    <div class="registeredArtwork" v-if="artwork.isExhibition.length">이미 전시 중인 작품입니다.</div>
+                    <div class="registeredArtwork" v-if="!artwork.exhibitionPossible">이미 전시 중인 작품입니다.</div>
                 </div>
             </div>
         </div>
@@ -44,6 +44,9 @@
     export default {
         name: 'ExistingArtworkRegister',
         components: { MainHeader },
+        props: {
+            exhibition: Object
+        },
         data() {
             return {
                 user: null,
@@ -72,14 +75,55 @@
                 artwork = await new Artwork(value).init()
                 artwork.thumbnail = await artwork.getThumbnailImage()
                 artwork.style = await cropImage(artwork.thumbnail, 1)
-                // let is_exhibition = await artwork.getAttachedExhibitions()
-                // if (is_exhibition.length !== 0) {
-                //     is_exhibition.forEach(async (value, index) => {
-                //         let exhibition = await new Exhibition(value).init()
-                //         let start_date = 
-                //     })
-                // }
-                artwork.isExhibition = await artwork.getAttachedExhibitions()
+                
+                let exhibition_list = await artwork.getAttachedExhibitions()
+                if (exhibition_list.length !== 0) {
+                    let index = 0
+                    // 현재 전시가 전시기간 설정이 안돼있는 경우
+                    if (this.exhibition.getStartDate() === null || this.exhibition.getEndDate() === null) {
+                        while (index < exhibition_list.length) {
+                            let exhibition = await new Exhibition(exhibition_list[index]).init()
+                            // 작품이 현재 전시에 이미 전시돼있는 작품인 경우 break
+                            if (exhibition.getPageID() === this.exhibition.getPageID()) {
+                                console.log('본 전시에 전시')
+                                break
+                            }
+
+                            index++
+                        }
+                    }
+                    else {
+                        while (index < exhibition_list.length) {
+                            let exhibition = await new Exhibition(exhibition_list[index]).init()
+
+                            let start_date = exhibition.getStartDate()
+                            let end_date = exhibition.getEndDate()
+
+                            if (start_date !== null && end_date !== null) {
+                                if (start_date <= this.exhibition.getStartDate() && end_date >= this.exhibition.getStartDate()) {
+                                    console.log('전시기간 겹침 1')
+                                    break
+                                }
+                                else if (start_date >= this.exhibition.getStartDate() && start_date <= this.exhibition.getEndDate()) {
+                                    console.log('전시기간 겹침 2')
+                                    break
+                                }
+                            }
+                            index++
+                        }
+                    }
+
+                    if (index < exhibition_list.length) {
+                        artwork.exhibitionPossible = false
+                    }
+                    else {
+                        artwork.exhibitionPossible = true
+                    }
+                }
+                else {
+                    artwork.exhibitionPossible = true
+                }
+                
                 this.own_artworks[index] = artwork
             })
 
