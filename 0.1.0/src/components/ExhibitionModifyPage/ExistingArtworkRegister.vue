@@ -103,7 +103,7 @@
                 this.offset = 0
                 this.limit = 10
                 this.loading = false
-                this.own_artworks = null
+                this.own_artworks = new Array(0)
                 await this.load()
             },
             async load () {
@@ -113,22 +113,28 @@
                 
                 this.loading = true
                 
+                // 내 아트워크에 대한 page_id 리스트를 받아온다.
                 let artwork_page_id_list = await this.user.getOwnArtworks(this.offset, this.limit)
 
+                // 내 아트워크들이 현재 전시에 전시 가능한 상태인지 검사한다.
                 artwork_page_id_list.forEach(async (value, index) => {
                     let artwork = new Object()
                     artwork = await new Artwork(value).init()
                     artwork.thumbnail = await artwork.getThumbnailImage()
                     artwork.style = await cropImage(artwork.thumbnail, 1)
 
-                    // 본 전시가 전시기간 설정이 돼있지 않은 경우
+                    // 1. 현재 전시의 전시기간이 설정 돼있지 않은 경우
                     if (this.exhibition.getStartDate() === null || this.exhibition.getEndDate() === null) {
                         artwork.exhibitionPossible = this.isExhibitedArtwork(artwork)
                     }
+                    // 2. 현재 전시의 전시기간이 설정 돼있는 경우
                     else {
+                        // 검사 중인 artwork가 전시돼있는 exhibition들의 page_id 리스트를 받아온다.
                         let exhibition_list = await artwork.getAttachedExhibitions()
+                        // 2-1. 검사 중인 artwork가 전시된 exhibition이 있는 경우
                         if (exhibition_list.length !== 0) {
                             let index = 0
+                            // artwork가 전시된 exhibition들의 전시 날짜와 현재 전시의 전시날짜 비교
                             while (index < exhibition_list.length) {
                                 let exhibition = await new Exhibition(exhibition_list[index]).init()
 
@@ -136,24 +142,37 @@
                                 let end_date = exhibition.getEndDate()
 
                                 if (start_date !== null && end_date !== null) {
-                                    if (start_date <= this.exhibition.getStartDate() && end_date >= this.exhibition.getStartDate()) {
+                                    if (exhibition.getPageID() === this.exhibition.getPageID()) {
+                                        
+                                    }
+                                    if (start_date < this.exhibition.getStartDate() && end_date >= this.exhibition.getStartDate()) {
                                         break
                                     }
-                                    else if (start_date >= this.exhibition.getStartDate() && start_date <= this.exhibition.getEndDate()) {
+                                    else if (start_date > this.exhibition.getStartDate() && start_date <= this.exhibition.getEndDate()) {
                                         break
+                                    }
+                                    else if (start_date === this.exhibition.getStartDate() && end_date === this.exhibition.getEndDate()) {
+                                        if (exhibition.getPageID() !== this.exhibition.getPageID()) {
+                                            break
+                                        }
                                     }
                                 }
                                 index++
                             }
 
+                            // 2-1-1. artwork가 전시된 exhibition(현재 전시와 다른 전시) 중 현재 전시와 전시 날짜가 겹치는 경우가 존재하는 경우
                             if (index < exhibition_list.length) {
                                 artwork.exhibitionPossible = false
                             }
-                            else {
+                            // 2-1-2. artwork가 전시된 exhibition 중 현재 전시와 전시 날짜가 겹치는 경우가 없거나 현재 전시에 이미 전시돼있던 artwork인 경우
+                            else if (index === exhibition_list.length){
+                                // 해당 아트워크가 현재 전시의 수정 과정에서 전시에 추가된 상태인지를 검사하여 전시 가능여부 판단.
                                 artwork.exhibitionPossible = this.isExhibitedArtwork(artwork)
                             }
                         }
+                        // 검사 중인 artwork가 전시된 exhibition이 없는 경우
                         else {
+                            // 해당 아트워크가 현재 전시의 수정 과정에서 전시에 추가된 상태인지를 검사하여 전시 가능여부 판단.
                             artwork.exhibitionPossible = this.isExhibitedArtwork(artwork)
                         }
                     }
@@ -165,8 +184,13 @@
                 this.offset += this.limit
                 this.loading = false
             },
+            /**
+             * artwork 객체를 받아서 해당 artwork가 현재 전시에 이미 전시돼있는 artwork인지 검사.
+             * @param {Object} artwork 
+             */
             isExhibitedArtwork(artwork) {
                 let j = 0
+                //console.log(this.exhibited_artwork_track_list)
                 // 이미 본 전시에 추가된 아트워크이면 전시 불가.
                 while (j < this.exhibited_artwork_track_list.length) {
                     let k = 0
