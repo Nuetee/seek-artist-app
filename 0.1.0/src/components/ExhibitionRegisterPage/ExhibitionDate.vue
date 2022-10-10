@@ -86,8 +86,8 @@
         mounted() {
             let date = new Date()
             let currentYear = date.getFullYear()
-            let currentMonth = date.getMonth()
-            let currentDay = date.getDay()
+            let currentMonth = date.getMonth() + 1
+            let currentDay = date.getDate()
 
             for (let y = Number(currentYear) - 100; y <= Number(currentYear + 10); y++) {
                 let option_start = document.createElement('option')
@@ -108,7 +108,7 @@
                 document.getElementById('year_end').appendChild(option_end)
             }
 
-            for (let m = 0; m <= 12; m++) {
+            for (let m = 1; m <= 12; m++) {
                 let option_start = document.createElement('option')
                 let option_end = document.createElement('option')
                 option_start.value = m
@@ -126,7 +126,7 @@
                 document.getElementById('month_end').appendChild(option_end)
             }
 
-            for (let d = 0; d <= 31; d++) {
+            for (let d = 1; d <= 31; d++) {
                 let option_start = document.createElement('option')
                 let option_end = document.createElement('option')
                 option_start.value = d

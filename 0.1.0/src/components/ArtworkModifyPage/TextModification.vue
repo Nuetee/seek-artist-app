@@ -13,7 +13,7 @@
                 <div>완료</div>
             </div>
         </div>
-        <div class="bottom">
+        <div class="textModification" v-if="!this.exhibition_selection_page && !this.cateogry_selection_page">
             <div class="material">
                 <div class="label">작품명</div>
                 <div class="background">
@@ -84,24 +84,52 @@
             <hr class="solid">
             <div class="exhibition">
                 <div class="label">전시설정</div>
-                <div class="setExhibitionButton">전시에 추가하기</div>
-                <!-- <div class="exhibitionName"></div>
-                <div class="exhibitionSelection"></div> -->
+                <div class="currentExhibition" v-if="this.exhibition !== null">
+                    <div class="modificationContainer">
+                        <div class="content">{{ this.exhibition.getName() }}</div>
+                        <div class="button" @click="() => { this.exhibition_selection_page = true; this.cateogry_selection_page = false }">변경</div>
+                    </div>
+                    <div class="modificationContainer">
+                        <div class="content">{{ this.artwork_category ? this.artwork_category : '카테고리 없음' }}</div>
+                        <div class="button" @click="() => { this.exhibition_selection_page = false; this.cateogry_selection_page = true }">변경</div>
+                    </div>
+                </div>
+                <div class="setExhibitionButton" v-else>전시에 추가하기</div>
             </div>
         </div>
+        <div class="exhibitionSelection" v-else-if="this.exhibition_selection_page && !this.cateogry_selection_page">
+            <div class="exhibitionContainer" v-for="(exhibition, i) in this.own_exhibitions" :key="i"
+                @click="this.selectExhibition(exhibition, i)">
+                <div class="exhibition" v-if="exhibition !== undefined && exhibition !== null">
+                    <div class="thumbnail">
+                        <div class="imageContainer">
+                            <img class="thumbnailImage" :src="exhibition.thumbnail" :style="exhibition.style">
+                        </div>
+                    </div>
+                    <div class="exhibitionInformation">
+                        <div class="exhibitionkName poppins">{{ exhibition.getName() }}</div>
+                    </div>
+                    <div class="registeredExhibition" v-if="!exhibition.exhibitionPossible"></div>
+                </div>
+            </div>
+        </div>
+        <div class="categorySelection" v-else-if="!this.exhibition_selection_page && this.cateogry_selection_page"></div>
     </div>
 </template>
 <script>
-    import { Artwork } from '@/classes/artwork'
+    import { getAuth } from '@/modules/auth';
+    import { Exhibition } from '@/classes/exhibition';
+    import { cropImage } from '@/modules/image';
 
     export default {
         name: 'TextModification',
         props: {
-            originalArtwork: Object
+            //originalArtwork: Object
+            artwork: Object
         },
         data() {
             return {
-                artwork: null,
+                //artwork: null,
                 old_title: '',
                 old_material: '클레이',
                 old_threeDimensional: false,
@@ -114,6 +142,13 @@
                 unit_candidates: ['mm', 'cm', 'm'],
                 old_year: 2022,
                 old_description: '작품에 대한 설명을 써 주세요!',
+
+                exhibition: null,
+                artwork_category: null,
+                own_exhibitions: null,
+                offset: 0,
+                limit: 10,
+
                 title: null,
                 material: null,
                 threeDimensional: null,
@@ -123,7 +158,10 @@
                 unit: null,
                 year: null,
                 description: null,
-                activateNextButton: false
+                activateNextButton: false,
+
+                exhibition_selection_page: false,
+                cateogry_selection_page: false
             };
         },
         watch: {
@@ -153,8 +191,7 @@
             }
         },
         async created() {
-            this.artwork = this.originalArtwork
-            
+            //this.artwork = this.originalArtwork
             this.old_title = this.artwork.getName()
             this.old_material = this.artwork.getMaterial()
             this.old_threeDimensional = this.artwork.getThreeDimensional()
@@ -162,7 +199,7 @@
             const old_size_array = this.artwork.getDimension().split('x').map(x => x.trim())
             const old_x = parseInt(old_size_array[0])
             this.old_size.x = (isNaN(old_x)) ? 20 : old_x
-        
+
             if (this.old_threeDimensional) {
                 const old_y = parseInt(old_size_array[1])
                 this.old_size.y = (isNaN(old_y)) ? 20 : old_y
@@ -181,11 +218,92 @@
 
             this.old_year = this.artwork.getYear()
             this.old_description = this.artwork.getInformation()
+
+            let own_exhibition_page_id_list = await getAuth().getTotalExhibitions(this.offset, this.limit)
+            this.offset += this.limit
+            this.own_exhibitions = new Array(own_exhibition_page_id_list.length)
+            
+            let i = 0
+            while (i < own_exhibition_page_id_list.length) {
+                let exhibition = await new Exhibition(own_exhibition_page_id_list[i].page_id).init()
+                exhibition.thumbnail = await exhibition.getThumbnailImage()
+                exhibition.style = await cropImage(exhibition.thumbnail, 1)
+                this.own_exhibitions[i] = exhibition
+
+                i++
+            }
+
+            let attached_exhibitions = await this.artwork.getAttachedExhibitions()
+            // 현재 artwork가 전시된 전시가 있는지 검사
+            // 1. artwork가 전시된 전시가 없는 경우
+            if (attached_exhibitions.length === 0) {
+                this.exhibition = null
+            }
+            // 2. artwork가 전시된 전시가 있는 경우
+            else {
+                // 해당 전시들의 전시기간을 확인하여 현재 전시 여부 확인
+                let i = 0
+                let current_date = new Date()
+                console.log(current_date)
+                while (i < attached_exhibitions.length) {
+                    let exhibition = await new Exhibition(attached_exhibitions[i]).init()
+                    let end_date = new Date(exhibition.getEndDate())
+                    // 만약 아직 종료되지 않은 전시인 경우 전시 설정 후 break
+                    if (end_date >= current_date) {
+                        this.exhibition = exhibition
+                        break
+                    }
+
+                    i++
+                }
+
+                if (i < attached_exhibitions.length) {
+                    // 작품이 현재 전시중인 exhibition의 name과 artwork category를 얻어옴
+                    await this.exhibition.initializePage()
+                    let artwork_list = this.exhibition.getArtworkList()
+                    let category_list = this.exhibition.getCategoryList()
+                    
+                    let j = 0
+                    while (j < artwork_list.length) {
+                        if (artwork_list[j].getPageID() === this.artwork.getPageID()) {
+                            break
+                        }
+
+                        j++
+                    }
+
+                    while (j >= 0) {
+                        if (category_list[j] !== null) {
+                            this.artwork_category = category_list[j]
+                            break
+                        }
+
+                        j--
+                    }
+                }
+                else {
+                    this.exhibition = null
+                }
+            }
         },
         mounted() {},
         methods: {
+            reset () {
+                this.title = null
+                this.material = null
+                this.threeDimensional = null
+                this.size_x = null
+                this.size_y = null
+                this.size_z = null
+                this.unit = null
+                this.year = null
+                this.description = null
+                this.activateNextButton = false
+                
+            },
             back () {
-                this.artwork = this.originalArtwork
+                //this.artwork = this.originalArtwork
+                this.reset()
                 this.closeWindow()
             },
             closeWindow () {
