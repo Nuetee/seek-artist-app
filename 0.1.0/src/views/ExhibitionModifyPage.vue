@@ -542,11 +542,13 @@
                 category_list.forEach((value, index) => {
                     if (value !== null) {
                         this.original_artwork_track_list.push(new Array())
+                        this.modified_artwork_track_list.push(new Array())
                         category_index = this.original_artwork_track_list.length - 1
                     }
 
                     if (category_index >= 0) {
                         this.original_artwork_track_list[category_index].push(artwork_list[index])
+                        this.modified_artwork_track_list[category_index].push(artwork_list[index])
                     }
                 })
 
@@ -557,10 +559,12 @@
                 if (this.original_category_list.length === 0) {
                     this.original_category_list = ['']
                     this.original_artwork_track_list = [[]]
+                    this.modified_artwork_track_list = [[]]
                 }
                 else if (this.original_category_list[0] !== '') {
                     this.original_category_list.splice(0, 0, '')
                     this.original_artwork_track_list.splice(0, 0, [])
+                    this.modified_artwork_track_list.splice(0, 0, [])
                 }
 
                 this.modified_category_list = this.original_category_list.slice()

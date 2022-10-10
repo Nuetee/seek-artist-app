@@ -90,6 +90,7 @@
                             d="M34.5416 43.4167C41.077 43.4167 46.3749 38.1187 46.3749 31.5833C46.3749 25.048 41.077 19.75 34.5416 19.75C28.0062 19.75 22.7083 25.048 22.7083 31.5833C22.7083 38.1187 28.0062 43.4167 34.5416 43.4167Z"
                             stroke="black" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
+                    <p>이미지 수정</p>
                 </div>
                 <div class="textEditButton" @click="this.showEditPage('text')">
                     <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -99,6 +100,7 @@
                             d="M48.125 10.2084C49.2853 9.0481 50.8591 8.39624 52.5 8.39624C53.3125 8.39624 54.1171 8.55628 54.8677 8.86721C55.6184 9.17815 56.3005 9.63389 56.875 10.2084C57.4495 10.783 57.9053 11.465 58.2162 12.2157C58.5271 12.9664 58.6872 13.7709 58.6872 14.5834C58.6872 15.3959 58.5271 16.2005 58.2162 16.9512C57.9053 17.7018 57.4495 18.3839 56.875 18.9584L20.4167 55.4168L8.75 58.3334L11.6667 46.6668L48.125 10.2084Z"
                             stroke="black" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
+                    <p>텍스트 수정</p>
                 </div>
             </div>
             <div class="popup" v-show="this.deletePopupFlag">
@@ -130,7 +132,7 @@
         <SideBar ref="sideBar"></SideBar>
     </div>
     <TextModification ref="textModification" v-if="this.artwork !== null" v-show="!this.isFrontPage && this.textEdit"
-        :originalArtwork="this.artwork" @close-text-modification="this.closeEditPage"></TextModification>
+        :artwork="this.artwork" @close-text-modification="this.closeEditPage"></TextModification>
     <ImageModification ref="imageModification" v-if="this.artwork !== null" v-show="!this.isFrontPage && this.imageEdit"
         :originalArtwork="this.artwork" @close-image-modification="this.closeEditPage"></ImageModification>
     <div v-if="this.loading" id="loading">
@@ -334,7 +336,7 @@
                 window.history.back()
             },
             cancelEdit () {
-                this.$refs.textModification.back()
+                this.$refs.textModification.reset()
                 this.$refs.imageModification.back()
                 this.switchPage()
             },
