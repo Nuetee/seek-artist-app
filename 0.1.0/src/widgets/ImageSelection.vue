@@ -230,7 +230,8 @@
                    
                     if (this.checkFile(current_file.name, current_file.type)) {
                         if (current_file.type.includes('image')) {
-                            current_file.style = await cropImage(current_file.src, 3 / 5)
+                            current_file.background_style = await cropImage(current_file.src, 3 / 5)
+                            current_file.style = await cropImage(current_file.src, 3 / 5, false)
 
                             this.selectedImageFiles.push(current_file)
                         }

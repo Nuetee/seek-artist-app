@@ -59,7 +59,10 @@
             </div>
             <swiper v-bind="this.swiperOptions">
                 <swiper-slide v-for="(imageInfo, i) in this.artworkImageInfo" :key="i">
-                    <img v-if="imageInfo.style !== 'video'" :src="imageInfo.src" :style="imageInfo.style">
+                    <div class="image" v-if="imageInfo.style !== 'video'">
+                        <img class="background" :src="imageInfo.src" :style="imageInfo.background_style">
+                        <img class="main" :src="imageInfo.src" :style="imageInfo.style">
+                    </div>
                     <div v-else class="video">
                         <img :src="imageInfo.background_src" :style="imageInfo.background_style">
                         <video :src="imageInfo.src" controls></video>
@@ -304,11 +307,13 @@
                 }
 
                 for (let i = 0; i < artworkImages.length; i++) {
-                    let style = await cropImage(artworkImages[i], container_ratio)
+                    let background_style = await cropImage(artworkImages[i], container_ratio)
+                    let style = await cropImage(artworkImages[i], container_ratio, false)
 
                     let imageInfo = new Object()
                     imageInfo.src = artworkImages[i]
                     imageInfo.style = style
+                    imageInfo.background_style = background_style
 
                     this.artworkImageInfo.push(imageInfo)
                 }
