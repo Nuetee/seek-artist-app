@@ -3,7 +3,8 @@
         <div class="card">
             <div class="front" :style="'color:' + this.textColor">
                 <div class="imageContainer">
-                    <img :src="image.src" :style="image.style" />
+                    <img class="background" :src="image.src" :style="image.background_style" />
+                    <img class="main" :src="image.src" :style="image.style" />
                 </div>
                 <div class="artworkInfo poppins">
                     <div class="artworkTitle">
