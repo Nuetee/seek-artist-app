@@ -222,7 +222,7 @@
                         for (let i = 0; i < files.length; i++) {
                             const file = files[i]
                             const resized_file = await resizeImage(file, {
-                                x: 720,
+                                x: 1200,
                                 y: 1200
                             })
                             resized_files.push(resized_file)
