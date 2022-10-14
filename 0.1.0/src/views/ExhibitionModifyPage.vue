@@ -540,7 +540,9 @@
                 let category_index = 0
 
                 category_list.forEach((value, index) => {
+                    // 카테고리가 나타난 경우
                     if (value !== null) {
+                        // artwork_track_list에 해당 카테고리에 대응하는 새로운 배열을 추가한다
                         this.original_artwork_track_list.push(new Array())
                         this.modified_artwork_track_list.push(new Array())
                         category_index = this.original_artwork_track_list.length - 1
