@@ -732,7 +732,7 @@
 
                 if (this.new_poster_files !== null) {
                     const poster_image = await resizeImage(this.$refs.posterImageSelection.files[0], {
-                        x: 720,
+                        x: 1200,
                         y: 1200
                     })
                     let poster_images = []
