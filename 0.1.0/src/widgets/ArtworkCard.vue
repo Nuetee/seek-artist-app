@@ -2,7 +2,7 @@
     <div class="artworkCard" v-if="this.loadFlag" @click="this.redirectMain">
         <ArtworkImageContainer :isArtwork="this.is_artwork" :image-src="this.cardImage" :order="this.order"></ArtworkImageContainer>
         <div class="exhibitionOwnerIcon" v-if="this.exhibitionId !== null">
-            <svg v-if="this.is_owner" width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg v-if="this.is_owner === 1" width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="13" cy="13" r="13" fill="white" fill-opacity="0.8" />
                 <path
                     d="M18.7778 18.7778V17.3333C18.7778 16.5672 18.4734 15.8324 17.9316 15.2906C17.3899 14.7488 16.6551 14.4444 15.8889 14.4444H10.1111C9.34492 14.4444 8.61012 14.7488 8.06835 15.2906C7.52658 15.8324 7.22221 16.5672 7.22221 17.3333V18.7778"
