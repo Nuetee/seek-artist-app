@@ -29,7 +29,8 @@
                 z-index: 0;
 
                 .background {
-                    filter: blur(100px);
+                    filter: blur(var(--blur, 100px));
+                    -webkit-filter: blur(var(--blur, 100px));
                     z-index: 0;
                 }
 

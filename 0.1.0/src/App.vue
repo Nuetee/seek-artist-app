@@ -4,32 +4,51 @@
 <script>
   export default {
     name: 'App',
-  created() {
-    this.setVwVh()
-    window.addEventListener('resize', this.setVwVh)
+    created() {
+      this.setVwVh()
+      window.addEventListener('resize', this.setVwVh)
 
-    // Kakao SDK initialization
-    Kakao.init('26b87aab90f717f43d0f8c22cb55c629')
-  },
-  methods: {
-    setVwVh() {
-      let screenHeight = window.innerHeight;
-      let vh = screenHeight * 0.01
-
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-
-      let screenWidth = window.innerWidth;
-      if (screenWidth >= 768) {
-        let vw = 480 * 0.01;
-        document.documentElement.style.setProperty('--vw', `${vw}px`);
+      // Kakao SDK initialization
+      Kakao.init('26b87aab90f717f43d0f8c22cb55c629')
+    },
+    mounted () {
+      if (this.checkMobile() === 'ios') {
+        document.documentElement.style.setProperty('--blur', '40px')
       }
-      else {
-        let vw = screenWidth * 0.01;
-        document.documentElement.style.setProperty('--vw', `${vw}px`);
-      }
+    },
+    methods: {
+      setVwVh() {
+        let screenHeight = window.innerHeight;
+        let vh = screenHeight * 0.01
+
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+
+        let screenWidth = window.innerWidth;
+        if (screenWidth >= 768) {
+          let vw = 480 * 0.01;
+          document.documentElement.style.setProperty('--vw', `${vw}px`);
+        }
+        else {
+          let vw = screenWidth * 0.01;
+          document.documentElement.style.setProperty('--vw', `${vw}px`);
+        }
+      },
+      checkMobile () {
+        var varUA = navigator.userAgent.toLowerCase(); //userAgent 값 얻기
+
+        if ( varUA.indexOf('android') > -1) {
+          //안드로이드
+          return "android";
+        } else if ( varUA.indexOf("iphone") > -1||varUA.indexOf("ipad") > -1||varUA.indexOf("ipod") > -1 ) {
+          //IOS
+          return "ios";
+        } else {
+          //아이폰, 안드로이드 외
+          return "other";
+        }
+      },
     }
   }
-}
 </script>
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600&display=swap');
@@ -38,6 +57,7 @@
     --vw: 1vw;
     --vh: 1vh;
     --padding: calc(var(--vw, 1vw) * 5);
+    --blur: 100px
   }
   
   html,
@@ -48,6 +68,7 @@
     // 탭 할 때 하이라이트 컬러 없애기
     -webkit-tap-highlight-color: rgba($color: #000000, $alpha: 0.0);
     // ios safari scroll bouncing 막기
+    --va-background-primary: white;
   }
   
   #app {
