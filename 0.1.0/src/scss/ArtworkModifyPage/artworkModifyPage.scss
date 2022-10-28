@@ -125,7 +125,7 @@
                     height: 100%;
 
                     .background {
-                        filter: blur(10px);
+                        filter: blur(100px);
                         z-index: 0;
                     }
 
@@ -156,7 +156,7 @@
                     }
 
                     img {
-                        filter: blur(10px)
+                        filter: blur(100px)
                     }
                 }
             }
