@@ -1,81 +1,94 @@
 <template>
-    <div id="profilePage" @click="() => { this.$refs.mainProfile.showControlBox = false }">
-        <MainProfile ref="mainProfile"></MainProfile>
-        <div class="bottom">
-            <div class="tab">
-                <div class="navigationBar">
-                    <va-tabs id="tabs" v-model="this.tab_index" color="black" grow>
-                        <template #tabs>
-                            <va-tab color="black"
-                                @click="this.clickTab(tab_index)">
-                                홈
-                            </va-tab>
-                            <va-tab color="black"
-                                @click="this.clickTab(tab_index)">
-                                작업
-                            </va-tab>
-                            <va-tab color="black" 
-                                @click="this.clickTab(tab_index)">
-                                전시
-                            </va-tab>
-                        </template>
-                    </va-tabs>
-                </div>
+    <div id="profilePage">
+        <div id="top">
+            <div class="profileControlButton"
+                @click="(event) => { this.showControlBox = !this.showControlBox; this.stopPropagation(event)}">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z"
+                        stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path
+                        d="M19 13C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11C18.4477 11 18 11.4477 18 12C18 12.5523 18.4477 13 19 13Z"
+                        stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path
+                        d="M5 13C5.55228 13 6 12.5523 6 12C6 11.4477 5.55228 11 5 11C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13Z"
+                        stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
             </div>
-            <div class="tabBody">
-                <swiper v-bind="this.swiperOptions" @slideChange="this.slideChange" @init="(swiper) => {this.swiper = swiper}">
-                    <swiper-slide>
-                        <div>
+            <div class="profileControlBox" v-show="this.showControlBox">
+                <div>프로필 편집</div>
+                <div>프로필 링크복사</div>
+                <div>로그아웃</div>
+            </div>
+            <div class="name">
+                {{ (this.user === null ? 'Guest' : this.user.getNickname()) }}
+            </div>
+            <RoundProfile :profile="this.user.getProfile()"></RoundProfile>
+            <div class="navigationBar">
+                <va-tabs id="tabs" v-model="this.tab_index" color="#ffffff" grow>
+                    <template #tabs>
+                        <va-tab @click="this.clickTab(tab_index)">
                             홈
-                        </div>
-                    </swiper-slide>
-                    <swiper-slide>
-                        <ArtworkCardList v-if="this.loadFlag" :artworkIdList="this.artworkIdList">
-                        </ArtworkCardList>
-                    </swiper-slide>
-                    <swiper-slide>
-                        <ExhibitionList :exhibition_pageId_list="this.exhibitionPageIdList"></ExhibitionList>
-                    </swiper-slide>
-                </swiper>
+                        </va-tab>
+                        <va-tab @click="this.clickTab(tab_index)">
+                            작업
+                        </va-tab>
+                        <va-tab @click="this.clickTab(tab_index)">
+                            전시
+                        </va-tab>
+                    </template>
+                </va-tabs>
             </div>
         </div>
-        <UploadButton></UploadButton>
+        <div id="bottom">
+            <swiper v-bind="this.swiperOptions" @slideChange="this.slideChange" @init="(swiper) => {this.swiper = swiper}">
+                <swiper-slide>
+                    <div>
+                        홈
+                    </div>
+                </swiper-slide>
+                <swiper-slide>
+                    <ArtworkCardList v-if="this.loadFlag" :artworkIdList="this.artworkIdList">
+                    </ArtworkCardList>
+                </swiper-slide>
+                <swiper-slide>
+                    <ExhibitionList :exhibition_pageId_list="this.exhibitionPageIdList"></ExhibitionList>
+                </swiper-slide>
+            </swiper>
+        </div>
     </div>
 </template>
 <script>
-
-import MainProfile from '../components/ProfilePage/MainProfile.vue'
+import RoundProfile from '@/widgets/RoundProfile.vue';
 import ArtworkCardList from '@/widgets/ArtworkCardList.vue';
 import ExhibitionList from '../components/ProfilePage/ExhibitionList.vue'
-import UploadButton from '@/components/MyPage/UploadButton.vue';
-
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { isAuth, getAuth } from '@/modules/auth';
-
 
 export default {
     name: 'ProfilePage',
     components: {
-        MainProfile,
+        RoundProfile,
         ArtworkCardList,
         ExhibitionList,
-        UploadButton,
         Swiper,
         SwiperSlide,
     },
     data() {
         return {
-            minimized: true,
             user: null,
-            profile: '',
+            showControlBox: false,
+            tab_index: 1,
+            pre_activated_tab: 1,
+
             loadFlag: false,
             artworkIdList: [],
             exhibitionPageIdList: [],
-            nothingToUpdate: false,
+            nothingToUpdate: {
+                artwork: false,
+                exhibition: false
+            },
             updateInProgress: false,
-
-            tab_index: 1,
-            pre_activated_tab: 1,
 
             swiper: null,
             swiperOptions: {
@@ -87,46 +100,29 @@ export default {
             },
         };
     },
+    beforeCreate() {},
     async created() {
-        const _this = this
-        /*
-        * - popstate 이벤트는 뒤로가기 (back button이나 history.back() 호출)시에 발생.
-        * SideBar가 펼쳐진 상태(this.minimized == false)에서 뒤로가기 버튼을 누르면 closeSideBar()함수를 호출한다.
-        */
-        window.onpopstate = function (event) {
-            if (_this.minimized == false) {
-                _this.minimized = true
-                return
-            }
-        }
-
-        //Update session
         if (isAuth()) {
             this.user = getAuth()
-            await this.rebuild(0, 12)
-            this.profile = this.user.getProfile()
+            this.artworkIdList = await this.rebuildList(true, 0, 12, this.artworkIdList)
+            this.exhibitionPageIdList = await this.rebuildList(false, 0, 12, this.exhibitionPageIdList)
         }
         else {
             this.nothingToUpdate = true
         }
         this.loadFlag = true
     },
-    mounted() {
-        const _this = this
-
-        // Scroll Listener
-        document.getElementById('profilePage').addEventListener('scroll', async function (event) {
-            const scroll_height = event.target.scrollHeight
-            const scroll_top = event.target.scrollTop
-            const offset_height = event.target.offsetHeight
-            if (scroll_height === scroll_top + offset_height) {
-                await _this.load()
-            }
-        })
-    },
+    beforeMount() {},
+    mounted() {},
+    beforeUpdate() {},
+    updated() {},
+    beforeUnmount() {},
+    unmounted() {},
     methods: {
-        slideChange(swiper) {
-            this.tab_index = swiper.activeIndex
+        stopPropagation(event) {
+            // event 전파 방지
+            if (event.stopPropagation) event.stopPropagation();
+            else event.cancelBubble = true; // IE 대응
         },
         /**
          * 
@@ -137,33 +133,28 @@ export default {
             this.swiper.slideTo(clicked_tab, 300, true)
             return
         },
-        openSideBar(event) {
-            this.$refs.sideBar.openSideBar(event)
+        slideChange(swiper) {
+            this.tab_index = swiper.activeIndex
         },
-        async rebuild(offset, length) {
-            const newArtworkIdList = await this.user.getOwnArtworks(offset, length)
-            const newExhibitionPageIdList = await this.user.getTotalExhibitions(offset, length)
-            this.artworkIdList = this.artworkIdList.concat(newArtworkIdList)
-            this.exhibitionPageIdList = this.exhibitionPageIdList.concat(newExhibitionPageIdList)
-            if (newArtworkIdList.length < 12 && newExhibitionPageIdList.length < 12) {
-                this.nothingToUpdate = true
+        async rebuildList(is_artwork, offset, length, list) {
+            let newList = []
+            if (is_artwork) {
+                newList = await this.user.getOwnArtworks(offset, length)
             }
-        },
-        async load() {
-            if (this.updateInProgress) {
-                return false
-            }
-            this.updateInProgress = true
-
-            if (!this.nothingToUpdate) {
-                await this.rebuild(this.artworkIdList.length, 12)
+            else {
+                newList = await this.user.getTotalExhibitions(offset, length)
             }
 
-            this.updateInProgress = false
-        }
+            if (newList.length < 12) {
+                if (is_artwork)
+                    this.nothingToUpdate.artwork = true
+                else
+                    this.nothingToUpdate.exhibition = true
+            }
+
+            return list.concat(newList)
+        },
     }
 }
 </script>
-<style lang="scss" scoped src="../scss/ProfilePage/profilePage.scss">
-
-</style>
+<style lang="scss" scoped src="../scss/ProfilePage/profilePage.scss"></style>
