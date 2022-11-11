@@ -10,6 +10,7 @@ import {
 } from '@/modules/auth'
 import { authByToken } from '@/modules/kakao'
 
+import ProfilePageLegacy from '../views/ProfilePage_legacy.vue'
 import ProfilePage from '../views/ProfilePage.vue'
 import MyPage from '../views/MyPage.vue'
 import ArtworkRegisterPage from '../views/ArtworkRegisterPage.vue'
@@ -28,6 +29,11 @@ const routes = [
     path: '/profile',
     name: 'profilePage',
     component: ProfilePage
+  },
+  {
+    path: '/profile-legacy',
+    name: 'profilePageLegacy',
+    component: ProfilePageLegacy
   },
   {
     path: '/artwork-register',
@@ -71,6 +77,11 @@ const routes = [
     path: '/invitation',
     name: 'InvitationPage',
     component: () => import(/* webpackChunkName: "about" */ '../views/InvitationPage.vue')
+  },
+  {
+    path: '/test',
+    name: 'Test',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Test.vue')
   },
 ]
 
