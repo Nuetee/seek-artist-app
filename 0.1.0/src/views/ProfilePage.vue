@@ -1,6 +1,6 @@
 <template>
     <div id="profilePage" @click="() => { this.show_control_box = false }">
-    <div id="top">
+        <div id="top">
             <div class="profileControlButton"
                 @click="(event) => { this.show_control_box = !this.show_control_box; this.stopPropagation(event)}">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
