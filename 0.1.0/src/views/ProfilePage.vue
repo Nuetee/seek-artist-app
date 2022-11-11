@@ -1,8 +1,8 @@
 <template>
-    <div id="profilePage">
-        <div id="top">
+    <div id="profilePage" @click="() => { this.show_control_box = false }">
+    <div id="top">
             <div class="profileControlButton"
-                @click="(event) => { this.showControlBox = !this.showControlBox; this.stopPropagation(event)}">
+                @click="(event) => { this.show_control_box = !this.show_control_box; this.stopPropagation(event)}">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z"
@@ -15,7 +15,7 @@
                         stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
             </div>
-            <div class="profileControlBox" v-show="this.showControlBox">
+            <div class="profileControlBox" v-show="this.show_control_box">
                 <div>프로필 편집</div>
                 <div>프로필 링크복사</div>
                 <div>로그아웃</div>
@@ -54,19 +54,18 @@
         </div>
         <div id="bottom">
             <swiper v-bind="this.swiperOptions" @slideChange="this.slideChange" @init="(swiper) => {this.swiper = swiper;}">
-                <swiper-slide>
+                <swiper-slide class="mainSwiper firstSlide">
                     <div>
-                        홈
+                        <HomeTab></HomeTab>
                     </div>
                 </swiper-slide>
-                <swiper-slide class="secondSlide">
+                <swiper-slide class="mainSwiper secondSlide">
                     <List ref="artworkList" 
                     :is_artwork="true"
                     :single_column="this.is_single_column.artwork_list"
                     :id_list="this.artworkIdList"></List>
                 </swiper-slide>
-                <swiper-slide class="thirdSlide">
-                    <!-- <ExhibitionList :exhibition_pageId_list="this.exhibitionPageIdList"></ExhibitionList> -->
+                <swiper-slide class="mainSwiper thirdSlide">
                     <List ref="exhibitionList" 
                     :is_artwork="false"
                     :single_column="this.is_single_column.exhibition_list"
@@ -74,32 +73,33 @@
                 </swiper-slide>
             </swiper>
         </div>
+        <UploadButton v-show="this.tab_index"></UploadButton>
     </div>
 </template>
 <script>
 import RoundProfile from '@/widgets/RoundProfile.vue';
 import List from '@/widgets/List.vue';
-import ArtworkCardList from '@/widgets/ArtworkCardList.vue';
-import ExhibitionList from '../components/ProfilePage/ExhibitionList.vue'
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { isAuth, getAuth } from '@/modules/auth';
+import HomeTab from '@/components/ProfilePage/HomeTab.vue';
+import UploadButton from '@/components/MyPage/UploadButton.vue';
 
 export default {
     name: 'ProfilePage',
     components: {
-        RoundProfile,
-        List,
-        ArtworkCardList,
-        ExhibitionList,
-        Swiper,
-        SwiperSlide,
-    },
+    RoundProfile,
+    List,
+    Swiper,
+    SwiperSlide,
+    HomeTab,
+    UploadButton
+},
     data() {
         return {
             user: null,
-            showControlBox: false,
-            tab_index: 1,
-            pre_activated_tab: 1,
+            show_control_box: false,
+            tab_index: 0,
+            pre_activated_tab: 0,
             is_profile_shrink: false,
 
             artworkIdList: [],
@@ -117,7 +117,7 @@ export default {
 
             swiper: null,
             swiperOptions: {
-                initialSlide: 1,
+                initialSlide: 0,
                 slidesPerView: 1,
                 loop: false,
                 centeredSlides: true,
@@ -145,13 +145,12 @@ export default {
     beforeMount() {},
     mounted() {
         const _this = this
-        document.getElementsByClassName('swiper-slide')[1].addEventListener('scroll', async function (event) {
-            _this.swiperSlideScrollEventFunction(event.currentTarget)
-        })
-
-        document.getElementsByClassName('swiper-slide')[2].addEventListener('scroll', async function (event) {
-            _this.swiperSlideScrollEventFunction(event.currentTarget)
-        })
+        let swiper_slides = document.getElementsByClassName('mainSwiper')
+        for (let swiper_slide of swiper_slides) {
+            swiper_slide.addEventListener('scroll', async function (event) {
+                _this.swiperSlideScrollEventFunction(event.currentTarget)
+            })
+        }
     },
     beforeUpdate() {},
     updated() {},
@@ -174,6 +173,31 @@ export default {
         },
         slideChange(swiper) {
             this.tab_index = swiper.activeIndex
+            
+            let singleColumnButton = document.getElementsByClassName('singleColumnStrategy')[0]
+            let doubleColumnButton = document.getElementsByClassName('doubleColumnStrategy')[0]
+
+            let is_single_column_array = [this.is_single_column.artwork_list, this.is_single_column.exhibition_list]
+
+            if (is_single_column_array[this.tab_index - 1]) {
+                if (singleColumnButton.classList.contains('sortingStrategy')) {
+                    return
+                }
+                else {
+                    singleColumnButton.classList.add('sortingStrategy')
+                    doubleColumnButton.classList.remove('sortingStrategy')
+                }
+            }
+            else {
+                if (doubleColumnButton.classList.contains('sortingStrategy')) {
+                    return
+                }
+                else {
+                    doubleColumnButton.classList.add('sortingStrategy')
+                    singleColumnButton.classList.remove('sortingStrategy')
+                }
+            }
+
             let current_slide = document.getElementsByClassName('swiper-slide')[swiper.activeIndex]
             this.swiperSlideScrollEventFunction(current_slide)
         },
@@ -218,7 +242,7 @@ export default {
             const scroll_height = targetElement.scrollHeight
             const scroll_top = targetElement.scrollTop
             const offset_height = targetElement.offsetHeight
-
+            
             if (scroll_top > 5) {
                 this.shrinkProfileHeight(true)
             }
