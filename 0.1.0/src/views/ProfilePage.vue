@@ -23,7 +23,7 @@
             <div class="name">
                 {{ (this.user === null ? 'Guest' : this.user.getNickname()) }}
             </div>
-            <RoundProfile :profile="this.user.getProfile()"></RoundProfile>
+            <RoundProfile ref="roundProfile" :profile="this.user.getProfile()"></RoundProfile>
             <div class="navigationBar">
                 <va-tabs id="tabs" v-model="this.tab_index" color="#ffffff" grow>
                     <template #tabs>
@@ -39,20 +39,38 @@
                     </template>
                 </va-tabs>
             </div>
+            <div class="sortingStrategyTab" v-show="this.tab_index">
+                <svg class="doubleColumnStrategy sortingStrategy" @click="this.setSortingStrategy($event)" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="6.30695" height="6.30695" rx="2"/>
+                    <rect y="7.45361" width="6.30695" height="6.30695" rx="2"/>
+                    <rect x="7.45361" width="6.30695" height="6.30695" rx="2"/>
+                    <rect x="7.45361" y="7.45361" width="6.30695" height="6.30695" rx="2"/>
+                </svg>
+                <svg class="singleColumnStrategy" @click="this.setSortingStrategy($event)" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="14" height="6" rx="2"/>
+                    <rect y="8" width="14" height="6" rx="2"/>
+                </svg>
+            </div>
         </div>
         <div id="bottom">
-            <swiper v-bind="this.swiperOptions" @slideChange="this.slideChange" @init="(swiper) => {this.swiper = swiper}">
+            <swiper v-bind="this.swiperOptions" @slideChange="this.slideChange" @init="(swiper) => {this.swiper = swiper;}">
                 <swiper-slide>
                     <div>
                         홈
                     </div>
                 </swiper-slide>
-                <swiper-slide>
-                    <ArtworkCardList v-if="this.loadFlag" :artworkIdList="this.artworkIdList">
-                    </ArtworkCardList>
+                <swiper-slide class="secondSlide">
+                    <List ref="artworkList" 
+                    :is_artwork="true"
+                    :single_column="this.is_single_column.artwork_list"
+                    :id_list="this.artworkIdList"></List>
                 </swiper-slide>
-                <swiper-slide>
-                    <ExhibitionList :exhibition_pageId_list="this.exhibitionPageIdList"></ExhibitionList>
+                <swiper-slide class="thirdSlide">
+                    <!-- <ExhibitionList :exhibition_pageId_list="this.exhibitionPageIdList"></ExhibitionList> -->
+                    <List ref="exhibitionList" 
+                    :is_artwork="false"
+                    :single_column="this.is_single_column.exhibition_list"
+                    :id_list="this.exhibitionPageIdList"></List>
                 </swiper-slide>
             </swiper>
         </div>
@@ -60,6 +78,7 @@
 </template>
 <script>
 import RoundProfile from '@/widgets/RoundProfile.vue';
+import List from '@/widgets/List.vue';
 import ArtworkCardList from '@/widgets/ArtworkCardList.vue';
 import ExhibitionList from '../components/ProfilePage/ExhibitionList.vue'
 import { Swiper, SwiperSlide } from 'swiper/vue';
@@ -69,6 +88,7 @@ export default {
     name: 'ProfilePage',
     components: {
         RoundProfile,
+        List,
         ArtworkCardList,
         ExhibitionList,
         Swiper,
@@ -80,15 +100,20 @@ export default {
             showControlBox: false,
             tab_index: 1,
             pre_activated_tab: 1,
+            is_profile_shrink: false,
 
-            loadFlag: false,
             artworkIdList: [],
             exhibitionPageIdList: [],
-            nothingToUpdate: {
-                artwork: false,
-                exhibition: false
-            },
-            updateInProgress: false,
+            offset_artwork_list: 0,
+            offset_exhibition_list: 0,
+            nothingToUpdate: [
+                false,
+                false
+            ],
+            updateInProgress: [
+                false,
+                false
+            ],
 
             swiper: null,
             swiperOptions: {
@@ -98,22 +123,36 @@ export default {
                 centeredSlides: true,
                 allowTouchMove: true,
             },
+
+            is_single_column: {
+                artwork_list: false,
+                exhibition_list: false
+            }
         };
     },
     beforeCreate() {},
     async created() {
         if (isAuth()) {
             this.user = getAuth()
-            this.artworkIdList = await this.rebuildList(true, 0, 12, this.artworkIdList)
-            this.exhibitionPageIdList = await this.rebuildList(false, 0, 12, this.exhibitionPageIdList)
+            this.artworkIdList = await this.rebuildList(1, this.offset_artwork_list, 12, this.artworkIdList)
+            this.exhibitionPageIdList = await this.rebuildList(0, this.offset_exhibition_list, 12, this.exhibitionPageIdList)
         }
         else {
-            this.nothingToUpdate = true
+            this.nothingToUpdate[0] = true
+            this.nothingToUpdate[1] = true
         }
-        this.loadFlag = true
     },
     beforeMount() {},
-    mounted() {},
+    mounted() {
+        const _this = this
+        document.getElementsByClassName('swiper-slide')[1].addEventListener('scroll', async function (event) {
+            _this.swiperSlideScrollEventFunction(event.currentTarget)
+        })
+
+        document.getElementsByClassName('swiper-slide')[2].addEventListener('scroll', async function (event) {
+            _this.swiperSlideScrollEventFunction(event.currentTarget)
+        })
+    },
     beforeUpdate() {},
     updated() {},
     beforeUnmount() {},
@@ -135,25 +174,106 @@ export default {
         },
         slideChange(swiper) {
             this.tab_index = swiper.activeIndex
+            let current_slide = document.getElementsByClassName('swiper-slide')[swiper.activeIndex]
+            this.swiperSlideScrollEventFunction(current_slide)
         },
         async rebuildList(is_artwork, offset, length, list) {
             let newList = []
             if (is_artwork) {
-                newList = await this.user.getOwnArtworks(offset, length)
+                newList = await this.user.getOwnArtworks(offset, offset + length)
+
+                this.offset_artwork_list += length
             }
             else {
-                newList = await this.user.getTotalExhibitions(offset, length)
+                newList = await this.user.getTotalExhibitions(offset, offset + length)
+
+                this.offset_exhibition_list += length
             }
 
             if (newList.length < 12) {
-                if (is_artwork)
-                    this.nothingToUpdate.artwork = true
-                else
-                    this.nothingToUpdate.exhibition = true
+                this.nothingToUpdate[is_artwork] = true
             }
 
             return list.concat(newList)
+            
         },
+        async load(is_artwork) {
+            if (this.updateInProgress[is_artwork]) {
+                return false
+            }
+            this.updateInProgress[is_artwork] = true
+
+            if (!this.nothingToUpdate[is_artwork]) {
+                if (is_artwork) {
+                    await this.rebuildList(true, this.offset_artwork_list, 12, this.artworkIdList)
+                }
+                else {
+                    await this.rebuildList(false, this.offset_exhibition_list, 12, this.exhibitionPageIdList)
+                }
+            }
+
+            this.updateInProgress[is_artwork] = false
+        },
+        async swiperSlideScrollEventFunction(targetElement) {
+            const scroll_height = targetElement.scrollHeight
+            const scroll_top = targetElement.scrollTop
+            const offset_height = targetElement.offsetHeight
+
+            if (scroll_top > 5) {
+                this.shrinkProfileHeight(true)
+            }
+            else {
+                this.shrinkProfileHeight(false)
+            }
+
+            if (scroll_height === scroll_top + offset_height) {
+                if (targetElement.classList.contains('secondSlide'))
+                    await this.load(1)
+                else if (targetElement.classList.contains('thirdSlide'))
+                    await this.load(0)
+            }
+        },
+        shrinkProfileHeight (shrink) {
+            if (shrink) {
+                if (this.is_profile_shrink) return
+                this.$refs.roundProfile.$el.style.setProperty('height', '0')
+                this.$refs.roundProfile.$el.style.setProperty('width', '0')
+                this.$refs.roundProfile.$el.style.setProperty('margin-top', '0')
+                this.is_profile_shrink = true
+            }
+            else {
+                let height = window.innerWidth * 0.215
+                let margin = window.innerWidth * 0.03
+                this.$refs.roundProfile.$el.style.setProperty('height', `${height}px`)
+                this.$refs.roundProfile.$el.style.setProperty('width', `${height}px`)
+                this.$refs.roundProfile.$el.style.setProperty('margin-top', `${margin}px`)
+                this.is_profile_shrink = false
+            }
+        },
+        setSortingStrategy (event) {
+            if (event.currentTarget.classList.contains('sortingStrategy')) {
+                return
+            }
+
+            event.currentTarget.classList.add('sortingStrategy')
+
+            let is_single_column = event.currentTarget.classList.contains('singleColumnStrategy')
+
+            if (is_single_column) {
+                document.getElementsByClassName('doubleColumnStrategy')[0].classList.remove('sortingStrategy')
+            }
+            else {
+                document.getElementsByClassName('singleColumnStrategy')[0].classList.remove('sortingStrategy')
+            }
+
+            if (this.tab_index === 1) {
+                this.is_single_column.artwork_list = is_single_column
+            }
+            else if (this.tab_index === 2) {
+                this.is_single_column.exhibition_list = is_single_column
+            }
+            return
+        }
     }
 }
 </script>

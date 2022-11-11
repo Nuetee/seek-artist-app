@@ -164,6 +164,6 @@ export default {
     }
 }
 </script>
-<style lang="scss" scoped src="../scss/ProfilePage/profilePage_lecacy.scss">
+<style lang="scss" scoped src="../scss/ProfilePage/profilePage_legacy.scss">
 
 </style>
