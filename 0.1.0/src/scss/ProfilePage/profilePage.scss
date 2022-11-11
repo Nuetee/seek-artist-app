@@ -78,6 +78,7 @@
             width: calc(var(--vw, 1vw) * 21.5);
             margin-top: calc(var(--vw, 1vw) * 3);
             margin-bottom: calc(var(--vw, 1vw) * 3);
+            transition: height 0.2s ease, width 0.2s ease, margin 0.2s ease;
         }
 
         .navigationBar {
@@ -119,6 +120,25 @@
                             text-align: center;
                         }
                     }
+                }
+            }
+        }
+
+        .sortingStrategyTab {
+            width: 100%;
+            height: calc(var(--vw, 1vw) * 10);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: calc(var(--vw, 1vw) * 3);
+            svg {
+                rect {
+                    fill: rgb(174, 174, 174);
+                }
+            }
+            svg.sortingStrategy {
+                rect {
+                    fill: rgb(0, 0, 0);
                 }
             }
         }
