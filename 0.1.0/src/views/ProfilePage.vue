@@ -16,7 +16,7 @@
                 </svg>
             </div>
             <div class="profileControlBox" v-show="this.show_control_box">
-                <div>프로필 편집</div>
+                <div @click="this.routeToProfileModify()">프로필 편집</div>
                 <div>프로필 링크복사</div>
                 <div>로그아웃</div>
             </div>
@@ -82,18 +82,18 @@ import List from '@/widgets/List.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { isAuth, getAuth } from '@/modules/auth';
 import HomeTab from '@/components/ProfilePage/HomeTab.vue';
-import UploadButton from '@/components/MyPage/UploadButton.vue';
+import UploadButton from '@/components/ProfilePage/UploadButton.vue';
 
 export default {
     name: 'ProfilePage',
     components: {
-    RoundProfile,
-    List,
-    Swiper,
-    SwiperSlide,
-    HomeTab,
-    UploadButton
-},
+        RoundProfile,
+        List,
+        Swiper,
+        SwiperSlide,
+        HomeTab,
+        UploadButton
+    },
     data() {
         return {
             user: null,
@@ -295,6 +295,22 @@ export default {
             }
             else if (this.tab_index === 2) {
                 this.is_single_column.exhibition_list = is_single_column
+            }
+            return
+        },
+        routeToProfileModify () {
+            if (isAuth()) {
+                this.$router.replace({
+                    path: '/profile-modify',
+                })
+            }
+            else {
+                this.$router.replace({
+                    path: './login',
+                    query: {
+                        redirect: this.$route.fullPath
+                    }
+                })
             }
             return
         }
