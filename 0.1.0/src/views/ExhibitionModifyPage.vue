@@ -249,7 +249,7 @@
     </div>
 </template>
 <script>
-    import MainHeader from '@/components/ExhibitionModifyPage/MainHeader.vue';
+    import MainHeader from '@/widgets/MainHeader.vue';
     import TitleHeader from '@/components/ExhibitionModifyPage/TitleHeader.vue';
     import SideBar from '@/widgets/SideBar.vue';
     import RoundProfile from '@/widgets/RoundProfile.vue';

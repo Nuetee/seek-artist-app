@@ -32,7 +32,7 @@
     </div>
 </template>
 <script>
-    import MainHeader from './MainHeader.vue';
+    import MainHeader from '../../widgets/MainHeader.vue';
     import {
         isAuth,
         getAuth
