@@ -28,4 +28,4 @@
         },
     }
 </script>
-<style lang="scss" scoped src="../../scss/ExhibitionModifyPage/mainHeader.scss"></style>
+<style lang="scss" scoped src="../scss/widgets/mainHeader.scss"></style>
