@@ -171,7 +171,7 @@
     import { getAuth } from '@/modules/auth';
     import { Exhibition } from '@/classes/exhibition';
     import { cropImage } from '@/modules/image';
-    import MainHeader from '../ExhibitionModifyPage/MainHeader.vue';
+    import MainHeader from '../../widgets/MainHeader.vue';
 
     export default {
     name: "TextModification",

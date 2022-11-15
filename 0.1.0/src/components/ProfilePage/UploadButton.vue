@@ -58,4 +58,4 @@
         }
     }
 </script>
-<style lang="scss" scoped src="../../scss/MyPage/uploadButton.scss"></style>
+<style lang="scss" scoped src="../../scss/ProfilePage/uploadButton.scss"></style>
