@@ -14,7 +14,7 @@
             </div>
             <div class="presentStep"> {{ this.presentStep[this.swiperIndex] }} </div>
             <div class="nextButton" @click="this.swiperNavigation(1)" :style="'color: ' + this.fontColor">
-                <div v-if="this.swiperIndex === 3">완료</div>
+                <div v-if="this.swiperIndex === 4">완료</div>
                 <div v-else>다음</div>
             </div>
         </div>
@@ -101,7 +101,7 @@
         },
         data() {
             return {
-                presentStep: ['전시명 입력', '전시 기간 설정', '대표 이미지 선택', '전시 설명 입력', '링크 업로드'],
+                presentStep: ['전시명 입력', '전시 기간 설정', '대표 이미지 선택', '전시 설명 입력', '전시 링크 업로드 (선택)'],
                 swiperIndex: 0,
                 numberOfSlides: 0,
                 navigationButtons: [],
