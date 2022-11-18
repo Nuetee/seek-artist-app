@@ -18,7 +18,7 @@
             <div class="profileControlBox" v-show="this.show_control_box">
                 <div @click="this.routeToProfileModify()">프로필 편집</div>
                 <div>프로필 링크복사</div>
-                <div>로그아웃</div>
+                <div @click="this.logout()">로그아웃</div>
             </div>
             <div class="name">
                 {{ (this.user === null ? 'Guest' : this.user.getNickname()) }}
@@ -80,7 +80,7 @@
 import RoundProfile from '@/widgets/RoundProfile.vue';
 import List from '@/widgets/List.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
-import { isAuth, getAuth } from '@/modules/auth';
+import { isAuth, getAuth, logout } from '@/modules/auth';
 import HomeTab from '@/components/ProfilePage/HomeTab.vue';
 import UploadButton from '@/components/ProfilePage/UploadButton.vue';
 
@@ -266,8 +266,11 @@ export default {
                 this.is_profile_shrink = true
             }
             else {
-                let height = window.innerWidth * 0.215
-                let margin = window.innerWidth * 0.03
+                let vw
+                (window.innerWidth > 480) ? vw = 4.8 : vw = window.innerWidth / 100
+
+                let height = vw * 21.5
+                let margin = vw * 3
                 this.$refs.roundProfile.$el.style.setProperty('height', `${height}px`)
                 this.$refs.roundProfile.$el.style.setProperty('width', `${height}px`)
                 this.$refs.roundProfile.$el.style.setProperty('margin-top', `${margin}px`)
@@ -313,6 +316,10 @@ export default {
                 })
             }
             return
+        },
+        logout () {
+            logout(this.$store.getters.getProvider)
+            this.$router.go()
         }
     }
 }
