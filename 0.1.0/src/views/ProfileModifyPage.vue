@@ -2,14 +2,16 @@
     <div id="profileModifyPage">
         <MainHeader :background_color="'white'">
             <template v-slot:left>
-                <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg @click="this.back()" width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M7 13L1 7L7 1" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
             </template>
-            <template v-slot:middle>프로필 편집</template>
-            <template v-slot:right>완료</template>
+            <template v-slot:middle>
+                <p>{{ this.flag_tag_selection ? '태그' : '프로필 편집' }}</p>
+            </template>
+            <template v-slot:right><p @click="this.complete()" :style="this.active_complete_button ? 'color: #000000' : 'color: #959595'">완료</p></template>
         </MainHeader>
-        <div class="contents">
+        <div id="contents">
             <div class="profileImage">
                 <RoundProfile :profile="this.user.getProfile()"></RoundProfile>
                 <div class="selectProfileImage">
@@ -50,7 +52,8 @@
             </div>
             <div class="tag">
                 <div class="label">태그</div>
-                <div class="tagSelectionButton">
+                <!-- 쓰레기값을 history에 추가, tagSelection에서 뒤로가기 버튼 눌렀을 때, ProfileModifyPage에서 나가지지 않도록. -->
+                <div class="tagSelectionButton" @click="() => { this.setGarbageHistory(); this.flag_tag_selection = true; this.active_complete_button = true; }">
                     선택하기
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M7.5 5L12.5 10L7.5 15" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -147,6 +150,25 @@
                 </div>
             </div>
         </div>
+        <div id="tagSelection" v-show="this.flag_tag_selection">
+            <div class="guide">최대 3개까지 선택할 수 있어요!</div>
+            <div class="tagList">
+                <div class="tag"
+                    v-for="(tag, i) in this.tag_list"
+                    @click="(event, tag) => {
+                        if (event.currentTarget.classList.contains('select')) {
+                            event.currentTarget.classList.remove('select')
+                            this.selected_tag_list.remove(tag)
+                        }
+                        else {
+                            event.currentTarget.classList.add('select')
+                            this.selected_tag_list.push(tag)
+                        }
+                    }">
+                    {{ tag }}
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
@@ -176,11 +198,26 @@
                     centeredSlides: false,
                     allowTouchMove: true,
                 },
+                active_complete_button: false,
                 artwork_thumbnail_list: null,
                 mail_domain: 'naver.com',
+                flag_tag_selection: false,
+                tag_list: [
+                    '일러스트', '그래피티', '공예', '회화', '디자인',
+                    '동양화', '서양화', '판화', '조각', '서예', '그래픽',
+                    '영상', '건축', '사진', '패션', '3D', 'AR/VR',
+                    '드로잉', '캐릭터'
+                ],
+                selected_tag_list: []
             };
         },
         created() {
+            const _this = this
+            // 뒤로가기 이벤트 감지
+            window.onpopstate = function() {
+                _this.back()
+            }
+
             if (isAuth()) {
                 this.user = getAuth()
             }
@@ -188,8 +225,21 @@
         },
         mounted() {},
         methods: {
+            setGarbageHistory () {
+                window.history.pushState(null, '', location.href)
+            },
             back () {
-                this.$router.replace('/')
+                if (!this.flag_tag_selection) {
+                    window.history.back()
+                }
+                else if (this.flag_tag_selection) {
+                    this.flag_tag_selection = false
+                }
+
+                return
+            },
+            complete () {
+
             },
             async submit () {
                 if (!this.activateNextButton || !this.user) {
