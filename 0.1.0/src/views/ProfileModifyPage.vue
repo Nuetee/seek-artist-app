@@ -7,7 +7,7 @@
                 </svg>
             </template>
             <template v-slot:middle>
-                <p>{{ this.flag_tag_selection ? '태그' : '프로필 편집' }}</p>
+                <p>{{ this.flag_tag_selection ? '태그' : (this.flag_artwork_selection ? '대표작업 선택' : '프로필 편집') }}</p>
             </template>
             <template v-slot:right><p @click="this.complete()" :style="this.active_complete_button ? 'color: #000000' : 'color: #959595'">완료</p></template>
         </MainHeader>
@@ -29,13 +29,21 @@
                 <div class="label neccesary">
                     닉네임
                 </div>
-                <input type="text" class="input text" placeholder="닉네임을 입력해주세요!"/>
+                <input type="text" class="input text" placeholder="닉네임을 입력해주세요!" v-model="this.nickname"/>
             </div>
             <div class="signatureWork">
                 <div class="label">대표작업</div>
                 <swiper v-bind="this.swiperOptions">
-                    <swiper-slide v-for="(artwork_thumbnail, i) in this.artwork_thumbnail_list" :key="i"></swiper-slide>
-                    <swiper-slide class="input">
+                    <swiper-slide v-for="(artwork, i) in this.selected_artwork_list" :key="i">
+                        <img :src="artwork.thumbnail" :style="artwork.style"/>
+                    </swiper-slide>
+                    <swiper-slide class="input" @click="() => {
+                         this.setGarbageHistory();
+                        this.flag_tag_selection = false;
+                        this.flag_artwork_selection = true;
+                        this.active_complete_button = true; 
+                        this.selecting_artwork_list = this.selected_artwork_list.slice()
+                    }">
                         <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M40 16.6665V63.3332" stroke="#8A8A8A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
                             <path d="M16.6667 40H63.3334" stroke="#8A8A8A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
@@ -53,11 +61,20 @@
             <div class="tag">
                 <div class="label">태그</div>
                 <!-- 쓰레기값을 history에 추가, tagSelection에서 뒤로가기 버튼 눌렀을 때, ProfileModifyPage에서 나가지지 않도록. -->
-                <div class="tagSelectionButton" @click="() => { this.setGarbageHistory(); this.flag_tag_selection = true; this.active_complete_button = true; }">
-                    선택하기
+                <div class="tagSelectionButton" @click="() => { 
+                this.setGarbageHistory();
+                this.flag_tag_selection = true;
+                this.flag_artwork_selection = false;
+                this.active_complete_button = true; 
+                this.selecting_tag_list = this.selected_tag_list.slice()
+                }">
+                    {{ (this.selected_tag_list.length > 0) ? '변경하기' : '선택하기' }}
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M7.5 5L12.5 10L7.5 15" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
+                </div>
+                <div class="selectedTagList">
+                    <div class="selectedTag" v-for="(selected_tag, i) in this.selected_tag_list" :key="i">{{ selected_tag }}</div>
                 </div>
             </div>
             <div class="sns">
@@ -150,21 +167,25 @@
                 </div>
             </div>
         </div>
+        <div id="signatureWorkSelection" v-show="this.flag_artwork_selection">
+            <div class="label">작품 목록</div>
+            <div class="artworkList">
+                <div class="artwork"
+                    v-for="(artwork, i) in this.artwork_list"
+                    @click="this.selectArtwork($event, artwork)">
+                    <div class="thumbnail">
+                        <img :src="artwork.thumbnail" :style="artwork.style"/>
+                    </div>
+                    <div class="name">{{ artwork.name }}</div>
+                </div>
+            </div>
+        </div>
         <div id="tagSelection" v-show="this.flag_tag_selection">
             <div class="guide">최대 3개까지 선택할 수 있어요!</div>
             <div class="tagList">
                 <div class="tag"
                     v-for="(tag, i) in this.tag_list"
-                    @click="(event, tag) => {
-                        if (event.currentTarget.classList.contains('select')) {
-                            event.currentTarget.classList.remove('select')
-                            this.selected_tag_list.remove(tag)
-                        }
-                        else {
-                            event.currentTarget.classList.add('select')
-                            this.selected_tag_list.push(tag)
-                        }
-                    }">
+                    @click="this.selectTag($event, tag)">
                     {{ tag }}
                 </div>
             </div>
@@ -179,6 +200,8 @@
         isAuth,
         getAuth
     } from '@/modules/auth'
+    import { Artwork } from '@/classes/artwork';
+    import { cropImage } from '@/modules/image';
 
     export default {
         name: 'ProfileModifyPage',
@@ -193,25 +216,34 @@
                 user: null,
                 swiperOptions: {
                     initialSlide: 0,
-                    slidesPerView: 1.8,
+                    slidesPerView: 'auto',
+                    spaceBetween: 10,
                     loop: false,
                     centeredSlides: false,
                     allowTouchMove: true,
                 },
                 active_complete_button: false,
                 artwork_thumbnail_list: null,
-                mail_domain: 'naver.com',
+
+                flag_artwork_selection: false,
                 flag_tag_selection: false,
+                
+                nickname: '',
+                artwork_list: [],
+                selecting_artwork_list: [],
+                selected_artwork_list: [],
                 tag_list: [
                     '일러스트', '그래피티', '공예', '회화', '디자인',
                     '동양화', '서양화', '판화', '조각', '서예', '그래픽',
                     '영상', '건축', '사진', '패션', '3D', 'AR/VR',
                     '드로잉', '캐릭터'
                 ],
-                selected_tag_list: []
+                selecting_tag_list: [],
+                selected_tag_list: [],
+                mail_domain: 'naver.com',
             };
         },
-        created() {
+        async created() {
             const _this = this
             // 뒤로가기 이벤트 감지
             window.onpopstate = function() {
@@ -220,11 +252,52 @@
 
             if (isAuth()) {
                 this.user = getAuth()
+                this.nickname = this.user.getNickname()
+                let artwork_page_id_list = await this.user.getOwnArtworks(0, 1000)
+                for (let artwork_page_id of artwork_page_id_list) {
+                    let artwork = await new Artwork(artwork_page_id).init()
+                    let object = new Object()
+                    object.name = artwork.getName()
+                    object.thumbnail = await artwork.getThumbnailImage()
+                    object.style = await cropImage(object.thumbnail, 1)
+                    this.artwork_list.push(object)
+                }
             }
+            
             this.userThumbnailLoadFlag = true
         },
         mounted() {},
         methods: {
+            selectTag (event, tag) {
+                if (event.currentTarget.classList.contains('select')) {
+                    event.currentTarget.classList.remove('select')
+                    this.selecting_tag_list = this.selecting_tag_list.filter((data) => {
+                        return data !== tag
+                    })
+                }
+                else {
+                    if (this.selecting_tag_list.length === 3) {
+                        return
+                    }
+                    event.currentTarget.classList.add('select')
+                    this.selecting_tag_list.push(tag)
+                }
+            },
+            selectArtwork(event, artwork) {
+                if (event.currentTarget.classList.contains('select')) {
+                    event.currentTarget.classList.remove('select')
+                    this.selecting_artwork_list = this.selecting_artwork_list.filter((data) => {
+                        return data !== artwork
+                    })
+                }
+                else {
+                    if (this.selecting_artwork_list.length === 5) {
+                        return
+                    }
+                    event.currentTarget.classList.add('select')
+                    this.selecting_artwork_list.push(artwork)
+                }
+            },
             setGarbageHistory () {
                 window.history.pushState(null, '', location.href)
             },
@@ -238,8 +311,18 @@
 
                 return
             },
+            /**
+             * 프로필 수정 완료, 대표작업 선택완료, 태그 선택 완료에 대한 기능을 하는 함수, 세가지 경우에 대해 구분 필요
+             */
             complete () {
-
+                if (this.flag_tag_selection) {
+                    this.selected_tag_list = this.selecting_tag_list.slice()
+                    this.flag_tag_selection = false
+                }
+                else if (this.flag_artwork_selection) {
+                    this.selected_artwork_list = this.selecting_artwork_list.slice()
+                    this.flag_artwork_selection = false
+                }
             },
             async submit () {
                 if (!this.activateNextButton || !this.user) {
