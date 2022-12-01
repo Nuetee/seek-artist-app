@@ -55,7 +55,7 @@
                 <div class="label">소개글</div>
                 <div class="textarea">
                     <textarea cols="auto" rows="auto" placeholder="간단한 소개글을 입력해 주세요!" v-model="this.introduction"></textarea>
-                    <div class="letterCount">{{ this.introductionLetterCount + '/500' }}</div>
+                    <div class="letterCount">{{ this.introduction.length + '/500' }}</div>
                 </div>
             </div>
             <div class="tag">
@@ -143,7 +143,7 @@
             <div class="mail">
                 <div class="label">메일</div>
                 <div class="mailContainer">
-                    <input type="text" class="input text" placeholder="seekforartist" />
+                    <input type="text" class="input text" placeholder="seekforartist" v-model="this.mail" />
                     <select class="input text" v-model="this.mail_domain">
                         <option value="naver.com">naver.com</option>
                         <option value="kakao.com">kakao.com</option>
@@ -152,12 +152,12 @@
                     </select>
                 </div>
             </div>
-            <div class="link">
+            <div class="linkList">
                 <div class="label">링크</div>
-                <div class="linkContainer">
-                    <input type="text" class="input text" placeholder="www.seek.com"/>
+                <div class="linkContainer" v-for="(link, i) in this.link_list">
+                    <input type="text" class="input text" placeholder="www.seek.com" v-model="this.link_list[i]"/>
                 </div>
-                <div class="linkAdd">
+                <div class="linkAdd" @click="() => { this.link_list.push('') }">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="12" cy="12" r="10" fill="#D9D9D9" />
                         <path d="M12 6V18" stroke="#8A8A8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -232,6 +232,7 @@
                 artwork_list: [],
                 selecting_artwork_list: [],
                 selected_artwork_list: [],
+                introduction: '',
                 tag_list: [
                     '일러스트', '그래피티', '공예', '회화', '디자인',
                     '동양화', '서양화', '판화', '조각', '서예', '그래픽',
@@ -240,8 +241,17 @@
                 ],
                 selecting_tag_list: [],
                 selected_tag_list: [],
+                mail: '',
                 mail_domain: 'naver.com',
+                link_list: ['']
             };
+        },
+        watch: {
+            'nickname' : {
+                handler() {
+                    this.active_complete_button = this.nickname ? true : false
+                }
+            }
         },
         async created() {
             const _this = this
@@ -302,11 +312,14 @@
                 window.history.pushState(null, '', location.href)
             },
             back () {
-                if (!this.flag_tag_selection) {
+                if (!(this.flag_tag_selection || this.flag_artwork_selection)) {
                     window.history.back()
                 }
                 else if (this.flag_tag_selection) {
                     this.flag_tag_selection = false
+                }
+                else if (this.flag_artwork_selection) {
+                    this.flag_artwork_selection = false
                 }
 
                 return
@@ -323,6 +336,8 @@
                     this.selected_artwork_list = this.selecting_artwork_list.slice()
                     this.flag_artwork_selection = false
                 }
+
+                this.active_complete_button = this.nickname ? true : false
             },
             async submit () {
                 if (!this.activateNextButton || !this.user) {
