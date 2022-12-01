@@ -276,8 +276,19 @@
             }
         }
 
-        .link {
+        .linkList {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            .label {
+                align-self: flex-start;
+            }
+
             .linkContainer {
+                width: 100%;
+                margin-bottom: calc(var(--vw ,1vw) * 3);
                 input {
                     width: 100%;
                 }
@@ -287,7 +298,6 @@
                 align-items: center;
                 justify-content: center;
                 gap: calc(var(--vw, 1vw) * 2);
-                margin-top: calc(var(--vw, 1vw) * 3);
                 font-family: 'Pretendard';
                 font-style: normal;
                 font-weight: 600;
