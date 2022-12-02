@@ -303,7 +303,7 @@ export default {
         },
         routeToProfileModify () {
             if (isAuth()) {
-                this.$router.replace({
+                this.$router.push({
                     path: '/profile-modify',
                 })
             }
