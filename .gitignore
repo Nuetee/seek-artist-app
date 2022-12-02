@@ -4,18 +4,12 @@ node_modules
 0.1.0/node_modules
 0.1.0/dist
 
-# local env files
-.env.local
-.env.*.local
-0.1.0/.env.local
-0.1.0/.env.*.local
 
-# development env files
-.env.development
-.env.*.development
-0.1.0/.env.development
-0.1.0/.env.*.development
-
+# env files
+.env
+.env.*
+0.1.0/.env
+0.1.0/.env.*
 
 # Log files
 npm-debug.log*
