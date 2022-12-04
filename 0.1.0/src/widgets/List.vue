@@ -153,7 +153,7 @@ export default {
                                 _this.$router.push({
                                     path: '/exhibition-modify',
                                     query: {
-                                        id: id
+                                        id: id.page_id
                                     }
                                 })
                             }
