@@ -27,7 +27,13 @@
                 <Preview v-if="!this.isExhibition && file.type.includes('image')" :textColor="this.textColor" :title="this.artworkData.title" :image="file"></Preview>
                 <div class="video" v-else-if="!this.isExhibition && file.type.includes('video')">
                     <img class="videoBackground" src="" @load="this.setVideoBackgroundStyle($event)"/>
-                    <video id="video" :src="file.src" controls @canplaythrough="this.setVideoThumbnail($event)"></video>
+                    <!-- <video id="video" :src="file.src" controls @canplaythrough="this.setVideoThumbnail($event)"></video> -->
+                    <video id="video" controls @canplaythrough="this.setVideoThumbnail($event)">
+                        <source :src="file.src" type="video/mp4">
+                        <source :src="file.src" type="video/ogg">
+                        <source :src="file.src" type="video/webm">
+                        브라우저가 지원하는 파일 형식이 아닙니다.
+                    </video>
                 </div>
                 <ExhibitionPreview v-else :image="file"></ExhibitionPreview>
             </swiper-slide>
