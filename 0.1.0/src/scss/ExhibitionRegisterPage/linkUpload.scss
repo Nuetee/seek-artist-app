@@ -1,8 +1,5 @@
 #linkUpload {
     > div {
-        margin-top: calc(var(--vw, 1vw) * 12);
-        padding-bottom: calc(var(--vw, 1vw) * 8);
-
         .title {
             width: 100%;
             text-align: left;
@@ -37,6 +34,7 @@
 
     .linkListContainer {
         border-bottom: 1px solid #AEAEAE;
+        padding-bottom: calc(var(--vw, 1vw) * 8);
 
         .body {
 
@@ -60,6 +58,7 @@
     }
     
     .videoContainer {
+        padding-top: calc(var(--vw, 1vw) * 12);
         .title {
             span {
                 font-weight: 400;

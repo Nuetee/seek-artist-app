@@ -125,17 +125,23 @@
         }
 
         .sortingStrategyTab {
+            position: absolute;
+            bottom: calc(var(--vw, 1vw) * (-10));
+            left: 0;
+            z-index: 2;
             width: 100%;
             height: calc(var(--vw, 1vw) * 10);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: calc(var(--vw, 1vw) * 3);
+
             svg {
                 rect {
                     fill: rgb(174, 174, 174);
                 }
             }
+
             svg.sortingStrategy {
                 rect {
                     fill: rgb(0, 0, 0);
@@ -163,6 +169,10 @@
                     height: 0;
                     background: transparent;
                     -webkit-appearance: none;
+                }
+
+                .list {
+                    margin-top: calc(var(--vw, 1vw) * 10);
                 }
             }
         }

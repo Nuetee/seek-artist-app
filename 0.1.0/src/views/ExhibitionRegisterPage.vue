@@ -12,45 +12,40 @@
                         stroke-linejoin="round" />
                 </svg>
             </div>
-            <div class="presentStep"> {{ this.presentStep[this.swiperIndex] }} </div>
-            <div class="nextButton" @click="this.swiperNavigation(1)" :style="'color: ' + this.fontColor">
-                <div v-if="this.swiperIndex === 4">완료</div>
-                <div v-else>다음</div>
+        </div>
+        <div class="body">
+            <div class="presentStep" v-html="this.presentStep[this.swiperIndex]"></div>
+            <div class="bottom">
+                <swiper v-bind="this.swiperOptions" @slideChange="this.slideChange" @init="this.getSlidesNumber">
+                    <swiper-slide>
+                        <TitleInput :isExhibition="true" ref="titleInput" @activate-next-button="this.activateNextButton"
+                            @set-exhibition-entity="this.setExhibitionEntity"></TitleInput>
+                    </swiper-slide>
+                    <swiper-slide>
+                        <ExhibitionDate ref="exhibitionDate" @activate-next-button="this.activateNextButton"
+                            @set-exhibition-entity="this.setExhibitionEntity"></ExhibitionDate>
+                    </swiper-slide>
+                    <swiper-slide>
+                        <ImageSelection :isExhibition="true" ref="imageSelection" @activate-next-button="this.activateNextButton"
+                            @set-exhibition-entity="this.setExhibitionEntity" :exhibitionData="this.newExhibition"></ImageSelection>
+                    </swiper-slide>
+                    <swiper-slide>
+                        <Description :isExhibition="true" ref="description" @activate-next-button="this.activateNextButton"
+                            @set-exhibition-entity="this.setExhibitionEntity"></Description>
+                    </swiper-slide>
+                    <swiper-slide>
+                        <LinkUpload ref="linkUpload" @activate-next-button="this.activateNextButton"
+                            @set-exhibition-entity="this.setExhibitionEntity"></LinkUpload>
+                    </swiper-slide>
+                    <button class="next"></button>
+                    <button class="previous"></button>
+                </swiper>
             </div>
         </div>
-        <div class="bottom">
-            <swiper v-bind="this.swiperOptions"
-                @slideChange="this.slideChange"
-                @init="this.getSlidesNumber">
-                <swiper-slide>
-                    <TitleInput :isExhibition="true" ref="titleInput" 
-                        @activate-next-button="this.activateNextButton"
-                        @set-exhibition-entity="this.setExhibitionEntity"></TitleInput>
-                </swiper-slide>
-                <swiper-slide>
-                    <ExhibitionDate ref="exhibitionDate"
-                        @activate-next-button="this.activateNextButton"
-                        @set-exhibition-entity="this.setExhibitionEntity"></ExhibitionDate>
-                </swiper-slide>
-                <swiper-slide>
-                    <ImageSelection :isExhibition="true" ref="imageSelection" 
-                        @activate-next-button="this.activateNextButton"
-                        @set-exhibition-entity="this.setExhibitionEntity" :exhibitionData="this.newExhibition"></ImageSelection>
-                </swiper-slide>
-                <swiper-slide>
-                    <Description :isExhibition="true" ref="description" 
-                        @activate-next-button="this.activateNextButton"
-                        @set-exhibition-entity="this.setExhibitionEntity"></Description>
-                </swiper-slide>
-                <swiper-slide>
-                    <LinkUpload
-                        ref="linkUpload"
-                        @activate-next-button="this.activateNextButton"
-                        @set-exhibition-entity="this.setExhibitionEntity"></LinkUpload>
-                </swiper-slide>
-                <button class="next"></button>
-                <button class="previous"></button>
-            </swiper>
+        <div class="nextButtonContainer">
+            <div class="nextButton" @click="this.swiperNavigation(1)" :style="'color: ' + this.fontColor">
+                {{ this.swiperIndex === 4 ? '완료' : '다음' }}
+            </div>
         </div>
     </div>
     <div class="exhibitionRegisterPopup" v-show="this.registerPopupFlag">
@@ -101,7 +96,13 @@
         },
         data() {
             return {
-                presentStep: ['전시명 입력', '전시 기간 설정', '대표 이미지 선택', '전시 설명 입력', '전시 링크 업로드 (선택)'],
+                presentStep: [
+                    '전시 제목을<br/>입력해 주세요!',
+                    '전시 기간을<br/>입력해 주세요!',
+                    '전시의 대표 이미지를<br/>선택해 주세요!',
+                    '전시에 대한 설명을<br/>적어 주세요!',
+                    '추가로 업로드 해보세요!',
+                ],
                 swiperIndex: 0,
                 numberOfSlides: 0,
                 navigationButtons: [],
@@ -121,9 +122,9 @@
                     loop: false,
                     centeredSlides: true,
                     allowTouchMove: false,
-                    pagination: {
-                        type: 'progressbar',
-                    },
+                    // pagination: {
+                    //     type: 'progressbar',
+                    // },
                     navigation: {
                         nextEl: '.next',
                         prevEl: '.previous'

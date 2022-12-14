@@ -346,7 +346,6 @@
 
                 .label {
                     padding-top: calc(var(--vw, 1vw) * 8);
-                    
                 }
             }
     
@@ -393,6 +392,14 @@
                         display: flex;
                         align-items: center;
                         justify-content: center;
+                    }
+                }
+            }
+
+            .editexhibitionMoreInformation {
+                ::v-deep(#linkUpload) {
+                    .linkListContainer {
+                        border-bottom: 1px solid #000000;
                     }
                 }
             }
